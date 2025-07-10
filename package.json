@@ -2,16 +2,21 @@
   "name": "instello",
   "version": "0.0.1",
   "private": true,
+  "engines": {
+    "node": ">=22.17.0",
+    "pnpm": ">=9.6.0"
+  },
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",
-     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
+    "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
     "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
     "lint:ws": "pnpm dlx sherif@latest",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
-    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache"
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache",
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "@instello/eslint-config": "workspace:*",
@@ -22,9 +27,6 @@
     "typescript": "5.7.3"
   },
   "packageManager": "pnpm@10.4.1",
-  "engines": {
-    "node": ">=20"
-  },
   "pnpm": {
     "ignoredBuiltDependencies": [
       "core-js-pure"

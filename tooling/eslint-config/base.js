@@ -1,5 +1,6 @@
 /// <reference types="./types.d.ts" />
 
+// @ts-ignore
 import * as path from "node:path";
 import { includeIgnoreFile } from "@eslint/compat";
 import eslint from "@eslint/js";
@@ -24,6 +25,7 @@ export const restrictEnvAccess = tseslint.config(
             "Use `import { env } from '~/env'` instead to ensure validated types.",
         },
       ],
+      "@typescript-eslint/no-unsafe-return": "warn",
       "no-restricted-imports": [
         "error",
         {
@@ -39,6 +41,7 @@ export const restrictEnvAccess = tseslint.config(
 
 export default tseslint.config(
   // Ignore files not tracked by VCS and any config files
+  // @ts-ignore
   includeIgnoreFile(path.join(import.meta.dirname, "../../.gitignore")),
   { ignores: ["**/*.config.*"] },
   {
@@ -55,7 +58,6 @@ export default tseslint.config(
     ],
     rules: {
       ...turboPlugin.configs.recommended.rules,
-      "@typescript-eslint/no-unsafe-assignment": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },

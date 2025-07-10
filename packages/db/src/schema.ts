@@ -1,0 +1,24 @@
+import { pgTable } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod/v4";
+
+import { initialColumns } from "./columns.helpers";
+
+export const branch = pgTable("branch", (t) => ({
+  ...initialColumns,
+  name: t.text().notNull(),
+  icon: t.varchar({ length: 256 }).notNull(),
+  currentSemesterMode: t.text().$type<"odd" | "even">().notNull(),
+  numberOfSemesters: t.integer().notNull(),
+}));
+
+export const CreateBranchSchema = createInsertSchema(branch, {
+  name: z.string(),
+  icon: z.string(),
+  numberOfSemesters: z.number(),
+  currentSemesterMode: z.enum(["odd", "even"]),
+}).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});

@@ -4,7 +4,7 @@
   "version": "0.3.0",
   "type": "module",
   "exports": {
-    "./base": "./base.js",
+    "./base": "./base.mjs",
     "./nextjs": "./nextjs.js",
     "./react": "./react.js"
   },
@@ -24,6 +24,7 @@
     "typescript-eslint": "^8.33.1"
   },
   "devDependencies": {
+    "@types/node": "catalog:react19",
     "@instello/prettier-config": "workspace:*",
     "@instello/tsconfig": "workspace:*",
     "eslint": "catalog:",

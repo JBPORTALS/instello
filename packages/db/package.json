@@ -1,0 +1,38 @@
+{
+  "name": "@instello/db",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./client": "./src/client.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "devDependencies": {
+    "@instello/eslint-config": "workspace:*",
+    "@instello/prettier-config": "workspace:*",
+    "@instello/tsconfig": "workspace:*",
+    "dotenv-cli": "^8.0.0",
+    "drizzle-kit": "^0.31.4",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  },
+  "prettier": "@instello/prettier-config",
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.1",
+    "@paralleldrive/cuid2": "^2.2.2",
+    "drizzle-orm": "^0.44.2",
+    "drizzle-zod": "^0.8.2",
+    "zod": "catalog:"
+  }
+}

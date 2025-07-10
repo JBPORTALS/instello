@@ -17,5 +17,20 @@
       "cache": false,
       "persistent": true
     }
-  }
+  },
+  "globalEnv": [
+    "POSTGRES_URL",
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+    "CLERK_SECRET_KEY",
+    "RESEND_API_KEY",
+    "PORT"
+  ],
+  "globalPassThroughEnv": [
+    "NODE_ENV",
+    "CI",
+    "VERCEL",
+    "VERCEL_ENV",
+    "VERCEL_URL",
+    "npm_lifecycle_event"
+  ]
 }

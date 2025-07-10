@@ -11,9 +11,9 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@/components",
-    "hooks": "@/hooks",
-    "lib": "@/lib",
+    "components": "@/src/components",
+    "hooks": "@/src/hooks",
+    "lib": "@/src/lib",
     "utils": "@instello/ui/lib/utils",
     "ui": "@instello/ui/components"
   }

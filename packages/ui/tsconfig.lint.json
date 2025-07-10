@@ -1,5 +1,5 @@
 {
-  "extends": "@instello/typescript-config/react-library.json",
+  "extends": "@instello/tsconfig/internal-package.json",
   "compilerOptions": {
     "outDir": "dist"
   },

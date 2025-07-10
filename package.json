@@ -1,17 +1,23 @@
 {
-  "name": "shadcn-ui-monorepo",
+  "name": "instello",
   "version": "0.0.1",
   "private": true,
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "clean": "git clean -xdf node_modules",
+    "clean:workspaces": "turbo run clean",
+     "lint": "turbo run lint --continue -- --cache --cache-location .cache/.eslintcache",
+    "lint:fix": "turbo run lint --continue -- --fix --cache --cache-location .cache/.eslintcache",
+    "lint:ws": "pnpm dlx sherif@latest",
+    "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",
+    "format:fix": "turbo run format --continue -- --write --cache --cache-location .cache/.prettiercache"
   },
   "devDependencies": {
     "@instello/eslint-config": "workspace:*",
-    "@instello/typescript-config": "workspace:*",
-    "prettier": "^3.5.1",
+    "@instello/prettier-config": "workspace:*",
+    "@instello/tsconfig": "workspace:*",
+    "prettier": "catalog:",
     "turbo": "^2.4.2",
     "typescript": "5.7.3"
   },
@@ -27,5 +33,9 @@
       "@clerk/shared",
       "sharp"
     ]
-  }
+  },
+  "dependencies": {
+    "@turbo/gen": "^2.4.2"
+  },
+  "prettier": "@instello/prettier-config"
 }

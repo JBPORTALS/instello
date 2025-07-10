@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "@instello/ui/globals.css";
+
 import { Providers } from "@/components/providers";
 import { ClerkProvider } from "@clerk/nextjs";
 
@@ -23,7 +24,7 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased `}
+          className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
         >
           <Providers>{children}</Providers>
         </body>

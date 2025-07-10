@@ -1,6 +1,8 @@
 {
-  "extends": "@instello/typescript-config/nextjs.json",
+  "extends": "@instello/tsconfig/base.json",
   "compilerOptions": {
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
@@ -10,7 +12,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "module": "esnext"
   },
   "include": [
     "next-env.d.ts",

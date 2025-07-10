@@ -46,7 +46,7 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  apps/web:
+  apps/dashboard:
     dependencies:
       '@clerk/nextjs':
         specifier: ^6.24.0

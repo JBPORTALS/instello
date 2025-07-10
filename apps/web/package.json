@@ -12,19 +12,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@workspace/ui": "workspace:*",
+    "@instello/ui": "workspace:*",
     "lucide-react": "^0.475.0",
     "next": "^15.2.3",
     "next-themes": "^0.4.4",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "catalog:react19",
+    "react-dom": "catalog:react19"
   },
   "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "@workspace/eslint-config": "workspace:^",
-    "@workspace/typescript-config": "workspace:*",
-    "typescript": "^5.7.3"
+    "@types/node": "catalog:react19",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
+    "@instello/eslint-config": "workspace:^",
+    "@instello/typescript-config": "workspace:*",
+    "typescript": "catalog:"
   }
 }

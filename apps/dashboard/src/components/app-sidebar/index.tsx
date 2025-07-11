@@ -31,6 +31,12 @@ export async function AppSidebar({
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
+                <Image
+                  src={"/instello-feather.svg"}
+                  height={28}
+                  width={28}
+                  alt="Instello Feather"
+                />
                 <span className="text-base font-semibold">
                   Organization Name
                 </span>

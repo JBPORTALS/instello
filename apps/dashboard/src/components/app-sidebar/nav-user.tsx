@@ -29,7 +29,11 @@ import {
   UserCircleIcon,
 } from "@phosphor-icons/react";
 
-export function NavUser({ user }: { user: User }) {
+export function NavUser({
+  user,
+}: {
+  user: Pick<User, "imageUrl" | "fullName"> & { primaryEmailAddress?: string };
+}) {
   const { isMobile } = useSidebar();
   const { signOut } = useAuth();
 
@@ -54,7 +58,7 @@ export function NavUser({ user }: { user: User }) {
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.fullName}</span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user.primaryEmailAddress?.emailAddress}
+                  {user.primaryEmailAddress}
                 </span>
               </div>
               <DotsThreeIcon className="ml-auto size-4" />
@@ -80,7 +84,7 @@ export function NavUser({ user }: { user: User }) {
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.fullName}</span>
                   <span className="text-muted-foreground truncate text-xs">
-                    {user.primaryEmailAddress?.emailAddress}
+                    {user.primaryEmailAddress}
                   </span>
                 </div>
               </div>

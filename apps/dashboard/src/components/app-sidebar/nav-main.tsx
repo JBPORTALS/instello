@@ -26,7 +26,7 @@ const items = [
 ];
 
 export function NavMain() {
-  const { orgSlug } = useParams<{ orgSlug: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const pathname = usePathname();
 
   return (
@@ -34,7 +34,7 @@ export function NavMain() {
       <SidebarGroupContent>
         <SidebarMenu>
           {items.map((item) => {
-            const url = `/${orgSlug}${item.url}`;
+            const url = `/${slug}${item.url}`;
             const isActive = item.exact
               ? pathname == url
               : pathname.startsWith(url);
@@ -43,7 +43,10 @@ export function NavMain() {
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton isActive={isActive} asChild>
                   <Link href={url}>
-                    <item.icon className="text-muted-foreground" />
+                    <item.icon
+                      weight="duotone"
+                      className="text-muted-foreground"
+                    />
                     <span>{item.title}</span>
                   </Link>
                 </SidebarMenuButton>

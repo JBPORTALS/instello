@@ -31,13 +31,6 @@ export async function AppSidebar({
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
               <a href="#">
-                <Image
-                  width={20}
-                  height={20}
-                  src={"/nexuss-logo.png"}
-                  alt="Nexuss Logo"
-                  className="dark:invert"
-                />
                 <span className="text-base font-semibold">
                   Organization Name
                 </span>
@@ -51,7 +44,13 @@ export async function AppSidebar({
         <NavBranches />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={user} />
+        <NavUser
+          user={{
+            imageUrl: user.imageUrl,
+            fullName: user.fullName,
+            primaryEmailAddress: user.primaryEmailAddress?.emailAddress,
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
   );

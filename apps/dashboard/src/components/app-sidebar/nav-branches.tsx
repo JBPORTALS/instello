@@ -60,7 +60,7 @@ export function NavBranches() {
 
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Teams</SidebarGroupLabel>
+      <SidebarGroupLabel>Branches</SidebarGroupLabel>
 
       <Tooltip>
         <TooltipTrigger asChild>
@@ -69,7 +69,7 @@ export function NavBranches() {
           </SidebarGroupAction>
         </TooltipTrigger>
 
-        <TooltipContent side="right">Create Team</TooltipContent>
+        <TooltipContent side="right">Create Branch</TooltipContent>
       </Tooltip>
       <SidebarMenu>
         {branches.map((b) => {
@@ -94,7 +94,7 @@ export function NavBranches() {
                   </Link>
                 </SidebarMenuButton>
                 <CollapsibleTrigger asChild>
-                  <SidebarMenuAction className="data-[state=open]:rotate-90 [&_svg]:size-1.5">
+                  <SidebarMenuAction className="data-[state=open]:rotate-90">
                     <TriangleIcon
                       weight="fill"
                       className="text-muted-foreground rotate-90"
@@ -112,11 +112,14 @@ export function NavBranches() {
                         <SidebarMenuSubItem key={subItem.title}>
                           <SidebarMenuSubButton
                             isActive={isActive}
-                            className="px-5 text-xs"
+                            className="px-5"
                             asChild
                           >
                             <Link href={subItemUrl}>
-                              <subItem.icon className="text-muted-foreground" />
+                              <subItem.icon
+                                weight="duotone"
+                                className="text-muted-foreground"
+                              />
                               <span>{subItem.title}</span>
                             </Link>
                           </SidebarMenuSubButton>

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 
 import "@instello/ui/globals.css";
 
+import { Metadata } from "next";
 import { Providers } from "@/components/providers";
 import { ClerkProvider } from "@clerk/nextjs";
 
@@ -14,6 +15,10 @@ const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
 });
+
+export const metadata: Metadata = {
+  title: "Instello - Dashboard",
+};
 
 export default function RootLayout({
   children,

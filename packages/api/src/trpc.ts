@@ -2,8 +2,6 @@ import type {
   SignedInAuthObject,
   SignedOutAuthObject,
 } from "@clerk/backend/internal";
-import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
-import { getAuth } from "@clerk/nextjs/server";
 import { db } from "@instello/db/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
@@ -23,19 +21,8 @@ import { ZodError } from "zod/v4";
  */
 interface AuthContextProps {
   auth: SignedInAuthObject | SignedOutAuthObject;
+  headers: Headers;
 }
-
-/** Use this helper for:
- *  - testing, where we dont have to Mock Next.js' req/res
- *  - trpc's `createSSGHelpers` where we don't have req/res
- * @see https://beta.create.t3.gg/en/usage/trpc#-servertrpccontextts
- */
-export const createContextInner = ({ auth }: AuthContextProps) => {
-  return {
-    auth,
-    db,
-  };
-};
 
 /**
  * 1. CONTEXT
@@ -49,8 +36,14 @@ export const createContextInner = ({ auth }: AuthContextProps) => {
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = (opts: CreateNextContextOptions) => {
-  return createContextInner({ auth: getAuth(opts.req) });
+export const createTRPCContext = ({ auth, headers }: AuthContextProps) => {
+  const source = headers.get("x-trpc-source");
+  console.log(`Request from ${source}`);
+
+  return {
+    auth,
+    db,
+  };
 };
 
 export type Context = Awaited<ReturnType<typeof createTRPCContext>>;

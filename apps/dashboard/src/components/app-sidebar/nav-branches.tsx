@@ -31,6 +31,9 @@ import {
   UsersThreeIcon,
 } from "@phosphor-icons/react";
 
+import { CreateBranchDialog } from "../create-branch-dialog";
+import { IconPickerIcon, TablerReactIcon } from "../icon-picker";
+
 const items = [
   {
     title: "Students",
@@ -50,8 +53,8 @@ const items = [
 ];
 
 const branches = [
-  { id: "1", name: "Computer Science" },
-  { id: "2", name: "Automobile Engineering" },
+  { id: "1", name: "Computer Science", icon: "IconCircleFilled" },
+  { id: "2", name: "Automobile Engineering", icon: "IconCircleFilled" },
 ];
 
 export function NavBranches() {
@@ -64,9 +67,11 @@ export function NavBranches() {
 
       <Tooltip>
         <TooltipTrigger asChild>
-          <SidebarGroupAction>
-            <PlusIcon />
-          </SidebarGroupAction>
+          <CreateBranchDialog>
+            <SidebarGroupAction>
+              <PlusIcon />
+            </SidebarGroupAction>
+          </CreateBranchDialog>
         </TooltipTrigger>
 
         <TooltipContent side="right">Create Branch</TooltipContent>
@@ -85,11 +90,11 @@ export function NavBranches() {
                   className="font-medium"
                 >
                   <Link href={branchUrl}>
-                    {/* <TablerReactIcon
+                    <TablerReactIcon
                       name={b.icon as IconPickerIcon}
                       isActive
                       className="size-5 [&_svg]:size-3.5"
-                    /> */}
+                    />
                     <span className="max-w-full truncate pr-2">{b.name}</span>
                   </Link>
                 </SidebarMenuButton>

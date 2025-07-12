@@ -9,15 +9,14 @@ export const branch = pgTable("branch", (t) => ({
   name: t.text().notNull(),
   icon: t.varchar({ length: 256 }).notNull(),
   currentSemesterMode: t.text().$type<"odd" | "even">().notNull(),
-  numberOfSemesters: t.integer().notNull(),
+  totalSemesters: t.integer().notNull(),
   clerkOrganizationId: t.text().notNull(),
 }));
 
 export const CreateBranchSchema = createInsertSchema(branch, {
   name: z.string(),
   icon: z.string(),
-  numberOfSemesters: z.number(),
-  currentSemesterMode: z.enum(["odd", "even"]),
+  totalSemesters: z.number(),
 }).omit({
   id: true,
   clerkOrganizationId: true,

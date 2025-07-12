@@ -4,7 +4,7 @@
   "version": "0.3.0",
   "type": "module",
   "exports": {
-    "./base": "./base.mjs",
+    "./base": "./base.js",
     "./nextjs": "./nextjs.js",
     "./react": "./react.js"
   },

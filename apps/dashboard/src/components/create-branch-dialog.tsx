@@ -3,7 +3,10 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateBranchSchema as _CreateBranchSchema } from "@instello/db/schema";
+import {
+  CreateBranchSchema as _CreateBranchSchema,
+  SemesterMode,
+} from "@instello/db/schema";
 import { Button } from "@instello/ui/components/button";
 import {
   Dialog,
@@ -47,7 +50,7 @@ export function CreateBranchDialog(
     defaultValues: {
       name: "",
       icon: "IconCircleFilled",
-      currentSemesterMode: "odd",
+      currentSemesterMode: "odd" as SemesterMode,
       totalSemesters: 6,
     },
   });

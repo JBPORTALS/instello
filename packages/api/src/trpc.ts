@@ -1,5 +1,9 @@
-import type { Session } from "@clerk/backend";
-import { createClerkClient, verifyToken } from "@clerk/backend";
+import type {
+  SignedInAuthObject,
+  SignedOutAuthObject,
+} from "@clerk/backend/internal";
+import type { CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { getAuth } from "@clerk/nextjs/server";
 import { db } from "@instello/db/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
@@ -14,35 +18,23 @@ import { ZodError } from "zod/v4";
  * The pieces you will need to use are documented accordingly near the end
  */
 
-export const clerk = createClerkClient({
-  secretKey: process.env.CLERK_SECRET_KEY,
-});
-
-async function verifyAuthToken(token: string | null) {
-  if (!token) return null;
-
-  const authJwt = await verifyToken(token, {
-    secretKey: process.env.CLERK_SECRET_KEY,
-  });
-
-  const authSession = clerk.sessions.getSession(authJwt.sid);
-
-  return authSession;
+/**
+ * Replace this with an object if you want to pass things to createContextInner
+ */
+interface AuthContextProps {
+  auth: SignedInAuthObject | SignedOutAuthObject;
 }
 
-/**
- * getAuthorizationSession getter for API requests
- * - Expo requests will have a session token in the Authorization header
- * - Next.js requests will have a session token in cookies so no need to pass down from here it will automatically recogonize from the request
+/** Use this helper for:
+ *  - testing, where we dont have to Mock Next.js' req/res
+ *  - trpc's `createSSGHelpers` where we don't have req/res
+ * @see https://beta.create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const getAuthorizationSession = async (headers: Headers) => {
-  const authToken = headers.get("Authorization")?.split(" ")[1] ?? null;
-
-  if (authToken) {
-    return verifyAuthToken(authToken);
-  }
-
-  return null;
+export const createContextInner = ({ auth }: AuthContextProps) => {
+  return {
+    auth,
+    db,
+  };
 };
 
 /**
@@ -57,29 +49,11 @@ const getAuthorizationSession = async (headers: Headers) => {
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: {
-  headers: Headers;
-  session: Session | null;
-}) => {
-  const authToken = opts.headers.get("Authorization") ?? null;
-  const session = await getAuthorizationSession(opts.headers);
-
-  const source = opts.headers.get("x-trpc-source") ?? "unknown";
-  console.log(">>> tRPC Request from", source, "by", session?.userId);
-
-  return {
-    session: session ?? opts.session,
-    db,
-    clerk,
-    token: authToken,
-  };
+export const createTRPCContext = (opts: CreateNextContextOptions) => {
+  return createContextInner({ auth: getAuth(opts.req) });
 };
 
-type Context = Awaited<ReturnType<typeof createTRPCContext>>;
-
-export type AuthedContext = Context & {
-  session: NonNullable<Context["session"]>;
-};
+export type Context = Awaited<ReturnType<typeof createTRPCContext>>;
 
 /**
  * 2. INITIALIZATION
@@ -153,21 +127,49 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  * Protected (authenticated) procedure
  *
  * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
- * the session is valid and guarantees `ctx.session` is not null.
+ * the session is valid and guarantees `ctx.auth` is not null.
  *
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure
   .use(timingMiddleware)
   .use(({ ctx, next }) => {
-    if (!ctx.session?.userId) {
+    if (!ctx.auth.userId) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
+
     return next({
       ctx: {
         ...ctx,
-        // infers the `session` as non-nullable
-        session: ctx.session,
+        // infers the `auth.userId` as non-nullable
+        auth: { ...ctx.auth, userId: ctx.auth.userId },
+      },
+    });
+  });
+
+/**
+ * Organization context procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to selected organization users, use this. It verifies
+ * the auth.orgId (Active organization Id) is valid and guarantees `ctx.auth.orgId` is not null.
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const organizationProcedure = t.procedure
+  .concat(protectedProcedure)
+  .use(({ ctx, next }) => {
+    if (!ctx.auth.orgId) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "No organization has been selected. Select one or create one",
+      });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        // infers the `auth.orgId` as non-nullable
+        auth: { ...ctx.auth, orgId: ctx.auth.orgId },
       },
     });
   });

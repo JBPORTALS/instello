@@ -38,7 +38,7 @@ interface AuthContextProps {
  */
 export const createTRPCContext = ({ auth, headers }: AuthContextProps) => {
   const source = headers.get("x-trpc-source");
-  console.log(`Request from ${source}`);
+  console.log(`>>> Request recieved from ${source ?? "UNKNOWN"}`);
 
   return {
     auth,

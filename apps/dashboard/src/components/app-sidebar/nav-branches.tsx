@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { useTRPC } from "@/trpc/react";
 import {
   Collapsible,
   CollapsibleContent,
@@ -30,6 +31,7 @@ import {
   TriangleIcon,
   UsersThreeIcon,
 } from "@phosphor-icons/react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { CreateBranchDialog } from "../create-branch-dialog";
 import { IconPickerIcon, TablerReactIcon } from "../icon-picker";
@@ -52,14 +54,11 @@ const items = [
   },
 ];
 
-const branches = [
-  { id: "1", name: "Computer Science", icon: "IconCircleFilled" },
-  { id: "2", name: "Automobile Engineering", icon: "IconCircleFilled" },
-];
-
 export function NavBranches() {
   const { slug } = useParams<{ slug: string }>();
   const pathname = usePathname();
+  const trpc = useTRPC();
+  const branches = useSuspenseQuery(trpc.branch.list.queryOptions());
 
   return (
     <SidebarGroup>
@@ -77,7 +76,7 @@ export function NavBranches() {
         <TooltipContent side="right">Create Branch</TooltipContent>
       </Tooltip>
       <SidebarMenu>
-        {branches.map((b) => {
+        {branches.data.map((b) => {
           const branchUrl = `/${slug}/teams/${b.id}`;
           const isActive = pathname == branchUrl;
 

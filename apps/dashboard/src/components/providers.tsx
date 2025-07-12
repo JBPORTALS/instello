@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -12,7 +13,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      {children}
+      <TRPCReactProvider>{children}</TRPCReactProvider>
     </NextThemesProvider>
   );
 }

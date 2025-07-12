@@ -75,7 +75,7 @@ export function CreateBranchDialog(
                     <FormItem className="col-span-1">
                       <IconPicker value={field.value} onChange={field.onChange}>
                         <TablerReactIcon
-                          className="size-11 [&_svg]:size-6"
+                          className="size-11 [&>svg]:!size-6"
                           isActive
                           name={field.value as IconPickerIcon}
                         />
@@ -90,8 +90,7 @@ export function CreateBranchDialog(
                     <FormItem className="col-span-7">
                       <FormControl>
                         <Input
-                          placeholder="Computer Science"
-                          className="h-11 text-sm md:text-base"
+                          className="h-11 text-sm font-semibold md:text-base"
                           {...field}
                         />
                       </FormControl>
@@ -152,7 +151,9 @@ export function CreateBranchDialog(
                   )}
                 />
               </div>
-              <Button loading={form.formState.isSubmitting}>Create</Button>
+              <Button loading={form.formState.isSubmitting || true}>
+                Create
+              </Button>
             </DialogFooter>
           </form>
         </Form>

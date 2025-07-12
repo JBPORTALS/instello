@@ -40,9 +40,9 @@ function Button({
   className,
   variant,
   size,
-  disabled,
   asChild = false,
-  loading = disabled,
+  loading = false,
+  disabled = loading,
   children,
   ...props
 }: React.ComponentProps<"button"> &
@@ -61,7 +61,7 @@ function Button({
         loading ? (
           <>
             {children}
-            <SpinnerIcon className="animate-spin" />
+            <SpinnerIcon weight="bold" className="animate-spin" />
           </>
         ) : (
           children

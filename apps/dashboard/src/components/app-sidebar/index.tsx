@@ -37,9 +37,7 @@ export async function AppSidebar({
                   width={28}
                   alt="Instello Feather"
                 />
-                <span className="text-base font-semibold">
-                  Organization Name
-                </span>
+                <span className="text-base font-semibold">INSTELLO</span>
               </a>
             </SidebarMenuButton>
           </SidebarMenuItem>

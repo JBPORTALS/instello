@@ -4,9 +4,18 @@
   "version": "0.1.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts",
-    "./client": "./src/client.ts",
-    "./schema": "./src/schema.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./src/index.ts"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./src/client.ts"
+    },
+    "./schema": {
+      "types": "./dist/schema.d.ts",
+      "default": "./src/schema.ts"
+    }
   },
   "license": "MIT",
   "scripts": {
@@ -15,7 +24,10 @@
     "dev": "tsc",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "push": "pnpm with-env drizzle-kit push",
+    "studio": "pnpm with-env drizzle-kit studio",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false",
+    "with-env": "dotenv -e ../../.env --"
   },
   "devDependencies": {
     "@instello/eslint-config": "workspace:*",

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { TRPCReactProvider } from "@/trpc/react";
+import { Toaster } from "@instello/ui/components/sonner";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -13,7 +14,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
       disableTransitionOnChange
       enableColorScheme
     >
-      <TRPCReactProvider>{children}</TRPCReactProvider>
+      <TRPCReactProvider>
+        {children}
+        <Toaster />
+      </TRPCReactProvider>
     </NextThemesProvider>
   );
 }

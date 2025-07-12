@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useTRPC } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   CreateBranchSchema as _CreateBranchSchema,
@@ -33,7 +33,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@instello/ui/components/select";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 import { z } from "zod/v4";
 
 import type { IconPickerIcon } from "./icon-picker";
@@ -55,7 +57,25 @@ export function CreateBranchDialog(
     },
   });
 
-  async function onSubmit(values: z.infer<typeof CreateBranchSchema>) {}
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { mutateAsync: createBranch } = useMutation(
+    trpc.branch.create.mutationOptions({
+      async onSuccess(_data, variables) {
+        await queryClient.invalidateQueries(trpc.branch.list.queryFilter());
+        toast.success(`${variables.name} created.`);
+        setOpen(false);
+        form.reset();
+      },
+      onError(error) {
+        toast.error(error.message);
+      },
+    }),
+  );
+
+  async function onSubmit(values: z.infer<typeof CreateBranchSchema>) {
+    await createBranch(values);
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -80,6 +100,7 @@ export function CreateBranchDialog(
                         <TablerReactIcon
                           className="size-11 [&>svg]:!size-6"
                           isActive
+                          disabled={field.disabled}
                           name={field.value as IconPickerIcon}
                         />
                       </IconPicker>
@@ -113,6 +134,8 @@ export function CreateBranchDialog(
                       <Select
                         onValueChange={(v) => field.onChange(parseInt(v))}
                         defaultValue={field.value.toString()}
+                        disabled={field.disabled}
+                        value={field.value.toString()}
                       >
                         <FormControl>
                           <SelectTrigger className="bg-accent/60 h-8 min-w-24 text-xs">
@@ -138,6 +161,8 @@ export function CreateBranchDialog(
                       <Select
                         onValueChange={(v) => field.onChange(parseInt(v))}
                         defaultValue={field.value.toString()}
+                        disabled={field.disabled}
+                        value={field.value.toString()}
                       >
                         <FormControl>
                           <SelectTrigger className="bg-accent/60 h-8 min-w-24 text-xs">
@@ -154,9 +179,7 @@ export function CreateBranchDialog(
                   )}
                 />
               </div>
-              <Button loading={form.formState.isSubmitting || true}>
-                Create
-              </Button>
+              <Button loading={form.formState.isSubmitting}>Create</Button>
             </DialogFooter>
           </form>
         </Form>

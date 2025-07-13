@@ -4,6 +4,7 @@ import React from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
 import { IconPickerIcon, TablerReactIcon } from "@/components/icon-picker";
 import { useTRPC } from "@/trpc/react";
+import { Separator } from "@instello/ui/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@instello/ui/components/tabs";
 import {
   BooksIcon,
@@ -55,6 +56,7 @@ export function BranchTabs() {
         name={data?.icon as IconPickerIcon}
         className="size-6 [&>svg]:!size-4"
       />
+      <Separator orientation="vertical" className="!h-4" />
       <Tabs value={pathname}>
         <TabsList className="h-9">
           {items.map((item, i) => (

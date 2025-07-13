@@ -4,7 +4,7 @@ import { SiteHeader } from "@/components/site-header";
 export default function Page() {
   return (
     <React.Fragment>
-      <SiteHeader title="Home" />
+      <SiteHeader title="Members" />
     </React.Fragment>
   );
 }

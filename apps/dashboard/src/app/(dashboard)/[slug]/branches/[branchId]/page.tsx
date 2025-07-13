@@ -1,10 +1,13 @@
-import React from "react";
-import { SiteHeader } from "@/components/site-header";
+import { HydrateClient } from "@/trpc/server";
+
+import { BranchInfoRow } from "./branch-info-row";
 
 export default function Page() {
   return (
-    <React.Fragment>
-      <SiteHeader title="Computer Science" />
-    </React.Fragment>
+    <HydrateClient>
+      <section className="px-24 py-6">
+        <BranchInfoRow />
+      </section>
+    </HydrateClient>
   );
 }

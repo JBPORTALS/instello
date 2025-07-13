@@ -18,19 +18,19 @@ export function SiteHeader({
         {/* Sidebar button */}
         <SidebarTrigger className="-ml-1" />
 
-        {/* Optional start element */}
-        {startElement && (
-          <>
-            <Separator orientation="vertical" className="mx-2 h-4" />
-            <div className="flex items-center">{startElement}</div>
-          </>
-        )}
-
         {/* Optional title */}
         {title && (
           <>
             <Separator orientation="vertical" className="mx-2 h-4" />
             <h1 className="truncate text-sm font-medium">{title}</h1>
+          </>
+        )}
+
+        {/* Optional start element */}
+        {startElement && (
+          <>
+            <Separator orientation="vertical" className="mx-2 h-4" />
+            <div className="flex items-center">{startElement}</div>
           </>
         )}
 

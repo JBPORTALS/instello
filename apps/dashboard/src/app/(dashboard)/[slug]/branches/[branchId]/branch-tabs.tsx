@@ -1,8 +1,9 @@
 "use client";
 
+import type { IconPickerIcon } from "@/components/icon-picker";
 import React from "react";
 import { useParams, usePathname, useRouter } from "next/navigation";
-import { IconPickerIcon, TablerReactIcon } from "@/components/icon-picker";
+import { TablerReactIcon } from "@/components/icon-picker";
 import { useTRPC } from "@/trpc/react";
 import { Separator } from "@instello/ui/components/separator";
 import { Tabs, TabsList, TabsTrigger } from "@instello/ui/components/tabs";

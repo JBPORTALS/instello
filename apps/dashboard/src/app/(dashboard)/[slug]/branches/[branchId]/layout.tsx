@@ -1,4 +1,5 @@
 import React from "react";
+import { SemesterSwitcher } from "@/components/semester-switcher";
 import { SiteHeader } from "@/components/site-header";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
@@ -15,7 +16,10 @@ export default async function Layout({
   prefetch(trpc.branch.getByBranchId.queryOptions({ branchId }));
   return (
     <HydrateClient>
-      <SiteHeader startElement={<BranchTabs />} />
+      <SiteHeader
+        startElement={<BranchTabs />}
+        endElement={<SemesterSwitcher semesters={[1, 3, 5]} />}
+      />
 
       {children}
     </HydrateClient>

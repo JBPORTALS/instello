@@ -1,9 +1,21 @@
-import { Tabs, TabsList } from "@instello/ui/components/tabs";
+"use client";
 
-export function SemesterSwitcher() {
+import { Tabs, TabsList, TabsTrigger } from "@instello/ui/components/tabs";
+
+interface SemesterSwitcherProps {
+  semesters: number[];
+}
+
+export function SemesterSwitcher(props: SemesterSwitcherProps) {
   return (
-    <Tabs>
-      <TabsList>{}</TabsList>
+    <Tabs defaultValue="1">
+      <TabsList className="h-9 bg-transparent">
+        {props.semesters.map((semester, i) => (
+          <TabsTrigger className="text-xs" key={i} value={`${semester}`}>
+            SEM {semester}
+          </TabsTrigger>
+        ))}
+      </TabsList>
     </Tabs>
   );
 }

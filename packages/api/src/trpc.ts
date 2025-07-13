@@ -2,7 +2,9 @@ import type {
   SignedInAuthObject,
   SignedOutAuthObject,
 } from "@clerk/backend/internal";
+import { eq } from "@instello/db";
 import { db } from "@instello/db/client";
+import { branch } from "@instello/db/schema";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import z, { ZodError } from "zod/v4";
@@ -182,20 +184,35 @@ export const branchProcedure = t.procedure
   .concat(organizationProcedure)
   .input(z.object({ branchId: z.string() }))
   .use(async ({ ctx, input, next }) => {
-    const _activeSemester = ctx.headers.get(`branch_${input.branchId}`);
+    const semesterRaw = ctx.headers.get(`x-branch-${input.branchId}`);
+    const semester = z.coerce.number().int().parse(semesterRaw);
 
-    if (!_activeSemester) {
+    const _branch = await ctx.db.query.branch.findFirst({
+      where: eq(branch.id, input.branchId),
+    });
+
+    if (!_branch) {
+      throw new TRPCError({ code: "NOT_FOUND", message: "Branch not found." });
+    }
+
+    const isValid =
+      semester >= 1 &&
+      semester <= _branch.totalSemesters &&
+      (_branch.currentSemesterMode === "odd"
+        ? semester % 2 === 1
+        : semester % 2 === 0);
+
+    if (!isValid) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: `No active semester has been set to branch ${input.branchId}. Set one active semester for branch pass it under header name as 'x-branch-<< branchId >>'`,
+        message: `Semester ${semester} is not allowed in current mode.`,
       });
     }
 
     return next({
       ctx: {
         ...ctx,
-        // infers the `activeSemester` as non-nullable
-        auth: { ...ctx.auth, activeSemester: Number(_activeSemester) },
+        auth: { ...ctx.auth, activeSemester: semester },
       },
     });
   });

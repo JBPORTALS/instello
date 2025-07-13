@@ -1,5 +1,6 @@
 "use client";
 
+import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { Button } from "@instello/ui/components/button";
 import { Input } from "@instello/ui/components/input";
@@ -22,7 +23,7 @@ import { useIsMobile } from "@instello/ui/hooks/use-mobile";
 import { cn } from "@instello/ui/lib/utils";
 import { SidebarIcon } from "@phosphor-icons/react";
 import { Slot } from "@radix-ui/react-slot";
-import { cva, VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -31,7 +32,7 @@ const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
 
-type SidebarContextProps = {
+interface SidebarContextProps {
   state: "expanded" | "collapsed";
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -39,7 +40,7 @@ type SidebarContextProps = {
   setOpenMobile: (open: boolean) => void;
   isMobile: boolean;
   toggleSidebar: () => void;
-};
+}
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null);
 
@@ -80,12 +81,14 @@ function SidebarProvider({
       } else {
         _setOpen(openState);
       }
-
-      // This sets the cookie to keep the sidebar state.
-      document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
     },
     [setOpenProp, open],
   );
+
+  React.useEffect(() => {
+    // This sets the cookie to keep the sidebar state.
+    document.cookie = `${SIDEBAR_COOKIE_NAME}=${open}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
+  }, [open]);
 
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {

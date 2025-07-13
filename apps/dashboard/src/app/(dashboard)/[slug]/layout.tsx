@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarProvider } from "@instello/ui/components/sidebar";
+import { SidebarInset, SidebarProvider } from "@instello/ui/components/sidebar";
 
 export default async function Layout({
   children,
@@ -13,9 +13,18 @@ export default async function Layout({
 
   /** Continue to dashboard content */
   return (
-    <SidebarProvider defaultOpen={defaultOpen} className="bg-sidebar">
-      <AppSidebar variant="sidebar" />
-      {children}
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--header-height": "calc(var(--spacing) * 12)",
+        } as React.CSSProperties
+      }
+      defaultOpen={defaultOpen}
+      className="bg-sidebar"
+    >
+      <AppSidebar />
+      <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   );
 }

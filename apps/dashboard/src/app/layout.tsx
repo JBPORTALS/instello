@@ -1,8 +1,8 @@
-import { Geist, Geist_Mono, Outfit } from "next/font/google";
+import { Geist_Mono, Outfit } from "next/font/google";
 
 import "@instello/ui/globals.css";
 
-import { Metadata } from "next";
+import type { Metadata } from "next";
 import { Providers } from "@/components/providers";
 import { ClerkProvider } from "@clerk/nextjs";
 

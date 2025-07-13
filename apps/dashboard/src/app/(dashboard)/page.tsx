@@ -11,7 +11,7 @@ export default function Page() {
   const router = useRouter();
   React.useEffect(() => {
     if (activeOrganization) router.replace(`/${activeOrganization.slug}`);
-  }, [activeOrganization]);
+  }, [activeOrganization, router]);
 
   return (
     <div className="flex h-svh w-full items-center justify-center">

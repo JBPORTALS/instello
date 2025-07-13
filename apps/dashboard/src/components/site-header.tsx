@@ -21,7 +21,7 @@ export function SiteHeader({
         {/* Optional title */}
         {title && (
           <>
-            <Separator orientation="vertical" className="mx-2 h-4" />
+            <Separator orientation="vertical" className="mx-2 !h-4" />
             <h1 className="truncate text-sm font-medium">{title}</h1>
           </>
         )}
@@ -29,7 +29,7 @@ export function SiteHeader({
         {/* Optional start element */}
         {startElement && (
           <>
-            <Separator orientation="vertical" className="mx-2 h-4" />
+            <Separator orientation="vertical" className="mx-2 !h-4" />
             <div className="flex items-center">{startElement}</div>
           </>
         )}

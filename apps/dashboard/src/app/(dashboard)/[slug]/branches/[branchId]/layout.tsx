@@ -16,7 +16,7 @@ export default async function Layout({
   return (
     <HydrateClient>
       <SiteHeader startElement={<BranchTabs />} />
-      <section className="relative aspect-video h-52 bg-gradient-to-r from-blue-800 to-indigo-900"></section>
+
       {children}
     </HydrateClient>
   );

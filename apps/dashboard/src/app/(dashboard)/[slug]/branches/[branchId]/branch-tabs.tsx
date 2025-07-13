@@ -49,15 +49,12 @@ export function BranchTabs() {
   );
 
   return (
-    <div className="inline-flex w-full gap-6">
-      <div className="inline-flex items-center gap-2.5">
-        <TablerReactIcon
-          isActive
-          name={data?.icon as IconPickerIcon}
-          className="size-6 [&>svg]:!size-4"
-        />
-        <h3 className="font-medium outline-none">{data?.name}</h3>
-      </div>
+    <div className="inline-flex w-full items-center gap-3">
+      <TablerReactIcon
+        isActive
+        name={data?.icon as IconPickerIcon}
+        className="size-6 [&>svg]:!size-4"
+      />
       <Tabs value={pathname}>
         <TabsList>
           {items.map((item, i) => (

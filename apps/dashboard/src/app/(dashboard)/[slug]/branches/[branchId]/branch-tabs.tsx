@@ -56,12 +56,13 @@ export function BranchTabs() {
         className="size-6 [&>svg]:!size-4"
       />
       <Tabs value={pathname}>
-        <TabsList>
+        <TabsList className="h-9">
           {items.map((item, i) => (
             <TabsTrigger
               onClick={() => router.push(`${baseUrl}${item.url}`)}
               key={i}
               value={`${baseUrl}${item.url}`}
+              className="text-xs"
             >
               <item.icon />
               {item.title}

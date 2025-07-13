@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import { AppSidebar } from "@/components/app-sidebar";
-import { SidebarInset, SidebarProvider } from "@instello/ui/components/sidebar";
+import { SidebarProvider } from "@instello/ui/components/sidebar";
 
 export default async function Layout({
   children,
@@ -14,8 +14,8 @@ export default async function Layout({
   /** Continue to dashboard content */
   return (
     <SidebarProvider defaultOpen={defaultOpen} className="bg-sidebar">
-      <AppSidebar variant="inset" />
-      <SidebarInset className="border">{children}</SidebarInset>
+      <AppSidebar variant="sidebar" />
+      {children}
     </SidebarProvider>
   );
 }

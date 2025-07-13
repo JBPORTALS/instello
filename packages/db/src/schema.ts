@@ -29,6 +29,7 @@ export const CreateBranchSchema = createInsertSchema(branch, {
 export const subject = pgTable("subject", (t) => ({
   ...initialColumns,
   name: t.text().notNull(),
+  semester: t.numeric({ mode: "number" }).notNull(),
   branchId: t
     .text()
     .notNull()

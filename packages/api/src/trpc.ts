@@ -5,7 +5,7 @@ import type {
 import { db } from "@instello/db/client";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
-import { ZodError } from "zod/v4";
+import z, { ZodError } from "zod/v4";
 
 /**
  * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
@@ -43,6 +43,7 @@ export const createTRPCContext = ({ auth, headers }: AuthContextProps) => {
   return {
     auth,
     db,
+    headers,
   };
 };
 
@@ -163,6 +164,38 @@ export const organizationProcedure = t.procedure
         ...ctx,
         // infers the `auth.orgId` as non-nullable
         auth: { ...ctx.auth, orgId: ctx.auth.orgId },
+      },
+    });
+  });
+
+/**
+ * Branch context procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to selected organization and within selected branch's active semester, use this. It verifies
+ * the branch weather it has active semester or not. On top of it it verifies the `ctx.auth.userId` as well as `ctx.auth.orgId`.
+ *
+ * @info When using this procedure no need to validate input of `branchId` becuase it will pass down.
+ * @see https://trpc.io/docs/procedures
+ */
+export const branchProcedure = t.procedure
+  .concat(protectedProcedure)
+  .concat(organizationProcedure)
+  .input(z.object({ branchId: z.string() }))
+  .use(async ({ ctx, input, next }) => {
+    const _activeSemester = ctx.headers.get(`branch_${input.branchId}`);
+
+    if (!_activeSemester) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: `No active semester has been set to branch ${input.branchId}. Set one active semester for branch pass it under header name as 'x-branch-<< branchId >>'`,
+      });
+    }
+
+    return next({
+      ctx: {
+        ...ctx,
+        // infers the `activeSemester` as non-nullable
+        auth: { ...ctx.auth, activeSemester: Number(_activeSemester) },
       },
     });
   });

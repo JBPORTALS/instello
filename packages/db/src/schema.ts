@@ -25,3 +25,21 @@ export const CreateBranchSchema = createInsertSchema(branch, {
   createdAt: true,
   updatedAt: true,
 });
+
+export const subject = pgTable("subject", (t) => ({
+  ...initialColumns,
+  name: t.text().notNull(),
+  branchId: t
+    .text()
+    .notNull()
+    .references(() => branch.id),
+}));
+
+export const CreateSubjectSchema = createInsertSchema(subject, {
+  name: z.string(),
+}).omit({
+  id: true,
+  branchId: true,
+  createdAt: true,
+  updatedAt: true,
+});

@@ -47,7 +47,7 @@ export function NavBranches() {
       <SidebarMenu>
         {branches.data.map((b) => {
           const branchUrl = `/${slug}/branches/${b.id}`;
-          const isActive = pathname == branchUrl;
+          const isActive = pathname.startsWith(branchUrl);
 
           return (
             <SidebarMenuItem key={b.id} className="items-center">

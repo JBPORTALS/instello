@@ -11,19 +11,21 @@ export type Payment = RouterOutputs["subject"]["list"][number];
 export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "name",
-    header: "name",
+    header: "Name",
   },
 
   {
     accessorKey: "createdAt",
-    header: () => <div className="ml-auto w-20">Created</div>,
+    header: () => <div className="ml-auto w-20 px-3 text-right">Created</div>,
     cell(props) {
       return (
-        <time className="ml-auto w-20">
-          {formatDistanceToNowStrict(props.getValue() as Date, {
-            addSuffix: true,
-          })}
-        </time>
+        <div className="ml-auto max-w-max min-w-20 px-3">
+          <time className="text-muted-foreground text-sm">
+            {formatDistanceToNowStrict(props.getValue() as Date, {
+              addSuffix: true,
+            })}
+          </time>
+        </div>
       );
     },
   },

@@ -40,6 +40,7 @@ export const CreateSubjectSchema = createInsertSchema(subject, {
   name: z.string(),
 }).omit({
   id: true,
+  semester: true,
   branchId: true,
   createdAt: true,
   updatedAt: true,

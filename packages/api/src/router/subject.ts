@@ -7,7 +7,9 @@ export const subjectRouter = {
   create: branchProcedure
     .input(CreateSubjectSchema)
     .mutation(async ({ ctx, input }) => {
-      return ctx.db.insert(subject).values(input);
+      return ctx.db
+        .insert(subject)
+        .values({ ...input, semester: ctx.auth.activeSemester });
     }),
 
   list: branchProcedure.query(async ({ ctx, input }) => {

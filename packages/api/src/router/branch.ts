@@ -1,4 +1,4 @@
-import { and, eq, not } from "@instello/db";
+import { and, asc, eq, not } from "@instello/db";
 import { branch, CreateBranchSchema, semester } from "@instello/db/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
@@ -61,6 +61,18 @@ export const branchRouter = {
           eq(semester.branchId, input.branchId),
           not(semester.isArchived),
         ),
+      });
+    }),
+
+  getFirstSemester: organizationProcedure
+    .input(z.object({ branchId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.query.semester.findFirst({
+        where: and(
+          eq(semester.branchId, input.branchId),
+          not(semester.isArchived),
+        ),
+        orderBy: asc(semester.value),
       });
     }),
 };

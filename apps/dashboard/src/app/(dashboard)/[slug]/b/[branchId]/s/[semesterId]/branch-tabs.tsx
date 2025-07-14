@@ -40,12 +40,12 @@ const items = [
 ];
 
 export function BranchTabs() {
-  const { slug, branchId, semester } = useParams<{
+  const { slug, branchId, semesterId } = useParams<{
     slug: string;
     branchId: string;
-    semester: string;
+    semesterId: string;
   }>();
-  const baseUrl = `/${slug}/b/${branchId}/${semester}`;
+  const baseUrl = `/${slug}/b/${branchId}/s/${semesterId}`;
 
   const pathname = usePathname();
   const router = useRouter();

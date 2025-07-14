@@ -188,7 +188,7 @@ export const branchProcedure = t.procedure
       .get("cookie")
       ?.split(";")
       .map((v) => v.trim())
-      .find((v) => v.startsWith("branch"))
+      .find((v) => v.startsWith("semester"))
       ?.split("=")[1];
 
     if (!branchCookieRaw)

@@ -1,31 +1,17 @@
-# shadcn/ui monorepo template
+<picture>
+    <source srcset="./banner-dark.png" media="(prefers-color-scheme: dark)">
+    <source srcset="./banner.png" media="(prefers-color-scheme: light)">
+    <img src="./banner.png" alt="Better Auth Logo">
+  </picture>
+  <h2 align="center">
+    Instello
+  </h2>
+  <p align="center">One Platform. Every Possibility.</p>
 
-This template is for creating a monorepo with shadcn/ui.
+## About the Project
 
-## Usage
+Instello is the platform where academics can make there manual process of paper work into smart digital way of handling the things. Some of few famous things are Students, Attendance, Marks, Timetalbe and more.
 
-```bash
-pnpm dlx shadcn@latest init
-```
+### Why Better Auth
 
-## Adding components
-
-To add components to your app, run the following command at the root of your `web` app:
-
-```bash
-pnpm dlx shadcn@latest add button -c apps/web
-```
-
-This will place the ui components in the `packages/ui/src/components` directory.
-
-## Tailwind
-
-Your `tailwind.config.ts` and `globals.css` are already set up to use the components from the `ui` package.
-
-## Using components
-
-To use the components in your app, import them from the `ui` package.
-
-```tsx
-import { Button } from "@instello/ui/components/button";
-```
+Managing resources in manual way sucks even though there are lot of softwares outside that's not easily customizable, easy to use and great UX. We believe we can overcome all this problems thourgh Instello - One Platform. Every Possibility.

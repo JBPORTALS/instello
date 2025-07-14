@@ -4,7 +4,7 @@ import type {
 } from "@clerk/backend/internal";
 import { eq } from "@instello/db";
 import { db } from "@instello/db/client";
-import { branch } from "@instello/db/schema";
+import { branch, semester } from "@instello/db/schema";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import z, { ZodError } from "zod/v4";
@@ -200,7 +200,7 @@ export const branchProcedure = t.procedure
     const branchCookie = JSON.parse(branchCookieRaw) as Record<string, number>;
 
     const semesterRaw = branchCookie[input.branchId];
-    const semester = z.coerce.number().int().parse(semesterRaw);
+    const semesterId = z.coerce.string().parse(semesterRaw);
 
     const _branch = await ctx.db.query.branch.findFirst({
       where: eq(branch.id, input.branchId),
@@ -210,24 +210,21 @@ export const branchProcedure = t.procedure
       throw new TRPCError({ code: "NOT_FOUND", message: "Branch not found." });
     }
 
-    const isValid =
-      semester >= 1 &&
-      semester <= _branch.totalSemesters &&
-      (_branch.currentSemesterMode === "odd"
-        ? semester % 2 === 1
-        : semester % 2 === 0);
+    const _semester = await ctx.db.query.semester.findFirst({
+      where: eq(semester.id, semesterId),
+    });
 
-    if (!isValid) {
+    if (!_semester) {
       throw new TRPCError({
-        code: "FORBIDDEN",
-        message: `Semester ${semester} is not allowed in current mode.`,
+        code: "NOT_FOUND",
+        message: "Semester not found.",
       });
     }
 
     return next({
       ctx: {
         ...ctx,
-        auth: { ...ctx.auth, activeSemester: semester },
+        auth: { ...ctx.auth, activeSemester: _semester },
       },
     });
   });

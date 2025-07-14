@@ -1,17 +1,15 @@
-import Container from "@/components/container";
-import { HydrateClient } from "@/trpc/server";
+"use client";
 
-import { BranchInfoRow } from "./branch-info-row";
+import React from "react";
+import { SpinnerGapIcon } from "@phosphor-icons/react";
 
 export default function Page() {
   return (
-    <HydrateClient>
-      <div className="w-full px-6 py-2.5">
-        <section className="relative aspect-video h-52 w-full rounded-md bg-gradient-to-r from-indigo-500 to-blue-500"></section>
-      </div>
-      <Container className="px-16">
-        <BranchInfoRow />
-      </Container>
-    </HydrateClient>
+    <div className="flex h-svh w-full items-center justify-center">
+      <SpinnerGapIcon
+        className="text-muted-foreground size-8 animate-spin"
+        weight={"thin"}
+      />
+    </div>
   );
 }

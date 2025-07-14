@@ -9,14 +9,14 @@ export const subjectRouter = {
     .mutation(async ({ ctx, input }) => {
       return ctx.db
         .insert(subject)
-        .values({ ...input, semester: ctx.auth.activeSemester });
+        .values({ ...input, semesterValue: ctx.auth.activeSemester.value });
     }),
 
   list: branchProcedure.query(async ({ ctx, input }) => {
     return ctx.db.query.subject.findMany({
       where: and(
         eq(subject.branchId, input.branchId),
-        eq(subject.semester, ctx.auth.activeSemester),
+        eq(subject.semesterValue, ctx.auth.activeSemester.value),
       ),
     });
   }),

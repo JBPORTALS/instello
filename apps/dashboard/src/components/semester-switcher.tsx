@@ -1,26 +1,31 @@
 "use client";
 
-import { useBranch } from "@/context/branch/client";
+import { useParams } from "next/navigation";
+import { useTRPC } from "@/trpc/react";
 import { Tabs, TabsList, TabsTrigger } from "@instello/ui/components/tabs";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
-interface SemesterSwitcherProps {
+interface _SemesterSwitcherProps {
   semesters: number[];
 }
 
-export function SemesterSwitcher(props: SemesterSwitcherProps) {
-  const { activeSemester, setActiveSemester } = useBranch();
+export function SemesterSwitcher() {
+  const trpc = useTRPC();
+  const { branchId } = useParams<{ branchId: string }>();
+  const { data } = useSuspenseQuery(
+    trpc.branch.getSemesterList.queryOptions({ branchId }),
+  );
 
   return (
-    <Tabs defaultValue={activeSemester.toString()}>
+    <Tabs>
       <TabsList className="h-9 bg-transparent">
-        {props.semesters.map((semester, i) => (
+        {data.map((semester) => (
           <TabsTrigger
-            onClick={() => setActiveSemester(semester)}
             className="text-xs"
-            key={i}
-            value={`${semester}`}
+            key={semester.id}
+            value={`${semester.id}`}
           >
-            SEM {semester}
+            SEM {semester.value}
           </TabsTrigger>
         ))}
       </TabsList>

@@ -1,16 +1,39 @@
-import { and, eq } from "@instello/db";
-import { branch, CreateBranchSchema } from "@instello/db/schema";
+import { and, eq, not } from "@instello/db";
+import { branch, CreateBranchSchema, semester } from "@instello/db/schema";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
-import { organizationProcedure } from "../trpc";
+import { branchProcedure, organizationProcedure } from "../trpc";
 
 export const branchRouter = {
   create: organizationProcedure
     .input(CreateBranchSchema)
-    .mutation(({ ctx, input }) => {
-      return ctx.db
-        .insert(branch)
-        .values({ ...input, clerkOrganizationId: ctx.auth.orgId });
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.transaction(async (tx) => {
+        const [newBranch] = await tx
+          .insert(branch)
+          .values({ ...input, clerkOrganizationId: ctx.auth.orgId })
+          .returning();
+
+        if (!newBranch)
+          throw new TRPCError({
+            message: "Couldn't able to create branch",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+
+        const semesterValues = Array.from(
+          { length: input.totalSemesters },
+          (_, i) => i + 1,
+        )
+          // Filter down to based on the mode
+          .filter((n) =>
+            input.currentSemesterMode == "odd" ? n % 2 === 1 : n % 2 === 0,
+          )
+          // Map it to shape of semester values
+          .map((value) => ({ value, branchId: newBranch.id }));
+
+        await tx.insert(semester).values(semesterValues);
+      });
     }),
 
   getByBranchId: organizationProcedure
@@ -27,6 +50,15 @@ export const branchRouter = {
   list: organizationProcedure.query(({ ctx }) => {
     return ctx.db.query.branch.findMany({
       where: eq(branch.clerkOrganizationId, ctx.auth.orgId),
+    });
+  }),
+
+  getSemesterList: branchProcedure.query(async ({ ctx, input }) => {
+    return await ctx.db.query.semester.findMany({
+      where: and(
+        eq(semester.branchId, input.branchId),
+        not(semester.isArchived),
+      ),
     });
   }),
 };

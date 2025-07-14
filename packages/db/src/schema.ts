@@ -26,21 +26,35 @@ export const CreateBranchSchema = createInsertSchema(branch, {
   updatedAt: true,
 });
 
-export const subject = pgTable("subject", (t) => ({
+export const semester = pgTable("semester", (t) => ({
   ...initialColumns,
-  name: t.text().notNull(),
-  semester: t.numeric({ mode: "number" }).notNull(),
   branchId: t
     .text()
     .notNull()
-    .references(() => branch.id),
+    .references(() => branch.id, { onDelete: "cascade" }),
+  value: t.integer().notNull(),
+  isArchived: t.boolean().notNull().default(false),
+  acadYear: t
+    .varchar({ length: 256 })
+    .notNull()
+    .$defaultFn(() => `${new Date().getFullYear()}`),
+}));
+
+export const subject = pgTable("subject", (t) => ({
+  ...initialColumns,
+  name: t.text().notNull(),
+  semesterValue: t.numeric({ mode: "number" }).notNull(),
+  branchId: t
+    .text()
+    .notNull()
+    .references(() => branch.id, { onDelete: "cascade" }),
 }));
 
 export const CreateSubjectSchema = createInsertSchema(subject, {
   name: z.string(),
 }).omit({
   id: true,
-  semester: true,
+  semesterValue: true,
   branchId: true,
   createdAt: true,
   updatedAt: true,

@@ -12,7 +12,7 @@ const SEMESTER_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 export function SemesterSwitcher({
   defaultSemesterCookie,
 }: {
-  defaultSemesterCookie: Record<string, string>;
+  defaultSemesterCookie: string;
 }) {
   const trpc = useTRPC();
   const { branchId, slug, semesterId } = useParams<{
@@ -26,7 +26,7 @@ export function SemesterSwitcher({
   const router = useRouter();
 
   React.useEffect(() => {
-    document.cookie = `${SEMESTER_COOKIE_NAME}=${JSON.stringify({ ...defaultSemesterCookie, [branchId]: semesterId })}; path=/; max-age=${SEMESTER_COOKIE_MAX_AGE}`;
+    document.cookie = `${SEMESTER_COOKIE_NAME}=${JSON.stringify({ ...JSON.parse(defaultSemesterCookie), [branchId]: semesterId })}; path=/; max-age=${SEMESTER_COOKIE_MAX_AGE}`;
   }, [semesterId, branchId, defaultSemesterCookie]);
 
   return (

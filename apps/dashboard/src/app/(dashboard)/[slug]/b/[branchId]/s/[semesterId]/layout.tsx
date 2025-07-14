@@ -19,16 +19,14 @@ export default async function Layout({
 
   const cookieStore = await cookies();
   const semesterCookieRaw = cookieStore.get("semester")?.value ?? "null";
-  const semesterCookie = JSON.parse(semesterCookieRaw) as Record<
-    string,
-    string
-  >;
 
   return (
     <HydrateClient>
       <SiteHeader
         startElement={<BranchTabs />}
-        endElement={<SemesterSwitcher defaultSemesterCookie={semesterCookie} />}
+        endElement={
+          <SemesterSwitcher defaultSemesterCookie={semesterCookieRaw} />
+        }
       />
 
       {children}

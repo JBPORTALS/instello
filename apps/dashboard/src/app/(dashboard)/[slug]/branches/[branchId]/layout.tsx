@@ -19,15 +19,6 @@ export default async function Layout({
   const branch = await getBranch({ branchId });
   prefetch(trpc.branch.getByBranchId.queryOptions({ branchId }));
 
-  const semesters = Array.from(
-    { length: branch.totalSemesters },
-    (_, i) => i + 1,
-  ).filter((n) =>
-    branch.currentSemesterMode == "odd" ? n % 2 === 1 : n % 2 === 0,
-  );
-
-  console.log(branchCookie);
-
   return (
     <HydrateClient>
       <BranchProvider
@@ -37,7 +28,7 @@ export default async function Layout({
       >
         <SiteHeader
           startElement={<BranchTabs />}
-          endElement={<SemesterSwitcher semesters={semesters} />}
+          endElement={<SemesterSwitcher semesters={branch.semesters} />}
         />
 
         {children}

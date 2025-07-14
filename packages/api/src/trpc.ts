@@ -42,6 +42,15 @@ export const createTRPCContext = ({ auth, headers }: AuthContextProps) => {
   const source = headers.get("x-trpc-source");
   console.log(`>>> Request recieved from ${source ?? "UNKNOWN"}`);
 
+  console.log(
+    headers
+      .get("cookie")
+      ?.split(";")
+      .map((v) => v.trim())
+      .find((v) => v.startsWith("branch"))
+      ?.split("=")[1],
+  );
+
   return {
     auth,
     db,
@@ -184,7 +193,22 @@ export const branchProcedure = t.procedure
   .concat(organizationProcedure)
   .input(z.object({ branchId: z.string() }))
   .use(async ({ ctx, input, next }) => {
-    const semesterRaw = ctx.headers.get(`x-branch-${input.branchId}`);
+    const branchCookieRaw = ctx.headers
+      .get("cookie")
+      ?.split(";")
+      .map((v) => v.trim())
+      .find((v) => v.startsWith("branch"))
+      ?.split("=")[1];
+
+    if (!branchCookieRaw)
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "No branch cookie has been found",
+      });
+
+    const branchCookie = JSON.parse(branchCookieRaw) as Record<string, number>;
+
+    const semesterRaw = branchCookie[input.branchId];
     const semester = z.coerce.number().int().parse(semesterRaw);
 
     const _branch = await ctx.db.query.branch.findFirst({

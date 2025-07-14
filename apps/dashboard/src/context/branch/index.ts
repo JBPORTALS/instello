@@ -21,5 +21,11 @@ export const getBranch = cache(async ({ branchId }: { branchId: string }) => {
   );
 
   if (!branch) throw new Error("Couldn't able to fetch branch");
-  return branch;
+  const semesters = Array.from(
+    { length: branch.totalSemesters },
+    (_, i) => i + 1,
+  ).filter((n) =>
+    branch.currentSemesterMode == "odd" ? n % 2 === 1 : n % 2 === 0,
+  );
+  return { ...branch, semesters };
 });

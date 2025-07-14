@@ -42,15 +42,6 @@ export const createTRPCContext = ({ auth, headers }: AuthContextProps) => {
   const source = headers.get("x-trpc-source");
   console.log(`>>> Request recieved from ${source ?? "UNKNOWN"}`);
 
-  console.log(
-    headers
-      .get("cookie")
-      ?.split(";")
-      .map((v) => v.trim())
-      .find((v) => v.startsWith("branch"))
-      ?.split("=")[1],
-  );
-
   return {
     auth,
     db,

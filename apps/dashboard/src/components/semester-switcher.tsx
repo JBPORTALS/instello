@@ -9,7 +9,7 @@ interface SemesterSwitcherProps {
 
 export function SemesterSwitcher(props: SemesterSwitcherProps) {
   const { activeSemester, setActiveSemester } = useBranch();
-  console.log("client", activeSemester);
+
   return (
     <Tabs defaultValue={activeSemester.toString()}>
       <TabsList className="h-9 bg-transparent">

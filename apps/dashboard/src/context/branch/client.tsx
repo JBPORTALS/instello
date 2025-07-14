@@ -1,8 +1,8 @@
 "use client";
 
+import type { SemesterMode } from "@instello/db/schema";
 import React from "react";
 import { useParams } from "next/navigation";
-import { SemesterMode } from "@instello/db/schema";
 
 const BranchContext = React.createContext<{
   activeSemester: number;
@@ -12,10 +12,10 @@ const BranchContext = React.createContext<{
 /** All config in current selected team */
 export const useBranch = () => {
   const team = React.useContext(BranchContext);
-  const { teamId } = useParams<{ teamId: string }>();
+  const { branchId } = useParams<{ branchId: string }>();
 
   if (!team) throw new Error("useBranch must be used under BranchProvider");
-  if (!teamId)
+  if (!branchId)
     throw new Error(
       "usseBranch must be used under the branches/[branchId] route segment",
     );
@@ -23,7 +23,7 @@ export const useBranch = () => {
   return team;
 };
 
-export const BRANCH_COOKIE_NAME = "branch";
+const BRANCH_COOKIE_NAME = "branch";
 const BRANCH_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 
 export function BranchProvider({

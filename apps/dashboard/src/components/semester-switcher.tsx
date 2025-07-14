@@ -1,5 +1,6 @@
 "use client";
 
+import { useBranch } from "@/context/branch/client";
 import { Tabs, TabsList, TabsTrigger } from "@instello/ui/components/tabs";
 
 interface SemesterSwitcherProps {
@@ -7,11 +8,18 @@ interface SemesterSwitcherProps {
 }
 
 export function SemesterSwitcher(props: SemesterSwitcherProps) {
+  const { activeSemester, setActiveSemester } = useBranch();
+  console.log("client", activeSemester);
   return (
-    <Tabs defaultValue="1">
+    <Tabs defaultValue={activeSemester.toString()}>
       <TabsList className="h-9 bg-transparent">
         {props.semesters.map((semester, i) => (
-          <TabsTrigger className="text-xs" key={i} value={`${semester}`}>
+          <TabsTrigger
+            onClick={() => setActiveSemester(semester)}
+            className="text-xs"
+            key={i}
+            value={`${semester}`}
+          >
             SEM {semester}
           </TabsTrigger>
         ))}

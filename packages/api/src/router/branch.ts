@@ -3,7 +3,7 @@ import { branch, CreateBranchSchema, semester } from "@instello/db/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
-import { branchProcedure, organizationProcedure } from "../trpc";
+import { organizationProcedure } from "../trpc";
 
 export const branchRouter = {
   create: organizationProcedure
@@ -53,12 +53,14 @@ export const branchRouter = {
     });
   }),
 
-  getSemesterList: branchProcedure.query(async ({ ctx, input }) => {
-    return await ctx.db.query.semester.findMany({
-      where: and(
-        eq(semester.branchId, input.branchId),
-        not(semester.isArchived),
-      ),
-    });
-  }),
+  getSemesterList: organizationProcedure
+    .input(z.object({ branchId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.query.semester.findMany({
+        where: and(
+          eq(semester.branchId, input.branchId),
+          not(semester.isArchived),
+        ),
+      });
+    }),
 };

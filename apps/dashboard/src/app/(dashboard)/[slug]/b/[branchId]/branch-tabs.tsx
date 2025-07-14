@@ -45,7 +45,7 @@ export function BranchTabs() {
     branchId: string;
     semester: string;
   }>();
-  const baseUrl = `/${slug}/branches/${branchId}/${semester}`;
+  const baseUrl = `/${slug}/b/${branchId}/${semester}`;
 
   const pathname = usePathname();
   const router = useRouter();

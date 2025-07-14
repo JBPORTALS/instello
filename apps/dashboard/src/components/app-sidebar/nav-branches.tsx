@@ -46,7 +46,7 @@ export function NavBranches() {
       </Tooltip>
       <SidebarMenu>
         {branches.data.map((b) => {
-          const branchUrl = `/${slug}/branches/${b.id}`;
+          const branchUrl = `/${slug}/b/${b.id}`;
           const isActive = pathname.startsWith(branchUrl);
 
           return (

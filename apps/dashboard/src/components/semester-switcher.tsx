@@ -5,10 +5,6 @@ import { useTRPC } from "@/trpc/react";
 import { Tabs, TabsList, TabsTrigger } from "@instello/ui/components/tabs";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-interface _SemesterSwitcherProps {
-  semesters: number[];
-}
-
 export function SemesterSwitcher() {
   const trpc = useTRPC();
   const { branchId } = useParams<{ branchId: string }>();

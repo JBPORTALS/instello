@@ -71,7 +71,7 @@ export function BranchTabs() {
               value={`${baseUrl}${item.url}`}
               className="text-xs"
             >
-              <item.icon />
+              <item.icon weight="duotone" />
               {item.title}
             </TabsTrigger>
           ))}

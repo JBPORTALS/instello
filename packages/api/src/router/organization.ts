@@ -27,9 +27,7 @@ export const organizationRouter = {
   }),
 
   createInvitationBulk: organizationProcedure
-    .input(
-      z.array(z.object({ emailAddress: z.email(), role: z.enum(["staff"]) })),
-    )
+    .input(z.array(z.object({ emailAddress: z.email(), role: z.string() })))
     .mutation(async ({ ctx, input }) => {
       try {
         const mappedInput = input.map((i) => ({
@@ -46,7 +44,7 @@ export const organizationRouter = {
         return member;
       } catch (e) {
         const message = isClerkAPIResponseError(e)
-          ? e.message
+          ? e.errors[0]?.longMessage
           : "Unknown error occured while inviting members";
 
         throw new TRPCError({ message, code: "INTERNAL_SERVER_ERROR" });

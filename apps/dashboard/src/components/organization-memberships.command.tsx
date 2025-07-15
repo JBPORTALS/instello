@@ -2,6 +2,11 @@
 
 import { useOrganization } from "@clerk/nextjs";
 import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@instello/ui/components/avatar";
+import {
   Command,
   CommandEmpty,
   CommandGroup,
@@ -11,11 +16,11 @@ import {
 } from "@instello/ui/components/command";
 import { Label } from "@instello/ui/components/label";
 import { cn } from "@instello/ui/lib/utils";
-import { BuildingsIcon, CheckIcon, SpinnerIcon } from "@phosphor-icons/react";
+import { CheckIcon, SpinnerIcon } from "@phosphor-icons/react";
 
 interface OrganizationMembershipsCommandProps {
   /** Staff UserId */
-  value: string;
+  value?: string;
   onValueChange?: (value: string) => void;
 }
 
@@ -27,10 +32,10 @@ export function OrganizationMembershipsCommand({
     memberships: { role: ["org:staff"] },
   });
 
-  if (!isLoaded)
+  if (!isLoaded || memberships?.isLoading)
     return (
       <div className="flex min-h-20 w-full items-center justify-center">
-        <SpinnerIcon className="animate-spin" />
+        <SpinnerIcon className="size-5 animate-spin" />
       </div>
     );
 
@@ -40,8 +45,8 @@ export function OrganizationMembershipsCommand({
       <CommandList>
         <CommandEmpty>No staff found.</CommandEmpty>
         <CommandGroup>
-          <Label className="text-muted-foreground my-1 text-xs">
-            Organization Staff
+          <Label className="text-muted-foreground my-1.5 px-1.5 text-xs">
+            Organization Members
           </Label>
           {memberships?.data?.map((membership) => (
             <CommandItem
@@ -53,8 +58,14 @@ export function OrganizationMembershipsCommand({
               }}
             >
               <span className="inline-flex items-center gap-2.5">
-                <BuildingsIcon weight="duotone" />
-                {membership.organization.name}
+                <Avatar className="size-6">
+                  <AvatarImage src={membership.publicUserData?.imageUrl} />
+                  <AvatarFallback>
+                    {membership.publicUserData?.firstName?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                {membership.publicUserData?.firstName}{" "}
+                {membership.publicUserData?.lastName}
               </span>
               <CheckIcon
                 className={cn(

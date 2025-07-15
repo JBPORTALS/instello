@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Image from "next/image";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useOrganizationList } from "@clerk/nextjs";
 import { Button } from "@instello/ui/components/button";
@@ -65,11 +64,9 @@ export function OrganizationSwitcher() {
           className="w-full justify-between"
         >
           <span className="inline-flex items-center gap-3.5">
-            <Image
-              src={"/instello-feather.svg"}
-              height={28}
-              width={28}
-              alt="Instello Feather"
+            <BuildingsIcon
+              className="text-muted-foreground size-5"
+              weight="duotone"
             />
             {slug
               ? userMemberships.data.find(

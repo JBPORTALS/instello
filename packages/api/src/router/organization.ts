@@ -7,14 +7,20 @@ import { organizationProcedure } from "../trpc";
 export const organizationRouter = {
   getOrganizationMembers: organizationProcedure.query(async ({ ctx }) => {
     const members = await ctx.clerk.organizations.getOrganizationMembershipList(
-      { organizationId: ctx.auth.orgId, role: ["staff", "admin"] },
+      {
+        organizationId: ctx.auth.orgId,
+        role: ["org:staff", "org:admin"],
+        orderBy: "created_at",
+      },
     );
 
     const mappedMembers = members.data.map((membership) => {
       return {
         /** Membership ID */
         id: membership.id,
+        emailAddress: membership.publicUserData?.identifier,
         role: membership.role,
+        roleName: membership.role === "org:staff" ? "Staff" : "Admin",
         fullName: `${membership.publicUserData?.firstName} ${membership.publicUserData?.lastName}`,
         userId: membership.publicUserData?.userId,
         imageUrl: membership.publicUserData?.imageUrl,

@@ -14,10 +14,14 @@ export const subjectRouter = {
     }),
 
   list: branchProcedure.query(async ({ ctx, input }) => {
+    const isStaff = ctx.auth.orgRole == "org:staff";
+
     return ctx.db.query.subject.findMany({
       where: and(
         eq(subject.branchId, input.branchId),
         eq(subject.semesterValue, ctx.auth.activeSemester.value),
+        // If user  is staff of the organization fetch only alloted subjects
+        isStaff ? eq(subject.staffClerkUserId, ctx.auth.userId) : undefined,
       ),
       orderBy: desc(subject.createdAt),
     });

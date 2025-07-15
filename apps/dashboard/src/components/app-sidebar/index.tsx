@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { currentUser } from "@clerk/nextjs/server";
 import {
@@ -11,6 +10,7 @@ import {
   SidebarMenuItem,
 } from "@instello/ui/components/sidebar";
 
+import { OrganizationSwitcher } from "../organization-switcher";
 import { NavBranches } from "./nav-branches";
 import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
@@ -34,15 +34,7 @@ export async function AppSidebar({
                 asChild
                 className="data-[slot=sidebar-menu-button]:!p-1.5"
               >
-                <a href="#">
-                  <Image
-                    src={"/instello-feather.svg"}
-                    height={28}
-                    width={28}
-                    alt="Instello Feather"
-                  />
-                  <span className="text-base font-semibold">INSTELLO</span>
-                </a>
+                <OrganizationSwitcher />
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

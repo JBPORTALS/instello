@@ -16,7 +16,7 @@ export default async function Layout({
     <SidebarProvider
       style={
         {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
+          "--sidebar-width": "calc(var(--spacing) * 64)",
           "--header-height": "calc(var(--spacing) * 14)",
         } as React.CSSProperties
       }

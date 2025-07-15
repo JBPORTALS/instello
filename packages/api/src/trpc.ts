@@ -2,6 +2,7 @@ import type {
   SignedInAuthObject,
   SignedOutAuthObject,
 } from "@clerk/backend/internal";
+import { createClerkClient } from "@clerk/backend";
 import { eq } from "@instello/db";
 import { db } from "@instello/db/client";
 import { branch, semester } from "@instello/db/schema";
@@ -41,10 +42,12 @@ interface AuthContextProps {
 export const createTRPCContext = ({ auth, headers }: AuthContextProps) => {
   const source = headers.get("x-trpc-source");
   console.log(`>>> Request recieved from ${source ?? "UNKNOWN"}`);
+  const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
   return {
     auth,
     db,
+    clerk,
     headers,
   };
 };

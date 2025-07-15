@@ -1,5 +1,5 @@
 import Container from "@/components/container";
-import { CreateSubjectDialog } from "@/components/create-subject-dialog";
+import { CreateSubjectDialog } from "@/components/create-subject.dialog";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { Button } from "@instello/ui/components/button";
 import { PlusIcon } from "@phosphor-icons/react/ssr";

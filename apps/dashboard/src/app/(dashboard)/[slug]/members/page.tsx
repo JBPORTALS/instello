@@ -1,6 +1,6 @@
 import React from "react";
 import Container from "@/components/container";
-import { InviteMemberButton } from "@/components/invite-member-button";
+import { InviteMemberButton } from "@/components/invite-member.button";
 import { SiteHeader } from "@/components/site-header";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 

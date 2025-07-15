@@ -21,12 +21,15 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
   {
-    id: "alloted-staff",
+    accessorKey: "staffClerkUserId",
     header: () => <div className="px-3.5">Alloted</div>,
-    cell() {
+    cell(props) {
       return (
-        <div>
-          <SubjectStaffAssigner />
+        <div className="w-[200px]">
+          <SubjectStaffAssigner
+            subjectId={props.row.original.id}
+            staffUserId={props.getValue() as string | undefined}
+          />
         </div>
       );
     },

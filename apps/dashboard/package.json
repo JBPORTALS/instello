@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.24.0",
+    "@clerk/types": "^4.65.0",
     "@hookform/resolvers": "catalog:",
     "@instello/api": "workspace:*",
     "@instello/db": "workspace:*",

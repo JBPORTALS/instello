@@ -48,6 +48,7 @@ export const subject = pgTable("subject", (t) => ({
     .text()
     .notNull()
     .references(() => branch.id, { onDelete: "cascade" }),
+  staffClerkUserId: t.text(),
 }));
 
 export const CreateSubjectSchema = createInsertSchema(subject, {
@@ -55,6 +56,7 @@ export const CreateSubjectSchema = createInsertSchema(subject, {
 }).omit({
   id: true,
   semesterValue: true,
+  staffClerkUserId: true,
   branchId: true,
   createdAt: true,
   updatedAt: true,

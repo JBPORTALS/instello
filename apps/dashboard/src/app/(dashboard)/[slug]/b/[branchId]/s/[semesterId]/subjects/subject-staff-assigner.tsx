@@ -1,20 +1,53 @@
 "use client";
 
+import { useParams } from "next/navigation";
 import { OrganizationMembershipsCommand } from "@/components/organization-memberships.command";
-import { Avatar, AvatarFallback } from "@instello/ui/components/avatar";
+import { useTRPC } from "@/trpc/react";
+import { useOrganization } from "@clerk/nextjs";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@instello/ui/components/avatar";
 import { Button } from "@instello/ui/components/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@instello/ui/components/popover";
+import { Skeleton } from "@instello/ui/components/skeleton";
 import { UserIcon } from "@phosphor-icons/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function SubjectStaffAssigner({
   staffUserId,
+  subjectId,
 }: {
   staffUserId?: string;
+  subjectId: string;
 }) {
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+  const { memberships, isLoaded } = useOrganization({ memberships: true });
+  const { branchId } = useParams<{ branchId: string }>();
+  const { mutateAsync: assignStaff } = useMutation(
+    trpc.subject.assignStaff.mutationOptions({
+      async onSuccess() {
+        await queryClient.invalidateQueries(trpc.subject.list.queryFilter());
+      },
+      onError(error) {
+        toast.error(error.message);
+      },
+    }),
+  );
+  const staff = memberships?.data?.find(
+    (membership) => membership.publicUserData?.userId === staffUserId,
+  );
+
+  if (memberships?.isLoading || !isLoaded)
+    return <Skeleton className="h-8 w-32" />;
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -24,15 +57,27 @@ export function SubjectStaffAssigner({
           className="text-muted-foreground font-normal"
         >
           <Avatar className="size-6 border border-dashed bg-transparent">
+            <AvatarImage src={staff?.publicUserData?.imageUrl} />
             <AvatarFallback className="text-muted-foreground bg-transparent">
               <UserIcon weight="duotone" />
             </AvatarFallback>
           </Avatar>{" "}
-          Assign...
+          {staff ? (
+            <>
+              {staff.publicUserData?.firstName} {staff.publicUserData?.lastName}
+            </>
+          ) : (
+            "Assign..."
+          )}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
-        <OrganizationMembershipsCommand value={staffUserId} />
+        <OrganizationMembershipsCommand
+          onValueChange={async (staffClerkUserId) => {
+            await assignStaff({ branchId, staffClerkUserId, subjectId });
+          }}
+          value={staffUserId}
+        />
       </PopoverContent>
     </Popover>
   );

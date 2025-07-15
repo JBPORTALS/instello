@@ -1,5 +1,6 @@
-import { and, eq } from "@instello/db";
+import { and, desc, eq } from "@instello/db";
 import { CreateSubjectSchema, subject } from "@instello/db/schema";
+import { z } from "zod/v4";
 
 import { branchProcedure } from "../trpc";
 
@@ -18,6 +19,24 @@ export const subjectRouter = {
         eq(subject.branchId, input.branchId),
         eq(subject.semesterValue, ctx.auth.activeSemester.value),
       ),
+      orderBy: desc(subject.createdAt),
     });
   }),
+
+  assignStaff: branchProcedure
+    .input(z.object({ staffClerkUserId: z.string(), subjectId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { branchId, staffClerkUserId, subjectId } = input;
+
+      return ctx.db
+        .update(subject)
+        .set({ staffClerkUserId })
+        .where(
+          and(
+            eq(subject.branchId, branchId),
+            eq(subject.semesterValue, ctx.auth.activeSemester.value),
+            eq(subject.id, subjectId),
+          ),
+        );
+    }),
 };

@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { useParams } from "next/navigation";
 import { OrganizationMembershipsCommand } from "@/components/organization-memberships.command";
 import { useTRPC } from "@/trpc/react";
@@ -24,9 +25,10 @@ export function SubjectStaffAssigner({
   staffUserId,
   subjectId,
 }: {
-  staffUserId?: string;
+  staffUserId?: string | null;
   subjectId: string;
 }) {
+  const [open, setOpen] = React.useState(false);
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { memberships, isLoaded } = useOrganization({ memberships: true });
@@ -35,6 +37,7 @@ export function SubjectStaffAssigner({
     trpc.subject.assignStaff.mutationOptions({
       async onSuccess() {
         await queryClient.invalidateQueries(trpc.subject.list.queryFilter());
+        setOpen(false);
       },
       onError(error) {
         toast.error(error.message);
@@ -49,7 +52,7 @@ export function SubjectStaffAssigner({
     return <Skeleton className="h-8 w-32" />;
 
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
           variant={"ghost"}

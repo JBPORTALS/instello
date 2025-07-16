@@ -28,8 +28,13 @@ export const subjectRouter = {
   }),
 
   assignStaff: branchProcedure
-    .input(z.object({ staffClerkUserId: z.string(), subjectId: z.string() }))
-    .use(hasPermission("org:subjects:assign_staff"))
+    .input(
+      z.object({
+        staffClerkUserId: z.string().nullable().optional(),
+        subjectId: z.string(),
+      }),
+    )
+    .use(hasPermission({ permission: "org:subjects:assign_staff" }))
     .mutation(async ({ ctx, input }) => {
       const { branchId, staffClerkUserId, subjectId } = input;
 

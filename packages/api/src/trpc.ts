@@ -3,6 +3,7 @@ import type {
   SignedOutAuthObject,
 } from "@clerk/backend/internal";
 import { createClerkClient } from "@clerk/backend";
+import { CheckAuthorizationParamsFromSessionClaims } from "@clerk/types";
 import { eq } from "@instello/db";
 import { db } from "@instello/db/client";
 import { branch, semester } from "@instello/db/schema";
@@ -122,9 +123,11 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
  * @param required - A single permission or an array of required permissions
  * @returns Middleware that throws a FORBIDDEN error if permissions are missing
  */
-export const hasPermission = (permission: string) =>
+export const hasPermission = (
+  isAuthorizedParams: CheckAuthorizationParamsFromSessionClaims<string>,
+) =>
   t.middleware(async ({ next, ctx }) => {
-    if (!ctx.auth.sessionClaims?.org_permissions?.includes(permission)) {
+    if (!ctx.auth.has(isAuthorizedParams)) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "Permission not granted",

@@ -22,12 +22,8 @@ export const columns: ColumnDef<Payment>[] = [
     },
   },
   {
-    accessorKey: "staffClerkUserId",
-    header: () => (
-      <Protect permission="org:subjects:assign_staff">
-        <div className="px-3.5">Alloted</div>
-      </Protect>
-    ),
+    id: "staff-assigned",
+
     enableHiding: true,
     cell(props) {
       return (
@@ -35,7 +31,7 @@ export const columns: ColumnDef<Payment>[] = [
           <div className="w-[200px]">
             <SubjectStaffAssigner
               subjectId={props.row.original.id}
-              staffUserId={props.getValue() as string | undefined}
+              staffUserId={props.row.original.staffClerkUserId}
             />
           </div>
         </Protect>

@@ -21,8 +21,8 @@ import { CheckIcon, SpinnerIcon } from "@phosphor-icons/react";
 
 interface OrganizationMembershipsCommandProps {
   /** Staff UserId */
-  value?: string;
-  onValueChange?: (value: string) => Promise<void> | void;
+  value?: string | null;
+  onValueChange?: (value?: string | null) => Promise<void> | void;
 }
 
 export function OrganizationMembershipsCommand({
@@ -76,9 +76,9 @@ function OrganizationMembershipsCommandItem({
       className="justify-between"
       key={membership.id}
       value={membership.publicUserData?.userId}
-      onSelect={(value) => {
+      onSelect={(selectedValue) => {
         setIsLoading(true);
-        onValueChange?.(value)
+        onValueChange?.(value === selectedValue ? null : value)
           ?.then(() => setIsLoading(false))
           .catch(() => setIsLoading(false));
       }}

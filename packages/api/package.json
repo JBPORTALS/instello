@@ -27,8 +27,8 @@
   },
   "prettier": "@instello/prettier-config",
   "dependencies": {
-    "@clerk/backend": "^2.4.1",
-    "@clerk/nextjs": "^6.24.0",
+    "@clerk/backend": "^2.4.3",
+    "@clerk/nextjs": "^6.25.1",
     "@trpc/server": "^11.4.3",
     "superjson": "^2.2.2",
     "zod": "catalog:"

@@ -1,3 +1,4 @@
+import { SQL, sql } from "drizzle-orm";
 import { pgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -65,7 +66,14 @@ export const CreateSubjectSchema = createInsertSchema(subject, {
 export const student = pgTable("student", (t) => ({
   ...initialColumns,
   usn: t.text().notNull(),
-  fullName: t.text().notNull(),
+  firstName: t.text().notNull(),
+  lastName: t.text().notNull(),
+  fullName: t
+    .text()
+    .notNull()
+    .generatedAlwaysAs(
+      (): SQL => sql`${student.firstName}||' '||${student.lastName}`,
+    ),
   emailAddress: t.text().notNull(),
   clerkOrgId: t.text().notNull(),
   branchId: t
@@ -77,3 +85,16 @@ export const student = pgTable("student", (t) => ({
     .notNull()
     .references(() => semester.id, { onDelete: "cascade" }),
 }));
+
+export const CreateStudentSchema = createInsertSchema(student, {
+  firstName: z.string(),
+  lastName: z.string(),
+  emailAddress: z.email(),
+}).omit({
+  id: true,
+  currentSemesterId: true,
+  clerkOrgId: true,
+  branchId: true,
+  createdAt: true,
+  updatedAt: true,
+});

@@ -27,7 +27,7 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: true,
     cell(props) {
       return (
-        <Protect permission="org:subjects:assign_staff">
+        <Protect permission="org:subjects:update">
           <div className="w-[200px]">
             <SubjectStaffAssigner
               subjectId={props.row.original.id}

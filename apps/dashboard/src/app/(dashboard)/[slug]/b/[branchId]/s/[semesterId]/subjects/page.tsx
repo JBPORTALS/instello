@@ -1,6 +1,7 @@
 import Container from "@/components/container";
 import { CreateSubjectDialog } from "@/components/create-subject.dialog";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
+import { Protect } from "@clerk/nextjs";
 import { Button } from "@instello/ui/components/button";
 import { PlusIcon } from "@phosphor-icons/react/ssr";
 
@@ -19,12 +20,15 @@ export default async function Page({
       <Container className="px-16">
         <div className="inline-flex w-full justify-between">
           <h2 className="text-3xl font-semibold">Subjects</h2>
-          <CreateSubjectDialog>
-            <Button>
-              <PlusIcon />
-              Add
-            </Button>
-          </CreateSubjectDialog>
+
+          <Protect permission="org:subjects:create">
+            <CreateSubjectDialog>
+              <Button>
+                <PlusIcon />
+                Add
+              </Button>
+            </CreateSubjectDialog>
+          </Protect>
         </div>
         <DataTableClient />
       </Container>

@@ -6,6 +6,7 @@ import { branchProcedure, hasPermission } from "../trpc";
 
 export const subjectRouter = {
   create: branchProcedure
+    .use(hasPermission({ permission: "org:subjects:create" }))
     .input(CreateSubjectSchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db
@@ -28,13 +29,13 @@ export const subjectRouter = {
   }),
 
   assignStaff: branchProcedure
+    .use(hasPermission({ permission: "org:subjects:update" }))
     .input(
       z.object({
         staffClerkUserId: z.string().nullable().optional(),
         subjectId: z.string(),
       }),
     )
-    .use(hasPermission({ permission: "org:subjects:assign_staff" }))
     .mutation(async ({ ctx, input }) => {
       const { branchId, staffClerkUserId, subjectId } = input;
 

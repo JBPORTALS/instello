@@ -14,6 +14,11 @@ export const subjectRouter = {
         .values({ ...input, semesterValue: ctx.auth.activeSemester.value });
     }),
 
+  /**
+   * ***List of subjects***
+   *  @role Admin: Can see all subjects within the branch & semester
+   *  @role Staff: Can see his/her assigned subjects only
+   * */
   list: branchProcedure.query(async ({ ctx, input }) => {
     const isStaff = ctx.auth.orgRole == "org:staff";
 

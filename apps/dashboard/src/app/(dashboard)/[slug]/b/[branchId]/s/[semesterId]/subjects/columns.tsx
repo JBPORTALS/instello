@@ -2,6 +2,7 @@
 
 import type { RouterOutputs } from "@instello/api";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Protect } from "@clerk/nextjs";
 import { Button } from "@instello/ui/components/button";
 import { DotsThreeIcon } from "@phosphor-icons/react";
 import { formatDistanceToNowStrict } from "date-fns";
@@ -22,15 +23,22 @@ export const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: "staffClerkUserId",
-    header: () => <div className="px-3.5">Alloted</div>,
+    header: () => (
+      <Protect permission="org:subjects:assign_staff">
+        <div className="px-3.5">Alloted</div>
+      </Protect>
+    ),
+    enableHiding: true,
     cell(props) {
       return (
-        <div className="w-[200px]">
-          <SubjectStaffAssigner
-            subjectId={props.row.original.id}
-            staffUserId={props.getValue() as string | undefined}
-          />
-        </div>
+        <Protect permission="org:subjects:assign_staff">
+          <div className="w-[200px]">
+            <SubjectStaffAssigner
+              subjectId={props.row.original.id}
+              staffUserId={props.getValue() as string | undefined}
+            />
+          </div>
+        </Protect>
       );
     },
   },

@@ -74,7 +74,11 @@ export function SubjectStaffAssigner({
       <PopoverContent className="w-[200px] p-0">
         <OrganizationMembershipsCommand
           onValueChange={async (staffClerkUserId) => {
-            await assignStaff({ branchId, staffClerkUserId, subjectId });
+            await assignStaff({
+              branchId,
+              staffClerkUserId,
+              subjectId,
+            });
           }}
           value={staffUserId}
         />

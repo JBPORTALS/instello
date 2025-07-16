@@ -114,6 +114,27 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 });
 
 /**
+ * Middleware to check if the user has the required organization permissions
+ * before allowing access to a procedure.
+ *
+ * Use this **before input validation** in your tRPC procedure chain.
+ *
+ * @param required - A single permission or an array of required permissions
+ * @returns Middleware that throws a FORBIDDEN error if permissions are missing
+ */
+export const hasPermission = (permission: string) =>
+  t.middleware(async ({ next, ctx }) => {
+    if (!ctx.auth.sessionClaims?.org_permissions?.includes(permission)) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Permission not granted",
+      });
+    }
+
+    return next();
+  });
+
+/**
  * Public (unauthed) procedure
  *
  * This is the base piece you use to build new queries and mutations on your

@@ -76,9 +76,6 @@ importers:
       '@clerk/nextjs':
         specifier: ^6.24.0
         version: 6.24.0(next@15.3.5(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@clerk/types':
-        specifier: ^4.65.0
-        version: 4.65.0
       '@hookform/resolvers':
         specifier: 'catalog:'
         version: 5.1.1(react-hook-form@7.60.0(react@19.1.0))
@@ -143,6 +140,9 @@ importers:
         specifier: 'catalog:'
         version: 3.25.76
     devDependencies:
+      '@clerk/types':
+        specifier: ^4.65.0
+        version: 4.65.0
       '@instello/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint-config
@@ -186,6 +186,9 @@ importers:
         specifier: 'catalog:'
         version: 3.25.76
     devDependencies:
+      '@clerk/types':
+        specifier: ^4.65.0
+        version: 4.65.0
       '@instello/db':
         specifier: workspace:*
         version: link:../db
@@ -585,10 +588,6 @@ packages:
         optional: true
       react-dom:
         optional: true
-
-  '@clerk/types@4.64.0':
-    resolution: {integrity: sha512-R9V4aJ8o7A7CJiqleNTTlIWt77pbmWeyD/rkvbN/CQ7By0KE0IPZbsWGXK0q2/WZNcP47LwOYO9aOnuXVrdLYw==}
-    engines: {node: '>=18.17.0'}
 
   '@clerk/types@4.65.0':
     resolution: {integrity: sha512-jmZWlauq83ipye6XwPYvphoNcSO8YB+KikDNKY1zbovfGOXi1aWSvuWpXgF6ry3ZvlAfNrYZP66rDfqKWoAHlw==}
@@ -4388,7 +4387,7 @@ snapshots:
   '@clerk/backend@2.4.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
     dependencies:
       '@clerk/shared': 3.11.0(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      '@clerk/types': 4.64.0
+      '@clerk/types': 4.65.0
       cookie: 1.0.2
       snakecase-keys: 8.0.1
       standardwebhooks: 1.0.0
@@ -4428,10 +4427,6 @@ snapshots:
     optionalDependencies:
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
-
-  '@clerk/types@4.64.0':
-    dependencies:
-      csstype: 3.1.3
 
   '@clerk/types@4.65.0':
     dependencies:

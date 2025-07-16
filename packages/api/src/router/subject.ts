@@ -2,7 +2,7 @@ import { and, desc, eq } from "@instello/db";
 import { CreateSubjectSchema, subject } from "@instello/db/schema";
 import { z } from "zod/v4";
 
-import { branchProcedure } from "../trpc";
+import { branchProcedure, hasPermission } from "../trpc";
 
 export const subjectRouter = {
   create: branchProcedure
@@ -29,6 +29,7 @@ export const subjectRouter = {
 
   assignStaff: branchProcedure
     .input(z.object({ staffClerkUserId: z.string(), subjectId: z.string() }))
+    .use(hasPermission("org:subjects:assign_staff"))
     .mutation(async ({ ctx, input }) => {
       const { branchId, staffClerkUserId, subjectId } = input;
 

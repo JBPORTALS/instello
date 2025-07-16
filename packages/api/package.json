@@ -16,6 +16,7 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "devDependencies": {
+    "@clerk/types": "^4.65.0",
     "@instello/db": "workspace:*",
     "@instello/eslint-config": "workspace:*",
     "@instello/prettier-config": "workspace:*",

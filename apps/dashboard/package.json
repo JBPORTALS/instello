@@ -15,7 +15,6 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.24.0",
-    "@clerk/types": "^4.65.0",
     "@hookform/resolvers": "catalog:",
     "@instello/api": "workspace:*",
     "@instello/db": "workspace:*",
@@ -39,6 +38,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@clerk/types": "^4.65.0",
     "@instello/eslint-config": "workspace:*",
     "@instello/prettier-config": "workspace:*",
     "@instello/tsconfig": "workspace:*",

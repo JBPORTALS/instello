@@ -71,21 +71,17 @@ function OrganizationMembershipsCommandItem({
 }) {
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const onValueChangeAsync = React.useCallback(
-    async (value: string) => {
-      setIsLoading(true);
-      await onValueChange?.(value);
-      setIsLoading(false);
-    },
-    [onValueChange],
-  );
-
   return (
     <CommandItem
       className="justify-between"
       key={membership.id}
       value={membership.publicUserData?.userId}
-      onSelect={onValueChangeAsync}
+      onSelect={(value) => {
+        setIsLoading(true);
+        onValueChange?.(value)
+          ?.then(() => setIsLoading(false))
+          .catch(() => setIsLoading(false));
+      }}
     >
       <span className="inline-flex items-center gap-2.5">
         <Avatar className="size-6">

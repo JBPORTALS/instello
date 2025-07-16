@@ -2,8 +2,8 @@ import type {
   SignedInAuthObject,
   SignedOutAuthObject,
 } from "@clerk/backend/internal";
+import type { CheckAuthorizationParamsFromSessionClaims } from "@clerk/types";
 import { createClerkClient } from "@clerk/backend";
-import { CheckAuthorizationParamsFromSessionClaims } from "@clerk/types";
 import { eq } from "@instello/db";
 import { db } from "@instello/db/client";
 import { branch, semester } from "@instello/db/schema";

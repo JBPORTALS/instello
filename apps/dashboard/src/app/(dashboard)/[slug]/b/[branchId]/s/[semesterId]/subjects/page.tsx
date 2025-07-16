@@ -1,5 +1,5 @@
 import Container from "@/components/container";
-import { CreateSubjectDialog } from "@/components/create-subject.dialog";
+import { CreateSubjectDialog } from "@/components/dialogs/create-subject.dialog";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { Protect } from "@clerk/nextjs";
 import { Button } from "@instello/ui/components/button";

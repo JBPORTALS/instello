@@ -20,7 +20,7 @@ import { PlusIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import type { IconPickerIcon } from "../icon-picker";
-import { CreateBranchDialog } from "../create-branch.dialog";
+import { CreateBranchDialog } from "../dialogs/create-branch.dialog";
 import { TablerReactIcon } from "../icon-picker";
 
 export function NavBranches() {

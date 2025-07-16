@@ -38,8 +38,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod/v4";
 
-import type { IconPickerIcon } from "./icon-picker";
-import IconPicker, { TablerReactIcon } from "./icon-picker";
+import type { IconPickerIcon } from "../icon-picker";
+import IconPicker, { TablerReactIcon } from "../icon-picker";
 
 const CreateBranchSchema = _CreateBranchSchema;
 

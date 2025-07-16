@@ -78,7 +78,7 @@ function OrganizationMembershipsCommandItem({
       value={membership.publicUserData?.userId}
       onSelect={(selectedValue) => {
         setIsLoading(true);
-        onValueChange?.(value === selectedValue ? null : value)
+        onValueChange?.(!value ? selectedValue : null)
           ?.then(() => setIsLoading(false))
           .catch(() => setIsLoading(false));
       }}

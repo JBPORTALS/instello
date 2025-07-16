@@ -74,7 +74,7 @@ export function SubjectStaffAssigner({
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[200px] p-0">
+      <PopoverContent side="left" align="start" className="w-[200px] p-0">
         <OrganizationMembershipsCommand
           onValueChange={async (staffClerkUserId) => {
             await assignStaff({

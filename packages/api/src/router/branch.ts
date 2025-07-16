@@ -12,7 +12,7 @@ export const branchRouter = {
       return ctx.db.transaction(async (tx) => {
         const [newBranch] = await tx
           .insert(branch)
-          .values({ ...input, clerkOrganizationId: ctx.auth.orgId })
+          .values({ ...input, clerkOrgId: ctx.auth.orgId })
           .returning();
 
         if (!newBranch)
@@ -42,14 +42,14 @@ export const branchRouter = {
       return ctx.db.query.branch.findFirst({
         where: and(
           eq(branch.id, input.branchId),
-          eq(branch.clerkOrganizationId, ctx.auth.orgId),
+          eq(branch.clerkOrgId, ctx.auth.orgId),
         ),
       });
     }),
 
   list: organizationProcedure.query(({ ctx }) => {
     return ctx.db.query.branch.findMany({
-      where: eq(branch.clerkOrganizationId, ctx.auth.orgId),
+      where: eq(branch.clerkOrgId, ctx.auth.orgId),
     });
   }),
 

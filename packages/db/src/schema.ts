@@ -11,7 +11,7 @@ export const branch = pgTable("branch", (t) => ({
   icon: t.varchar({ length: 256 }).notNull(),
   currentSemesterMode: t.text().$type<SemesterMode>().notNull(),
   totalSemesters: t.integer().notNull(),
-  clerkOrganizationId: t.text().notNull(),
+  clerkOrgId: t.text().notNull(),
 }));
 
 export const CreateBranchSchema = createInsertSchema(branch, {
@@ -21,7 +21,7 @@ export const CreateBranchSchema = createInsertSchema(branch, {
   currentSemesterMode: z.enum(["odd", "even"]),
 }).omit({
   id: true,
-  clerkOrganizationId: true,
+  clerkOrgId: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -61,3 +61,19 @@ export const CreateSubjectSchema = createInsertSchema(subject, {
   createdAt: true,
   updatedAt: true,
 });
+
+export const student = pgTable("student", (t) => ({
+  ...initialColumns,
+  usn: t.text().notNull(),
+  fullName: t.text().notNull(),
+  emailAddress: t.text().notNull(),
+  clerkOrgId: t.text().notNull(),
+  branchId: t
+    .text()
+    .notNull()
+    .references(() => branch.id, { onDelete: "cascade" }),
+  currentSemesterId: t
+    .text()
+    .notNull()
+    .references(() => semester.id, { onDelete: "cascade" }),
+}));

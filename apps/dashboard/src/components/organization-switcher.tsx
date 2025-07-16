@@ -3,6 +3,7 @@
 import React from "react";
 import { notFound, useParams, useRouter } from "next/navigation";
 import { useOrganizationList } from "@clerk/nextjs";
+import { Badge } from "@instello/ui/components/badge";
 import { Button } from "@instello/ui/components/button";
 import {
   Command,
@@ -52,7 +53,12 @@ export function OrganizationSwitcher() {
     setActiveOrganization(slug).catch((e) => console.log(e));
   }, [slug, setActiveOrganization]);
 
-  if (!isLoaded) return <Skeleton className="h-9 w-full border" />;
+  if (!isLoaded || userMemberships.isLoading)
+    return <Skeleton className="h-9 w-full border" />;
+
+  const membership = userMemberships.data.find(
+    (membership) => membership.organization.slug === slug,
+  );
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -68,11 +74,18 @@ export function OrganizationSwitcher() {
               className="text-muted-foreground size-5"
               weight="duotone"
             />
-            {slug
-              ? userMemberships.data.find(
-                  (membership) => membership.organization.slug === slug,
-                )?.organization.name
-              : "Select organization..."}
+            {slug ? (
+              <>
+                {membership?.organization.name}{" "}
+                {membership?.role !== "org:admin" && (
+                  <Badge className="h-5 text-xs" variant={"outline"}>
+                    {membership?.roleName}
+                  </Badge>
+                )}
+              </>
+            ) : (
+              "Select organization..."
+            )}
           </span>
           <CaretUpDownIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>

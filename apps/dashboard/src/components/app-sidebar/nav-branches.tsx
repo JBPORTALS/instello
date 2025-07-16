@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useTRPC } from "@/trpc/react";
+import { Protect } from "@clerk/nextjs";
 import {
   SidebarGroup,
   SidebarGroupAction,
@@ -33,17 +34,19 @@ export function NavBranches() {
     <SidebarGroup>
       <SidebarGroupLabel>Branches</SidebarGroupLabel>
 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <CreateBranchDialog>
-            <SidebarGroupAction>
-              <PlusIcon />
-            </SidebarGroupAction>
-          </CreateBranchDialog>
-        </TooltipTrigger>
+      <Protect permission="org:branches:create">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <CreateBranchDialog>
+              <SidebarGroupAction>
+                <PlusIcon />
+              </SidebarGroupAction>
+            </CreateBranchDialog>
+          </TooltipTrigger>
 
-        <TooltipContent side="right">Create Branch</TooltipContent>
-      </Tooltip>
+          <TooltipContent side="right">Create Branch</TooltipContent>
+        </Tooltip>
+      </Protect>
       <SidebarMenu>
         {branches.data.map((b) => {
           const branchUrl = `/${slug}/b/${b.id}`;

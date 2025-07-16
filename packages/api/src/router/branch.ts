@@ -3,10 +3,11 @@ import { branch, CreateBranchSchema, semester } from "@instello/db/schema";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
-import { organizationProcedure } from "../trpc";
+import { hasPermission, organizationProcedure } from "../trpc";
 
 export const branchRouter = {
   create: organizationProcedure
+    .use(hasPermission({ permission: "org:branch:create" }))
     .input(CreateBranchSchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db.transaction(async (tx) => {

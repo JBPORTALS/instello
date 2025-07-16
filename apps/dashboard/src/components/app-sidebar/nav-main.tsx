@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
+import { Protect } from "@clerk/nextjs";
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -22,6 +23,7 @@ const items = [
     title: "Members",
     url: "/members",
     icon: UsersIcon,
+    permission: "sys_profile:manage",
   },
 ];
 
@@ -40,17 +42,19 @@ export function NavMain() {
               : pathname.startsWith(url);
 
             return (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton isActive={isActive} asChild>
-                  <Link href={url}>
-                    <item.icon
-                      weight="duotone"
-                      className="text-muted-foreground"
-                    />
-                    <span>{item.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              <Protect permission={item.permission ?? ""}>
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton isActive={isActive} asChild>
+                    <Link href={url}>
+                      <item.icon
+                        weight="duotone"
+                        className="text-muted-foreground"
+                      />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </Protect>
             );
           })}
         </SidebarMenu>

@@ -2,7 +2,7 @@ import { isClerkAPIResponseError } from "@clerk/nextjs/errors";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
-import { organizationProcedure } from "../trpc";
+import { hasPermission, organizationProcedure } from "../trpc";
 
 export const organizationRouter = {
   getOrganizationMembers: organizationProcedure.query(async ({ ctx }) => {
@@ -33,6 +33,7 @@ export const organizationRouter = {
   }),
 
   createInvitationBulk: organizationProcedure
+    .use(hasPermission({ role: "org:admin" }))
     .input(z.array(z.object({ emailAddress: z.email(), role: z.string() })))
     .mutation(async ({ ctx, input }) => {
       try {
@@ -57,26 +58,28 @@ export const organizationRouter = {
       }
     }),
 
-  getInviationList: organizationProcedure.query(async ({ ctx }) => {
-    const invitations =
-      await ctx.clerk.organizations.getOrganizationInvitationList({
-        organizationId: ctx.auth.orgId,
-        status: ["pending"],
-      });
+  getInviationList: organizationProcedure
+    .use(hasPermission({ role: "org:admin" }))
+    .query(async ({ ctx }) => {
+      const invitations =
+        await ctx.clerk.organizations.getOrganizationInvitationList({
+          organizationId: ctx.auth.orgId,
+          status: ["pending"],
+        });
 
-    const mappedInviations = invitations.data.map((i) => ({
-      /** Invitation ID */
-      id: i.id,
-      emailAddress: i.emailAddress,
-      role: i.role,
-      expiresAt: i.expiresAt,
-      createdAt: i.createdAt,
-      updatedAt: i.updatedAt,
-    }));
+      const mappedInviations = invitations.data.map((i) => ({
+        /** Invitation ID */
+        id: i.id,
+        emailAddress: i.emailAddress,
+        role: i.role,
+        expiresAt: i.expiresAt,
+        createdAt: i.createdAt,
+        updatedAt: i.updatedAt,
+      }));
 
-    return {
-      invitations: mappedInviations,
-      totalCount: invitations.totalCount,
-    };
-  }),
+      return {
+        invitations: mappedInviations,
+        totalCount: invitations.totalCount,
+      };
+    }),
 };

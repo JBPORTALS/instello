@@ -74,7 +74,7 @@ export function CreateStudentDialog(
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
-            <DialogBody className="space-y-5">
+            <DialogBody>
               <div className="grid-col-2 grid grid-flow-col gap-3.5">
                 <FormField
                   control={form.control}
@@ -85,7 +85,9 @@ export function CreateStudentDialog(
                       <FormControl>
                         <Input placeholder="Raghavan" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <div className="h-4">
+                        <FormMessage />
+                      </div>
                     </FormItem>
                   )}
                 />
@@ -98,44 +100,48 @@ export function CreateStudentDialog(
                       <FormControl>
                         <Input placeholder="R" {...field} />
                       </FormControl>
-                      <FormMessage />
+                      <div className="h-4">
+                        <FormMessage />
+                      </div>
                     </FormItem>
                   )}
                 />
               </div>
-              <FormField
-                control={form.control}
-                name="emailAddress"
-                render={({ field }) => (
-                  <FormItem className="col-span-1">
-                    <FormLabel>Email Address</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="eg. studentemail@example.com"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="space-y-3.5 py-3.5">
+                <FormField
+                  control={form.control}
+                  name="emailAddress"
+                  render={({ field }) => (
+                    <FormItem className="col-span-1">
+                      <FormLabel>Email Address</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="eg. studentemail@example.com"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="usn"
-                render={({ field }) => (
-                  <FormItem className="col-span-1">
-                    <FormLabel>Unique Student Identifier</FormLabel>
-                    <FormControl>
-                      <Input placeholder="eg. 364CS19013" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                    <FormDescription className="text-xs">
-                      This must be unique within your institution.
-                    </FormDescription>
-                  </FormItem>
-                )}
-              />
+                <FormField
+                  control={form.control}
+                  name="usn"
+                  render={({ field }) => (
+                    <FormItem className="col-span-1">
+                      <FormLabel>Unique Student Identifier</FormLabel>
+                      <FormControl>
+                        <Input placeholder="eg. 364CS19013" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                      <FormDescription className="text-xs">
+                        This must be unique within your institution.
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </div>
             </DialogBody>
             <DialogFooter>
               <Button loading={form.formState.isSubmitting}>Create</Button>

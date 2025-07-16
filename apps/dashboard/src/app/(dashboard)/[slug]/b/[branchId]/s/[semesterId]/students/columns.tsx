@@ -2,6 +2,8 @@
 
 import type { RouterOutputs } from "@instello/api";
 import type { ColumnDef } from "@tanstack/react-table";
+import { Avatar, AvatarFallback } from "@instello/ui/components/avatar";
+import { Badge } from "@instello/ui/components/badge";
 import { Button } from "@instello/ui/components/button";
 import { DotsThreeIcon } from "@phosphor-icons/react";
 import { formatDistanceToNowStrict } from "date-fns";
@@ -15,7 +17,32 @@ export const columns: ColumnDef<Payment>[] = [
     accessorKey: "fullName",
     header: "Student",
     cell(props) {
-      return <div className="min-w-4xl">{props.getValue() as string}</div>;
+      return (
+        <div className="inline-flex min-w-3xl items-center gap-2 font-medium">
+          <Avatar>
+            <AvatarFallback>
+              {props.row.original.firstName.charAt(0)}
+            </AvatarFallback>
+          </Avatar>
+          {props.getValue() as string}
+        </div>
+      );
+    },
+  },
+
+  {
+    accessorKey: "usn",
+    header: "USN",
+    cell(props) {
+      return <Badge variant={"secondary"}>{props.getValue() as string}</Badge>;
+    },
+  },
+
+  {
+    accessorKey: "emailAddress",
+    header: "Email Address",
+    cell(props) {
+      return <div>{props.getValue() as string}</div>;
     },
   },
 

@@ -1,5 +1,6 @@
-import { and, eq } from "@instello/db";
+import { and, eq, isDrizzleQueryError } from "@instello/db";
 import { CreateStudentSchema, student } from "@instello/db/schema";
+import { TRPCError } from "@trpc/server";
 
 import { branchProcedure, hasPermission } from "../trpc";
 
@@ -8,11 +9,27 @@ export const studentRouter = {
     .use(hasPermission({ permission: "org:students:create" }))
     .input(CreateStudentSchema)
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.insert(student).values({
-        ...input,
-        clerkOrgId: ctx.auth.orgId,
-        currentSemesterId: ctx.auth.activeSemester.id,
-      });
+      try {
+        return await ctx.db.insert(student).values({
+          ...input,
+          clerkOrgId: ctx.auth.orgId,
+          currentSemesterId: ctx.auth.activeSemester.id,
+        });
+      } catch (e) {
+        if (isDrizzleQueryError(e))
+          throw new TRPCError({
+            message:
+              e.cause.code === "23505"
+                ? "USN already exists."
+                : "Unknown error",
+            code: "UNPROCESSABLE_CONTENT",
+          });
+
+        throw new TRPCError({
+          message: "Unable to create student right now",
+          code: "INTERNAL_SERVER_ERROR",
+        });
+      }
     }),
 
   list: branchProcedure.query(async ({ ctx, input }) => {

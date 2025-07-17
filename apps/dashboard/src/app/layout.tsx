@@ -29,8 +29,6 @@ export default function RootLayout({
   return (
     <ClerkProvider
       appearance={{ baseTheme: [dark], signIn: { baseTheme: dark } }}
-      signInUrl="/sign-in"
-      signUpUrl="/sign-in"
     >
       <html lang="en" suppressHydrationWarning>
         <body

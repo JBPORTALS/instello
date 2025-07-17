@@ -42,8 +42,8 @@ export function NavMain() {
               : pathname.startsWith(url);
 
             return (
-              <Protect permission={item.permission ?? ""}>
-                <SidebarMenuItem key={item.title}>
+              <Protect key={item.title} permission={item.permission ?? ""}>
+                <SidebarMenuItem>
                   <SidebarMenuButton isActive={isActive} asChild>
                     <Link href={url}>
                       <item.icon

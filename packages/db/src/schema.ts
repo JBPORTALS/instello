@@ -88,7 +88,13 @@ export const student = pgTable(
       .notNull()
       .references(() => semester.id, { onDelete: "cascade" }),
   }),
-  (self) => [unique("usn_clerkOrgId_unique").on(self.usn, self.clerkOrgId)],
+  (self) => [
+    unique("usn_clerkOrgId_unique").on(self.usn, self.clerkOrgId),
+    unique("emailAddress_clerkOrgId_unique").on(
+      self.emailAddress,
+      self.clerkOrgId,
+    ),
+  ],
 );
 
 export const CreateStudentSchema = createInsertSchema(student, {

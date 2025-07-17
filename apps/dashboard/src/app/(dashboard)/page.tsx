@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useOrganization, useOrganizationList } from "@clerk/nextjs";
-import { SpinnerGapIcon } from "@phosphor-icons/react";
+import { SpinnerIcon } from "@phosphor-icons/react";
 
 export default function Page() {
   const { organization: activeOrganization } = useOrganization();
@@ -27,8 +27,11 @@ export default function Page() {
   }, [activeOrganization, router, setActive, userMemberships.data]);
 
   return (
-    <div className="flex h-svh w-full items-center justify-center">
-      <SpinnerGapIcon
+    <div className="flex h-svh w-full flex-col items-center justify-center gap-4">
+      <h4 className="text-muted-foreground text-lg font-medium">
+        Setting up workspace...
+      </h4>
+      <SpinnerIcon
         className="text-muted-foreground size-8 animate-spin"
         weight={"thin"}
       />

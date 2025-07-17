@@ -16,8 +16,9 @@ import {
   CommandItem,
   CommandList,
 } from "@instello/ui/components/command";
+import { Label } from "@instello/ui/components/label";
 import { cn } from "@instello/ui/lib/utils";
-import { CheckIcon, SpinnerIcon } from "@phosphor-icons/react";
+import { CheckIcon, SpinnerIcon, UserIcon } from "@phosphor-icons/react";
 
 interface OrganizationMembershipsCommandProps {
   /** Staff UserId */
@@ -45,6 +46,12 @@ export function OrganizationMembershipsCommand({
         <CommandList>
           <CommandEmpty>No staff found.</CommandEmpty>
           <CommandGroup>
+            <OrganizationMembershipsCommandNoAssigneeItem {...props} />
+          </CommandGroup>
+          <CommandGroup>
+            <Label className="text-muted-foreground px-1.5 py-1.5 text-xs">
+              Organization Members
+            </Label>
             {memberships?.data?.map((membership) => (
               <OrganizationMembershipsCommandItem
                 key={membership.id}
@@ -56,6 +63,47 @@ export function OrganizationMembershipsCommand({
         </CommandList>
       )}
     </Command>
+  );
+}
+
+function OrganizationMembershipsCommandNoAssigneeItem({
+  value,
+  onValueChange,
+}: OrganizationMembershipsCommandProps) {
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  return (
+    <CommandItem
+      className="justify-between"
+      onSelect={() => {
+        if (value !== null) {
+          setIsLoading(true);
+          onValueChange?.(null)
+            ?.then(() => setIsLoading(false))
+            .catch(() => setIsLoading(false));
+        }
+      }}
+    >
+      <span className="inline-flex items-center gap-2.5">
+        <Avatar className="size-6 border border-dashed bg-transparent">
+          <AvatarFallback className="text-muted-foreground bg-transparent">
+            <UserIcon weight="duotone" />
+          </AvatarFallback>
+        </Avatar>
+        No assignee
+      </span>
+
+      {isLoading ? (
+        <SpinnerIcon className="animate-spin" />
+      ) : (
+        <CheckIcon
+          className={cn(
+            "mr-2 h-4 w-4",
+            value === null ? "opacity-100" : "opacity-0",
+          )}
+        />
+      )}
+    </CommandItem>
   );
 }
 
@@ -77,10 +125,12 @@ function OrganizationMembershipsCommandItem({
       key={membership.id}
       value={membership.publicUserData?.userId}
       onSelect={(selectedValue) => {
-        setIsLoading(true);
-        onValueChange?.(!value ? selectedValue : null)
-          ?.then(() => setIsLoading(false))
-          .catch(() => setIsLoading(false));
+        if (selectedValue !== value) {
+          setIsLoading(true);
+          onValueChange?.(selectedValue)
+            ?.then(() => setIsLoading(false))
+            .catch(() => setIsLoading(false));
+        }
       }}
     >
       <span className="inline-flex items-center gap-2.5">

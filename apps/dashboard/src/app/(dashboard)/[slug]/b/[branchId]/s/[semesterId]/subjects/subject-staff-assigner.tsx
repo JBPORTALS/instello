@@ -17,6 +17,7 @@ import {
   PopoverTrigger,
 } from "@instello/ui/components/popover";
 import { Skeleton } from "@instello/ui/components/skeleton";
+import { cn } from "@instello/ui/lib/utils";
 import { UserIcon } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -59,7 +60,12 @@ export function SubjectStaffAssigner({
           size={"sm"}
           className="text-muted-foreground font-normal"
         >
-          <Avatar className="size-6 border border-dashed bg-transparent">
+          <Avatar
+            className={cn(
+              "size-6 border bg-transparent",
+              !staffUserId && "border-dashed",
+            )}
+          >
             <AvatarImage src={staff?.publicUserData?.imageUrl} />
             <AvatarFallback className="text-muted-foreground bg-transparent">
               <UserIcon weight="duotone" />
@@ -70,7 +76,7 @@ export function SubjectStaffAssigner({
               {staff.publicUserData?.firstName} {staff.publicUserData?.lastName}
             </>
           ) : (
-            "Assign..."
+            "No assignee"
           )}
         </Button>
       </PopoverTrigger>

@@ -7,7 +7,7 @@ import { hasPermission, organizationProcedure } from "../trpc";
 
 export const branchRouter = {
   create: organizationProcedure
-    .use(hasPermission({ permission: "org:branch:create" }))
+    .use(hasPermission({ permission: "org:branches:create" }))
     .input(CreateBranchSchema)
     .mutation(async ({ ctx, input }) => {
       return ctx.db.transaction(async (tx) => {

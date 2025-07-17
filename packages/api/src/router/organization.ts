@@ -40,6 +40,7 @@ export const organizationRouter = {
         const mappedInput = input.map((i) => ({
           ...i,
           inviterUserId: ctx.auth.userId,
+          redirectUrl: `http://localhost:3000/accept-invitation`,
         }));
 
         const member =

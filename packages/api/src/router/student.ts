@@ -16,14 +16,18 @@ export const studentRouter = {
           currentSemesterId: ctx.auth.activeSemester.id,
         });
       } catch (e) {
-        if (isDrizzleQueryError(e))
+        if (isDrizzleQueryError(e)) {
+          console.log(e.cause);
           throw new TRPCError({
             message:
               e.cause.code === "23505"
-                ? "USN already exists."
+                ? e.cause.constraint === "usn_clerkOrgId_unique"
+                  ? "USN already exists."
+                  : "Email address already exists"
                 : "Unknown error",
             code: "UNPROCESSABLE_CONTENT",
           });
+        }
 
         throw new TRPCError({
           message: "Unable to create student right now",

@@ -5,6 +5,7 @@ import "@instello/ui/globals.css";
 import type { Metadata } from "next";
 import { Providers } from "@/components/providers";
 import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
 const fontSans = Outfit({
   subsets: ["latin"],
@@ -26,7 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider
+      appearance={{ baseTheme: [dark], signIn: { baseTheme: dark } }}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-in"
+    >
       <html lang="en" suppressHydrationWarning>
         <body
           className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}

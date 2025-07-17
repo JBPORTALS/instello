@@ -1,12 +1,11 @@
 "use client";
 
+import type { SemesterMode } from "@instello/db/schema";
+import type { z } from "zod/v4";
 import React, { useState } from "react";
 import { useTRPC } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  CreateBranchSchema as _CreateBranchSchema,
-  SemesterMode,
-} from "@instello/db/schema";
+import { CreateBranchSchema as _CreateBranchSchema } from "@instello/db/schema";
 import { Button } from "@instello/ui/components/button";
 import {
   Dialog,
@@ -36,7 +35,6 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod/v4";
 
 import type { IconPickerIcon } from "../icon-picker";
 import IconPicker, { TablerReactIcon } from "../icon-picker";

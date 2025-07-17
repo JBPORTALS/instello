@@ -32,17 +32,15 @@ export default function Page() {
       const invitations = await user?.getOrganizationInvitations();
 
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+        // TODO:
         const jwt_token = jwtDecode<{ sid?: string }>(clerk_ticket ?? "");
 
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
         if (!jwt_token?.sid) {
           toast.error("Invalid invitation token.");
           return;
         }
 
         const invitation = invitations?.data.find(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
           (inv) => inv.id === jwt_token.sid,
         );
 

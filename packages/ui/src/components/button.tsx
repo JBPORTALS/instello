@@ -1,9 +1,10 @@
 import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { cn } from "@instello/ui/lib/utils";
-import { SpinnerIcon } from "@phosphor-icons/react/ssr";
 import { Slot } from "@radix-ui/react-slot";
 import { cva } from "class-variance-authority";
+
+import { Spinner } from "./spinner";
 
 const buttonVariants = cva(
   "focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive inline-flex shrink-0 items-center justify-center gap-2 rounded-md text-sm font-medium whitespace-nowrap transition-all outline-none focus-visible:ring-[3px] disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
@@ -61,7 +62,7 @@ function Button({
         loading ? (
           <>
             {children}
-            <SpinnerIcon weight="bold" className="animate-spin" />
+            <Spinner weight="bold" className="animate-spin" />
           </>
         ) : (
           children

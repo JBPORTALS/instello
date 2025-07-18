@@ -32,7 +32,7 @@ export default async function Page({
   if (activeSemesterId)
     redirect(`/${slug}/b/${branchId}/s/${activeSemesterId}`);
 
-  redirect(`/${slug}/b/${branchId}/s/${firstSemester?.id}`);
+  if (firstSemester) redirect(`/${slug}/b/${branchId}/s/${firstSemester.id}`);
 
   return (
     <div className="flex h-svh w-full flex-col items-center justify-center gap-2.5">

@@ -17,8 +17,9 @@ import {
   CommandList,
 } from "@instello/ui/components/command";
 import { Label } from "@instello/ui/components/label";
+import { Spinner } from "@instello/ui/components/spinner";
 import { cn } from "@instello/ui/lib/utils";
-import { CheckIcon, SpinnerIcon, UserIcon } from "@phosphor-icons/react";
+import { CheckIcon, UserIcon } from "@phosphor-icons/react";
 
 interface OrganizationMembershipsCommandProps {
   /** Staff UserId */
@@ -40,7 +41,7 @@ export function OrganizationMembershipsCommand({
       <CommandInput placeholder="Search..." />
       {memberships?.isLoading ? (
         <div className="flex min-h-20 w-full items-center justify-center">
-          <SpinnerIcon className="size-5 animate-spin" />
+          <Spinner className="size-5" />
         </div>
       ) : (
         <CommandList>
@@ -94,7 +95,7 @@ function OrganizationMembershipsCommandNoAssigneeItem({
       </span>
 
       {isLoading ? (
-        <SpinnerIcon className="animate-spin" />
+        <Spinner />
       ) : (
         <CheckIcon
           className={cn(
@@ -145,7 +146,7 @@ function OrganizationMembershipsCommandItem({
       </span>
 
       {isLoading ? (
-        <SpinnerIcon className="animate-spin" />
+        <Spinner />
       ) : (
         <CheckIcon
           className={cn(

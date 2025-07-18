@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createQueryClient } from "@/trpc/query-client";
 import { trpc } from "@/trpc/server";
-import { SpinnerIcon } from "@phosphor-icons/react/dist/ssr";
+import { Spinner } from "@instello/ui/components/spinner";
 
 export default async function Page({
   params,
@@ -39,10 +39,7 @@ export default async function Page({
       <span className="text-muted-foreground text-lg font-medium">
         Setting up your branch...
       </span>
-      <SpinnerIcon
-        className="text-muted-foreground animation-duration-[1.3s] size-7 animate-spin"
-        weight={"thin"}
-      />
+      <Spinner className="text-muted-foreground" />
     </div>
   );
 }

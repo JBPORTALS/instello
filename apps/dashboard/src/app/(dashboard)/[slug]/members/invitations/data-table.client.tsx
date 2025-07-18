@@ -2,7 +2,7 @@
 
 import { DataTable } from "@/components/data-table";
 import { useTRPC } from "@/trpc/react";
-import { SpinnerIcon } from "@phosphor-icons/react";
+import { Spinner } from "@instello/ui/components/spinner";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { columns } from "./columns";
@@ -15,8 +15,8 @@ export default function DataTableClient() {
 
   if (isRefetching)
     return (
-      <div className="flex h-full w-full items-center justify-center">
-        <SpinnerIcon className="size-5 animate-spin" />
+      <div className="flex h-svh w-full items-center justify-center">
+        <Spinner className="size-8" />
       </div>
     );
 

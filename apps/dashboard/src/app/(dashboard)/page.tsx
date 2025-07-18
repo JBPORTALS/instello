@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useOrganization, useOrganizationList } from "@clerk/nextjs";
-import { SpinnerIcon } from "@phosphor-icons/react";
+import { Spinner } from "@instello/ui/components/spinner";
 
 export default function Page() {
   const { organization: activeOrganization } = useOrganization();
@@ -31,7 +31,7 @@ export default function Page() {
       <h4 className="text-muted-foreground text-lg font-medium">
         Setting up workspace...
       </h4>
-      <SpinnerIcon
+      <Spinner
         className="text-muted-foreground size-8 animate-spin"
         weight={"thin"}
       />

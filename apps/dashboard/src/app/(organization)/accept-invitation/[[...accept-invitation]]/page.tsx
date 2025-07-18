@@ -11,7 +11,7 @@ import {
   useOrganizationList,
   useUser,
 } from "@clerk/nextjs";
-import { SpinnerIcon } from "@phosphor-icons/react";
+import { Spinner } from "@instello/ui/components/spinner";
 import { jwtDecode } from "jwt-decode";
 import { toast } from "sonner";
 
@@ -35,7 +35,7 @@ export default function Page() {
         // TODO:
         const jwt_token = jwtDecode<{ sid?: string }>(clerk_ticket ?? "");
 
-        if (!jwt_token?.sid) {
+        if (!jwt_token.sid) {
           toast.error("Invalid invitation token.");
           return;
         }
@@ -86,10 +86,7 @@ export default function Page() {
             <h4 className="text-muted-foreground text-lg font-medium">
               Accepting Invitation...
             </h4>
-            <SpinnerIcon
-              strokeWidth={0.5}
-              className="text-muted-foreground size-8 animate-spin"
-            />
+            <Spinner className="text-muted-foreground size-8" />
           </div>
         </SignedIn>
         <SignedOut>

@@ -41,7 +41,6 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --spinner: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="black" viewBox="0 0 256 256"><path d="M230.18,114.66a102.88,102.88,0,0,0-9.85-27.07,8,8,0,0,0-13.92,8,88,88,0,1,1-36.49-36.5,8,8,0,0,0,8-13.91,104,104,0,1,0,52.29,69.48A8,8,0,0,0,230.18,114.66Z"/></svg>');
 }
 
 .dark {
@@ -115,7 +114,6 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --mask-spinner: var(--spinner);
 }
 
 @layer base {

@@ -181,20 +181,17 @@ interface ReactTimetableSlotProps {
   slot: TimetableData;
   onResize: (id: string, delta: number, direction: "left" | "right") => void;
   numberOfHours?: number;
-  // getSnapLimits: (slotId: string) => { left: number; right: number };
 }
 
 function ReactTimetableSlot({
   slot,
   onResize,
   numberOfHours = 7,
-  // getSnapLimits,
 }: ReactTimetableSlotProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [hourWidth, setHourWidth] = React.useState(100); // default
   const [dragOffset, setDragOffset] = React.useState(0); // px during drag
   const [dragDir, setDragDir] = React.useState<"left" | "right" | null>(null);
-  // const { left: maxLeftSnap, right: maxRightSnap } = getSnapLimits(slot.id);
 
   // Dynamically calculate column width
   useLayoutEffect(() => {
@@ -205,35 +202,34 @@ function ReactTimetableSlot({
   }, [numberOfHours]);
 
   const bindLeft = useDrag(
-    ({ movement: [mx], delta: [dx], last }) => {
+    ({ movement: [mx], last }) => {
       setDragDir("left");
-      const snappedCols = Math.trunc(mx / hourWidth); // ✅ Signed columns
-
-      setDragOffset(mx + dx);
+      setDragOffset(mx); // Don't snap here
 
       if (last) {
+        const snappedCols = Math.round(mx / hourWidth); // round instead of trunc
         setDragOffset(0);
         setDragDir(null);
-
-        onResize(slot.id, snappedCols, "left");
+        requestAnimationFrame(() => {
+          onResize(slot.id, snappedCols, "left");
+        });
       }
     },
     { axis: "x", filterTaps: true },
   );
 
   const bindRight = useDrag(
-    ({ movement: [mx], delta: [dx], last }) => {
+    ({ movement: [mx], last }) => {
       setDragDir("right");
-
-      const snappedCols = Math.trunc(mx / hourWidth); // ✅ Signed columns
-
-      setDragOffset(mx + dx);
+      setDragOffset(mx); // Keep raw movement
 
       if (last) {
+        const snappedCols = Math.round(mx / hourWidth); // round instead of trunc
         setDragOffset(0);
         setDragDir(null);
-
-        onResize(slot.id, snappedCols, "right");
+        requestAnimationFrame(() => {
+          onResize(slot.id, snappedCols, "right");
+        });
       }
     },
     { axis: "x", filterTaps: true },
@@ -250,17 +246,11 @@ function ReactTimetableSlot({
   if (dragDir === "left") {
     dragWidth = baseWidth - dragOffset;
     dragWidth = Math.max(hourWidth, dragWidth);
-    offsetX = dragOffset;
+    offsetX = baseWidth - dragWidth;
   } else if (dragDir === "right") {
     dragWidth = baseWidth + dragOffset;
     dragWidth = Math.max(hourWidth, dragWidth);
     offsetX = 0;
-  }
-
-  if (dragDir) {
-    console.log("drag dir", dragDir);
-    console.log("offsetX", offsetX);
-    console.log("dragWidth", dragWidth);
   }
 
   return (

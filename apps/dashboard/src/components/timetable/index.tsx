@@ -7,7 +7,7 @@ import { useDrag } from "@use-gesture/react";
 import { format } from "date-fns";
 
 export interface TimetableData {
-  id: string;
+  _id: string;
   startOfPeriod: number;
   endOfPeriod: number;
   dayOfWeek: number;
@@ -16,21 +16,21 @@ export interface TimetableData {
 
 const data: TimetableData[] = [
   {
-    id: "839292",
+    _id: "839292",
     startOfPeriod: 1,
     endOfPeriod: 2,
     dayOfWeek: 1,
     subject: "Mathemetics",
   },
   {
-    id: "839282",
+    _id: "839282",
     startOfPeriod: 2,
     endOfPeriod: 2,
     dayOfWeek: 2,
     subject: "Science",
   },
   {
-    id: "8399092",
+    _id: "8399092",
     startOfPeriod: 6,
     endOfPeriod: 7,
     dayOfWeek: 1,
@@ -55,13 +55,13 @@ export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
   const [slots, setSlots] = React.useState<TimetableData[]>(data);
 
   const handleResize = (
-    id: string,
+    _id: string,
     delta: number,
     direction: "left" | "right",
   ) => {
     setSlots((prev) =>
       prev.map((s) => {
-        if (s.id !== id) return s;
+        if (s._id !== _id) return s;
 
         let newStart = s.startOfPeriod;
         let newEnd = s.endOfPeriod;
@@ -96,36 +96,36 @@ export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
     );
   };
 
-  // function getSnapLimits(slotId: string): { left: number; right: number } {
-  //   const current = slots.find((s) => s.id === slotId);
-  //   const siblings = slots.filter((s) => s.id !== slotId);
+  function getSnapLimits(slotId: string): { left: number; right: number } {
+    const current = slots.find((s) => s._id === slotId);
+    const siblings = slots.filter((s) => s._id !== slotId);
 
-  //   if (!current) throw new Error("No solt found");
+    if (!current) throw new Error("No solt found");
 
-  //   const maxLeft = current.startOfPeriod;
-  //   const maxRight = numberOfHours;
+    const maxLeft = 1;
+    const maxRight = numberOfHours;
 
-  //   const nearestLeft = siblings
-  //     .filter((s) => s.endOfPeriod < current.startOfPeriod)
-  //     .sort((a, b) => b.endOfPeriod - a.endOfPeriod)[0];
+    const nearestLeft = siblings
+      .filter((s) => s.endOfPeriod < current.startOfPeriod)
+      .sort((a, b) => b.endOfPeriod - a.endOfPeriod)[0];
 
-  //   const nearestRight = siblings
-  //     .filter((s) => s.startOfPeriod > current.endOfPeriod)
-  //     .sort((a, b) => a.startOfPeriod - b.startOfPeriod)[0];
+    const nearestRight = siblings
+      .filter((s) => s.startOfPeriod > current.endOfPeriod)
+      .sort((a, b) => a.startOfPeriod - b.startOfPeriod)[0];
 
-  //   const leftLimit = nearestLeft
-  //     ? current.startOfPeriod - nearestLeft.endOfPeriod - 1
-  //     : maxLeft;
+    const leftLimit = nearestLeft
+      ? current.startOfPeriod - nearestLeft.endOfPeriod - 1
+      : maxLeft;
 
-  //   const rightLimit = nearestRight
-  //     ? nearestRight.startOfPeriod - current.endOfPeriod - 1
-  //     : maxRight;
+    const rightLimit = nearestRight
+      ? nearestRight.startOfPeriod - current.endOfPeriod - 1
+      : maxRight;
 
-  //   return {
-  //     left: Math.max(0, leftLimit),
-  //     right: Math.max(0, rightLimit),
-  //   };
-  // }
+    return {
+      left: Math.max(0, leftLimit),
+      right: Math.max(0, rightLimit),
+    };
+  }
 
   return (
     <React.Fragment>
@@ -164,9 +164,9 @@ export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
                 .map((slot) => (
                   <ReactTimetableSlot
                     onResize={handleResize}
-                    // getSnapLimits={getSnapLimits}
+                    getSnapLimits={getSnapLimits}
                     slot={slot}
-                    key={slot.id}
+                    key={slot._id}
                   />
                 ))}
             </div>
@@ -179,14 +179,16 @@ export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
 
 interface ReactTimetableSlotProps {
   slot: TimetableData;
-  onResize: (id: string, delta: number, direction: "left" | "right") => void;
+  onResize: (_id: string, delta: number, direction: "left" | "right") => void;
   numberOfHours?: number;
+  getSnapLimits: (slotId: string) => { left: number; right: number };
 }
 
 function ReactTimetableSlot({
   slot,
   onResize,
   numberOfHours = 7,
+  getSnapLimits,
 }: ReactTimetableSlotProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [hourWidth, setHourWidth] = React.useState(100); // default
@@ -204,15 +206,18 @@ function ReactTimetableSlot({
   const bindLeft = useDrag(
     ({ movement: [mx], last }) => {
       setDragDir("left");
-      setDragOffset(mx); // Don't snap here
+
+      const snappedCols = Math.round(mx / hourWidth);
+      const clampedCols = Math.max(-slot.startOfPeriod + 1, snappedCols); // prevent overflow left
 
       if (last) {
-        const snappedCols = Math.round(mx / hourWidth); // round instead of trunc
         setDragOffset(0);
         setDragDir(null);
         requestAnimationFrame(() => {
-          onResize(slot.id, snappedCols, "left");
+          onResize(slot._id, clampedCols, "left");
         });
+      } else {
+        setDragOffset(clampedCols * hourWidth); // convert snapped cols back to px for live preview
       }
     },
     { axis: "x", filterTaps: true },
@@ -221,15 +226,22 @@ function ReactTimetableSlot({
   const bindRight = useDrag(
     ({ movement: [mx], last }) => {
       setDragDir("right");
-      setDragOffset(mx); // Keep raw movement
+
+      const snappedCols = Math.round(mx / hourWidth);
+      const maxCols = numberOfHours - slot.endOfPeriod; // how much it can grow
+      const clampedCols = Math.max(
+        Math.min(snappedCols, maxCols),
+        -originalCols + 1,
+      ); // prevent shrinking below 1
 
       if (last) {
-        const snappedCols = Math.round(mx / hourWidth); // round instead of trunc
         setDragOffset(0);
         setDragDir(null);
         requestAnimationFrame(() => {
-          onResize(slot.id, snappedCols, "right");
+          onResize(slot._id, clampedCols, "right");
         });
+      } else {
+        setDragOffset(clampedCols * hourWidth);
       }
     },
     { axis: "x", filterTaps: true },

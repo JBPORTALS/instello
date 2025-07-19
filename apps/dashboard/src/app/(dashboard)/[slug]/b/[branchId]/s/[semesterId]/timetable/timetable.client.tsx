@@ -25,5 +25,10 @@ export function TimetableClient() {
       </div>
     );
 
-  return <ReactTimetable timetableSlots={data.timetableData.timetableSlots} />;
+  const timetableSlots = data.timetableData.timetableSlots.map((s) => ({
+    ...s,
+    subjectName: s.subject.name,
+  }));
+
+  return <ReactTimetable timetableSlots={timetableSlots} />;
 }

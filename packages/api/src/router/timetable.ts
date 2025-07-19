@@ -80,7 +80,7 @@ export const timetableRouter = {
         eq(timetable.semesterId, ctx.auth.activeSemester.id),
       ),
       orderBy: ({ createdAt }, { desc }) => [desc(createdAt)],
-      with: { timetableSlots: true },
+      with: { timetableSlots: { with: { subject: true } } },
     });
 
     return { timetableData };

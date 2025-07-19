@@ -166,6 +166,10 @@ export const timetableSlotsRealations = relations(timetableSlot, ({ one }) => ({
     fields: [timetableSlot.timetableId],
     references: [timetable.id],
   }),
+  subject: one(subject, {
+    fields: [timetableSlot.subjectId],
+    references: [subject.id],
+  }),
 }));
 
 export const CreateTimetableSlotsSchema = createInsertSchema(

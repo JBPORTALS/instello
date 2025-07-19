@@ -12,10 +12,10 @@ export function TimetableClient() {
     trpc.timetable.findByActiveSemester.queryOptions({ branchId }),
   );
 
-  return (
-    <ReactTimetable
-      timetableSlots={data.timetableData?.timetableSlots ?? []}
-      editable
-    />
-  );
+  const timetableSlots = data.timetableData?.timetableSlots.map((s) => ({
+    ...s,
+    subjectName: s.subject.name,
+  }));
+
+  return <ReactTimetable timetableSlots={timetableSlots ?? []} editable />;
 }

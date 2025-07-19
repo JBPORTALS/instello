@@ -30,8 +30,12 @@ function getWeekdayName(dayIndex: number) {
 const daysIndex = [1, 2, 3, 4, 5, 6];
 
 interface ReactTimetableProps
-  extends Omit<ReactTimetableContextProps, "_id" | "addSlot" | "removeSlot"> {
+  extends Omit<
+    ReactTimetableContextProps,
+    "timetableSlots" | "addSlot" | "removeSlot"
+  > {
   numberOfHours?: number;
+  timetableSlots: Omit<TimetableData, "_id">[];
 }
 
 export interface PopoverState {
@@ -87,7 +91,7 @@ export function ReactTimetable({
     <ReactTimetableContext.Provider
       value={{ editable, addSlot, removeSlot, timetableSlots: slots }}
     >
-      <pre>{JSON.stringify(slots, undefined, 2)}</pre>
+      {/* <pre>{JSON.stringify(slots, undefined, 2)}</pre> */}
       <div
         style={{
           gridTemplateColumns: `repeat(${numberOfHours + 1}, minmax(0, 1fr))`,

@@ -96,37 +96,6 @@ export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
     );
   };
 
-  function getSnapLimits(slotId: string): { left: number; right: number } {
-    const current = slots.find((s) => s._id === slotId);
-    const siblings = slots.filter((s) => s._id !== slotId);
-
-    if (!current) throw new Error("No solt found");
-
-    const maxLeft = 1;
-    const maxRight = numberOfHours;
-
-    const nearestLeft = siblings
-      .filter((s) => s.endOfPeriod < current.startOfPeriod)
-      .sort((a, b) => b.endOfPeriod - a.endOfPeriod)[0];
-
-    const nearestRight = siblings
-      .filter((s) => s.startOfPeriod > current.endOfPeriod)
-      .sort((a, b) => a.startOfPeriod - b.startOfPeriod)[0];
-
-    const leftLimit = nearestLeft
-      ? current.startOfPeriod - nearestLeft.endOfPeriod - 1
-      : maxLeft;
-
-    const rightLimit = nearestRight
-      ? nearestRight.startOfPeriod - current.endOfPeriod - 1
-      : maxRight;
-
-    return {
-      left: Math.max(0, leftLimit),
-      right: Math.max(0, rightLimit),
-    };
-  }
-
   return (
     <React.Fragment>
       <pre>{JSON.stringify(slots, undefined, 2)}</pre>
@@ -164,7 +133,6 @@ export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
                 .map((slot) => (
                   <ReactTimetableSlot
                     onResize={handleResize}
-                    getSnapLimits={getSnapLimits}
                     slot={slot}
                     key={slot._id}
                   />
@@ -181,14 +149,12 @@ interface ReactTimetableSlotProps {
   slot: TimetableData;
   onResize: (_id: string, delta: number, direction: "left" | "right") => void;
   numberOfHours?: number;
-  getSnapLimits: (slotId: string) => { left: number; right: number };
 }
 
 function ReactTimetableSlot({
   slot,
   onResize,
   numberOfHours = 7,
-  getSnapLimits,
 }: ReactTimetableSlotProps) {
   const ref = React.useRef<HTMLDivElement>(null);
   const [hourWidth, setHourWidth] = React.useState(100); // default

@@ -87,7 +87,7 @@ export function ReactTimetable({
     <ReactTimetableContext.Provider
       value={{ editable, addSlot, removeSlot, timetableSlots: slots }}
     >
-      {/* <pre>{JSON.stringify(slots, undefined, 2)}</pre> */}
+      <pre>{JSON.stringify(slots, undefined, 2)}</pre>
       <div
         style={{
           gridTemplateColumns: `repeat(${numberOfHours + 1}, minmax(0, 1fr))`,
@@ -117,34 +117,42 @@ export function ReactTimetable({
                 gridTemplateColumns: `repeat(${numberOfHours}, minmax(0, 1fr))`,
               }}
             >
-              {Array.from({ length: numberOfHours }).map((_, i) => {
-                const occupied = slots.find(
-                  (slot) =>
-                    slot.dayOfWeek === dayIdx &&
-                    i + 1 >= slot.startOfPeriod &&
-                    i + 1 <= slot.endOfPeriod,
-                );
+              <div
+                data-row={"empty-slot-row"}
+                className="absolute z-10 col-span-full h-full w-full"
+              >
+                {/* Empty Clickable Cells */}
+                {Array.from({ length: numberOfHours }).map((_, i) => {
+                  const occupied = slots.find(
+                    (slot) =>
+                      slot.dayOfWeek === dayIdx &&
+                      i + 1 >= slot.startOfPeriod &&
+                      i + 1 <= slot.endOfPeriod, // <-- fixed condition
+                  );
 
-                const left = `${(i / numberOfHours) * 100}%`;
-                const width = `${100 / numberOfHours}%`;
+                  const left = `${(i / numberOfHours) * 100}%`;
+                  const width = `${100 / numberOfHours}%`;
 
-                return (
-                  <div
-                    key={`empty-${dayIdx}-${i}`}
-                    className={cn(
-                      "hover:bg-muted absolute top-2 bottom-2 cursor-pointer transition-colors",
-                      occupied && "pointer-events-none opacity-0",
-                    )}
-                    style={{
-                      left,
-                      width,
-                    }}
-                    onClick={(e) => {
-                      if (!occupied) handleEmptyClick(dayIdx, i + 1, e);
-                    }}
-                  />
-                );
-              })}
+                  return (
+                    <div
+                      data-slot="empty"
+                      key={`empty-${dayIdx}-${i}`}
+                      className={cn(
+                        "hover:bg-muted bg-muted/20 absolute top-0 bottom-0 cursor-pointer transition-colors",
+                        occupied &&
+                          "pointer-events-none h-0 opacity-0 hover:bg-transparent",
+                      )}
+                      style={{
+                        left,
+                        width,
+                      }}
+                      onClick={(e) => {
+                        if (!occupied) handleEmptyClick(dayIdx, i + 1, e);
+                      }}
+                    />
+                  );
+                })}
+              </div>
 
               {slots
                 .filter((s) => s.dayOfWeek === dayIdx)
@@ -159,7 +167,9 @@ export function ReactTimetable({
           </React.Fragment>
         ))}
       </div>
-      {popoverState && (
+
+      {/** Popover for subjects list only in editable mode */}
+      {popoverState && editable && (
         <SubjectPopover
           {...popoverState}
           onOpenChange={() => setPopoverState(null)}

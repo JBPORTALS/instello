@@ -97,7 +97,7 @@ export function ReactTimetableSlot({
     <div
       ref={ref}
       className={cn(
-        "bg-accent/50 relative flex h-20 overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75",
+        "bg-accent/50 relative z-50 flex h-20 overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75",
         dragDir && "top-2",
       )}
       style={{

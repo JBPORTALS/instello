@@ -72,13 +72,18 @@ export const timetableRouter = {
       });
     }),
 
-  /** Get current time table */
-  findByBatchId: branchProcedure.query(async ({ ctx, input }) => {
-    return await ctx.db.query.timetable.findFirst({
-      where: eq(timetable.branchId, input.branchId),
+  /** Get current time table within branch and active semester */
+  findByActiveSemester: branchProcedure.query(async ({ ctx, input }) => {
+    const timetableData = await ctx.db.query.timetable.findFirst({
+      where: and(
+        eq(timetable.branchId, input.branchId),
+        eq(timetable.semesterId, ctx.auth.activeSemester.id),
+      ),
       orderBy: ({ createdAt }, { desc }) => [desc(createdAt)],
       with: { timetableSlots: true },
     });
+
+    return { timetableData };
   }),
 
   /** Get all timetable version history within the branch*/

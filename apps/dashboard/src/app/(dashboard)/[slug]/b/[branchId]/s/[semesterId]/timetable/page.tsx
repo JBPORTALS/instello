@@ -1,12 +1,31 @@
 import Container from "@/components/container";
-import { ReactTimetable } from "@/components/timetable";
+import { HydrateClient, prefetch, trpc } from "@/trpc/server";
+import { Button } from "@instello/ui/components/button";
+import { PlusIcon } from "@phosphor-icons/react/ssr";
 
-export default function Page() {
+import { TimetableClient } from "./timetable.client";
+
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ branchId: string }>;
+}) {
+  const { branchId } = await params;
+  prefetch(trpc.timetable.findByActiveSemester.queryOptions({ branchId }));
+
   return (
-    <Container className="px-16">
-      <h2 className="text-3xl font-semibold">Timetable</h2>
+    <HydrateClient>
+      <Container className="px-16">
+        <div className="inline-flex w-full justify-between">
+          <h2 className="text-3xl font-semibold">Timetable</h2>
+          <Button>
+            <PlusIcon />
+            New
+          </Button>
+        </div>
 
-      <ReactTimetable editable />
-    </Container>
+        <TimetableClient />
+      </Container>
+    </HydrateClient>
   );
 }

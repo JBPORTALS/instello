@@ -1,5 +1,5 @@
 import type { SQL } from "drizzle-orm";
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { check, pgTable, unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -126,6 +126,10 @@ export const timetable = pgTable("timetable", (t) => ({
   effectiveFrom: t.timestamp({ mode: "date", withTimezone: true }).notNull(), // when it goes live
 }));
 
+export const timetableRealations = relations(timetable, ({ many }) => ({
+  timetableSlots: many(timetableSlot),
+}));
+
 export const CreateTimetableSchema = createInsertSchema(timetable).omit({
   id: true,
   createdAt: true,
@@ -156,6 +160,13 @@ export const timetableSlot = pgTable(
   }),
   (s) => [check("check_dayOfCheck", sql`${s.dayOfWeek} BETWEEN 0 AND 6`)],
 );
+
+export const timetableSlotsRealations = relations(timetableSlot, ({ one }) => ({
+  timetable: one(timetable, {
+    fields: [timetableSlot.timetableId],
+    references: [timetable.id],
+  }),
+}));
 
 export const CreateTimetableSlotsSchema = createInsertSchema(
   timetableSlot,

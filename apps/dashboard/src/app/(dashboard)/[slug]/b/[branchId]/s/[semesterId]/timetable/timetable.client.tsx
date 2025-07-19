@@ -25,5 +25,5 @@ export function TimetableClient() {
       </div>
     );
 
-  return <ReactTimetable />;
+  return <ReactTimetable timetableSlots={data.timetableData.timetableSlots} />;
 }

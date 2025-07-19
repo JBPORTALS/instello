@@ -120,7 +120,7 @@ export function ReactTimetableSlot({
         <IconGripVertical className="size-full" />
       </button>
 
-      <div className="w-full p-2.5 text-xs">{slot.subject}</div>
+      <div className="w-full p-2.5 text-xs">UI</div>
 
       {/* RIGHT HANDLE */}
       <button

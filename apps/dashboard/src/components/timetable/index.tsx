@@ -5,7 +5,6 @@ import { format } from "date-fns";
 
 import type { ReactTimetableContextProps } from "./context";
 import { ReactTimetableContext } from "./context";
-import { mockTimetableData } from "./mocks/timetable-data";
 import { ReactTimetableSlot } from "./react-timetable-slot";
 import { resizeSlot } from "./utils";
 
@@ -14,7 +13,6 @@ export interface TimetableData {
   startOfPeriod: number;
   endOfPeriod: number;
   dayOfWeek: number;
-  subject: string;
 }
 
 /** Utility to get weekday name from index */
@@ -28,13 +26,16 @@ const daysIndex = [1, 2, 3, 4, 5, 6];
 
 interface ReactTimetableProps extends ReactTimetableContextProps {
   numberOfHours?: number;
+  timetableSlots: Omit<TimetableData, "_id">[];
 }
 
 export function ReactTimetable({
   numberOfHours = 7,
   editable = false,
+  timetableSlots = [],
 }: ReactTimetableProps) {
-  const [slots, setSlots] = React.useState<TimetableData[]>(mockTimetableData);
+  const inputSlots = timetableSlots.map((s) => ({ ...s, _id: "" }));
+  const [slots, setSlots] = React.useState<TimetableData[]>(inputSlots);
 
   const handleResize = (
     _id: string,

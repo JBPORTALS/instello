@@ -6,7 +6,7 @@ export default function Page() {
     <Container className="px-16">
       <h2 className="text-3xl font-semibold">Timetable</h2>
 
-      <ReactTimetable />
+      <ReactTimetable editable />
     </Container>
   );
 }

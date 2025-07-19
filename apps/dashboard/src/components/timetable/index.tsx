@@ -52,7 +52,7 @@ export function ReactTimetable({
 
   return (
     <ReactTimetableContext.Provider value={{ editable }}>
-      <pre>{JSON.stringify(slots, undefined, 2)}</pre>
+      {/* <pre>{JSON.stringify(slots, undefined, 2)}</pre> */}
       <div
         style={{
           gridTemplateColumns: `repeat(${numberOfHours + 1}, minmax(0, 1fr))`,

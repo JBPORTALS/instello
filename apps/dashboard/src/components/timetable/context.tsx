@@ -3,7 +3,7 @@
 import React from "react";
 
 export interface ReactTimetableContextProps {
-  editable: boolean;
+  editable?: boolean;
 }
 
 export const ReactTimetableContext =

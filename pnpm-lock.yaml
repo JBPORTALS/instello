@@ -91,6 +91,9 @@ importers:
       '@instello/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@paralleldrive/cuid2':
+        specifier: ^2.2.2
+        version: 2.2.2
       '@phosphor-icons/react':
         specifier: 'catalog:'
         version: 2.1.10(react-dom@19.1.0(react@19.1.0))(react@19.1.0)

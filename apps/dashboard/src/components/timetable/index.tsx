@@ -1,11 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import { cn } from "@instello/ui/lib/utils";
+import { createId } from "@paralleldrive/cuid2";
 import { format } from "date-fns";
 
 import type { ReactTimetableContextProps } from "./context";
 import { ReactTimetableContext } from "./context";
 import { ReactTimetableSlot } from "./react-timetable-slot";
+import { SubjectPopover } from "./subject-popover";
 import { resizeSlot } from "./utils";
 
 export interface TimetableData {
@@ -13,6 +16,8 @@ export interface TimetableData {
   startOfPeriod: number;
   endOfPeriod: number;
   dayOfWeek: number;
+  subjectId: string;
+  subjectName: string;
 }
 
 /** Utility to get weekday name from index */
@@ -24,9 +29,15 @@ function getWeekdayName(dayIndex: number) {
 /** Day indices representing Monday to Saturday */
 const daysIndex = [1, 2, 3, 4, 5, 6];
 
-interface ReactTimetableProps extends ReactTimetableContextProps {
+interface ReactTimetableProps
+  extends Omit<ReactTimetableContextProps, "_id" | "addSlot" | "removeSlot"> {
   numberOfHours?: number;
-  timetableSlots: Omit<TimetableData, "_id">[];
+}
+
+export interface PopoverState {
+  dayIdx: number;
+  period: number;
+  position: { x: number; y: number };
 }
 
 export function ReactTimetable({
@@ -34,8 +45,21 @@ export function ReactTimetable({
   editable = false,
   timetableSlots = [],
 }: ReactTimetableProps) {
-  const inputSlots = timetableSlots.map((s) => ({ ...s, _id: "" }));
+  const inputSlots = timetableSlots.map((s) => ({ ...s, _id: createId() }));
   const [slots, setSlots] = React.useState<TimetableData[]>(inputSlots);
+  const [popoverState, setPopoverState] = useState<PopoverState | null>(null);
+
+  const handleEmptyClick = (
+    dayIdx: number,
+    period: number,
+    e: React.MouseEvent,
+  ) => {
+    setPopoverState({
+      dayIdx,
+      period,
+      position: { x: e.clientX, y: e.clientY },
+    });
+  };
 
   const handleResize = (
     _id: string,
@@ -51,8 +75,18 @@ export function ReactTimetable({
     );
   };
 
+  const addSlot = React.useCallback((data: Omit<TimetableData, "_id">) => {
+    setSlots((prev) => [...prev, { ...data, _id: createId() }]);
+  }, []);
+
+  const removeSlot = React.useCallback((_id: string) => {
+    setSlots((prev) => prev.filter((s) => s._id === _id));
+  }, []);
+
   return (
-    <ReactTimetableContext.Provider value={{ editable }}>
+    <ReactTimetableContext.Provider
+      value={{ editable, addSlot, removeSlot, timetableSlots: slots }}
+    >
       {/* <pre>{JSON.stringify(slots, undefined, 2)}</pre> */}
       <div
         style={{
@@ -83,6 +117,35 @@ export function ReactTimetable({
                 gridTemplateColumns: `repeat(${numberOfHours}, minmax(0, 1fr))`,
               }}
             >
+              {Array.from({ length: numberOfHours }).map((_, i) => {
+                const occupied = slots.find(
+                  (slot) =>
+                    slot.dayOfWeek === dayIdx &&
+                    i + 1 >= slot.startOfPeriod &&
+                    i + 1 <= slot.endOfPeriod,
+                );
+
+                const left = `${(i / numberOfHours) * 100}%`;
+                const width = `${100 / numberOfHours}%`;
+
+                return (
+                  <div
+                    key={`empty-${dayIdx}-${i}`}
+                    className={cn(
+                      "hover:bg-muted absolute top-2 bottom-2 cursor-pointer transition-colors",
+                      occupied && "pointer-events-none opacity-0",
+                    )}
+                    style={{
+                      left,
+                      width,
+                    }}
+                    onClick={(e) => {
+                      if (!occupied) handleEmptyClick(dayIdx, i + 1, e);
+                    }}
+                  />
+                );
+              })}
+
               {slots
                 .filter((s) => s.dayOfWeek === dayIdx)
                 .map((slot) => (
@@ -96,6 +159,12 @@ export function ReactTimetable({
           </React.Fragment>
         ))}
       </div>
+      {popoverState && (
+        <SubjectPopover
+          {...popoverState}
+          onOpenChange={() => setPopoverState(null)}
+        />
+      )}
     </ReactTimetableContext.Provider>
   );
 }

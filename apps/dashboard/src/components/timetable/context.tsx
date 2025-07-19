@@ -2,8 +2,13 @@
 
 import React from "react";
 
+import type { TimetableData } from ".";
+
 export interface ReactTimetableContextProps {
   editable?: boolean;
+  timetableSlots: TimetableData[];
+  addSlot: (data: Omit<TimetableData, "_id">) => void;
+  removeSlot: (_id: string) => void;
 }
 
 export const ReactTimetableContext =

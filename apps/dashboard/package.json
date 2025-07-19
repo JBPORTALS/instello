@@ -9,6 +9,7 @@
     "dev": "pnpm with-env next dev --turbopack",
     "format": "prettier --check . --ignore-path ../../.gitignore",
     "lint": "eslint",
+    "test": "vitest",
     "start": "pnpm with-env next start",
     "typecheck": "tsc --noEmit",
     "with-env": "dotenv -e ../../.env --"
@@ -46,12 +47,18 @@
     "@instello/eslint-config": "workspace:*",
     "@instello/prettier-config": "workspace:*",
     "@instello/tsconfig": "workspace:*",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.3.0",
     "@types/jwt-decode": "^3.1.0",
     "@types/node": "catalog:react19",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
+    "@vitejs/plugin-react": "^4.7.0",
+    "jsdom": "^26.1.0",
     "prettier": "catalog:",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   },
   "prettier": "@instello/prettier-config"
 }

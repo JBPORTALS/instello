@@ -4,6 +4,7 @@ import { IconGripVertical } from "@tabler/icons-react";
 import { useDrag } from "@use-gesture/react";
 
 import type { TimetableData } from ".";
+import { useReactTimetable } from "./context";
 
 interface ReactTimetableSlotProps {
   slot: TimetableData;
@@ -20,6 +21,7 @@ export function ReactTimetableSlot({
   const [hourWidth, setHourWidth] = React.useState(100); // default
   const [dragOffset, setDragOffset] = React.useState(0); // px during drag
   const [dragDir, setDragDir] = React.useState<"left" | "right" | null>(null);
+  const { editable } = useReactTimetable();
 
   // Dynamically calculate column width
   useLayoutEffect(() => {
@@ -46,7 +48,7 @@ export function ReactTimetableSlot({
         setDragOffset(clampedCols * hourWidth); // convert snapped cols back to px for live preview
       }
     },
-    { axis: "x", filterTaps: true },
+    { axis: "x", filterTaps: true, enabled: editable },
   );
 
   const bindRight = useDrag(
@@ -70,7 +72,7 @@ export function ReactTimetableSlot({
         setDragOffset(clampedCols * hourWidth);
       }
     },
-    { axis: "x", filterTaps: true },
+    { axis: "x", filterTaps: true, enabled: editable },
   );
 
   // The number of hours (cols) originally occupied
@@ -110,7 +112,10 @@ export function ReactTimetableSlot({
       {/* LEFT HANDLE */}
       <button
         {...bindLeft()}
-        className="bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 left-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize"
+        className={cn(
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 left-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
+          !editable && "hidden",
+        )}
       >
         <IconGripVertical className="size-full" />
       </button>
@@ -120,7 +125,10 @@ export function ReactTimetableSlot({
       {/* RIGHT HANDLE */}
       <button
         {...bindRight()}
-        className="bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 right-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize"
+        className={cn(
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 right-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
+          !editable && "hidden",
+        )}
       >
         <IconGripVertical className="size-full" />
       </button>

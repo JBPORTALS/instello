@@ -3,9 +3,11 @@
 import React from "react";
 import { format } from "date-fns";
 
-import { resizeSlot } from "./lib/utils";
+import type { ReactTimetableContextProps } from "./context";
+import { ReactTimetableContext } from "./context";
 import { mockTimetableData } from "./mocks/timetable-data";
 import { ReactTimetableSlot } from "./react-timetable-slot";
+import { resizeSlot } from "./utils";
 
 export interface TimetableData {
   _id: string;
@@ -24,11 +26,14 @@ function getWeekdayName(dayIndex: number) {
 /** Day indices representing Monday to Saturday */
 const daysIndex = [1, 2, 3, 4, 5, 6];
 
-interface ReactTimetableProps {
+interface ReactTimetableProps extends ReactTimetableContextProps {
   numberOfHours?: number;
 }
 
-export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
+export function ReactTimetable({
+  numberOfHours = 7,
+  editable = false,
+}: ReactTimetableProps) {
   const [slots, setSlots] = React.useState<TimetableData[]>(mockTimetableData);
 
   const handleResize = (
@@ -46,7 +51,7 @@ export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
   };
 
   return (
-    <React.Fragment>
+    <ReactTimetableContext.Provider value={{ editable }}>
       <pre>{JSON.stringify(slots, undefined, 2)}</pre>
       <div
         style={{
@@ -90,6 +95,6 @@ export function ReactTimetable({ numberOfHours = 7 }: ReactTimetableProps) {
           </React.Fragment>
         ))}
       </div>
-    </React.Fragment>
+    </ReactTimetableContext.Provider>
   );
 }

@@ -53,6 +53,7 @@ export default function RootLayout({
           colorRing: "var(--color-ring)",
           fontFamily: "var(--font-sans)",
           fontSize: "0.878rem",
+          colorShadow: "rgba(0,0,0,0)",
         },
       }}
     >

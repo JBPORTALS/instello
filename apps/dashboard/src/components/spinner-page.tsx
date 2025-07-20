@@ -1,14 +1,9 @@
-"use client";
-
-import { SpinnerGapIcon } from "@phosphor-icons/react";
+import { Spinner } from "@instello/ui/components/spinner";
 
 export function SpinnerPage() {
   return (
-    <div className="flex h-svh w-full items-center justify-center">
-      <SpinnerGapIcon
-        className="text-muted-foreground size-8 animate-spin"
-        weight={"thin"}
-      />
+    <div className="flex h-[calc(100vh-104px)] w-full items-center justify-center">
+      <Spinner className="text-muted-foreground size-8" />
     </div>
   );
 }

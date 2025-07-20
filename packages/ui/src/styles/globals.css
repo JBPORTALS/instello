@@ -123,4 +123,15 @@
   body {
     @apply bg-background text-foreground;
   }
+  .pattern-diagnol-v3 {
+    background-color: #e5e5f7;
+    background-size: 8px 8px;
+    background-image: repeating-linear-gradient(
+      45deg,
+      var(--color-muted-foreground) 0,
+      var(--color-muted-foreground) 1px,
+      var(--color-muted) 0,
+      var(--color-muted) 50%
+    );
+  }
 }

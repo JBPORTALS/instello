@@ -2,9 +2,18 @@
 
 import type { TimetableInput } from "@/components/timetable";
 import React from "react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { ReactTimetable } from "@/components/timetable";
 import { useTRPC } from "@/trpc/react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@instello/ui/components/breadcrumb";
 import { Button } from "@instello/ui/components/button";
 import { Input } from "@instello/ui/components/input";
 import {
@@ -52,7 +61,23 @@ export function TimetableClient() {
   return (
     <React.Fragment>
       <div className="inline-flex w-full justify-between">
-        <h2 className="text-3xl font-semibold">New Schedule</h2>
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href={`/${slug}/b/${branchId}/s/${semesterId}/timetable`}>
+                  <h2 className="text-2xl font-semibold">Timetable</h2>
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>
+                <h2 className="text-2xl font-semibold">New Schedule</h2>
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         <div className="inline-flex gap-3.5">
           <Input

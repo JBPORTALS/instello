@@ -33,6 +33,18 @@ export const subjectRouter = {
     });
   }),
 
+  getBySubjectId: branchProcedure
+    .input(z.object({ subjectId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return ctx.db.query.subject.findFirst({
+        where: and(
+          eq(subject.branchId, input.branchId),
+          eq(subject.semesterValue, ctx.auth.activeSemester.value),
+          eq(subject.id, input.subjectId),
+        ),
+      });
+    }),
+
   assignStaff: branchProcedure
     .use(hasPermission({ permission: "org:subjects:update" }))
     .input(

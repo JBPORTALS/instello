@@ -2,6 +2,8 @@
 
 import type { RouterOutputs } from "@instello/api";
 import type { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import { Protect } from "@clerk/nextjs";
 import { Button } from "@instello/ui/components/button";
 import { DotsThreeIcon } from "@phosphor-icons/react";
@@ -13,12 +15,38 @@ import { SubjectStaffAssigner } from "./subject-staff-assigner";
 // You can use a Zod schema here if you want.
 export type Payment = RouterOutputs["subject"]["list"][number];
 
+function SubjectCell({
+  subjectId,
+  subjectName,
+}: {
+  subjectId: string;
+  subjectName: string;
+}) {
+  const { branchId, semesterId, slug } = useParams<{
+    slug: string;
+    branchId: string;
+    semesterId: string;
+  }>();
+  return (
+    <div className="min-w-4xl">
+      <Button variant={"link"}>
+        <Link href={`/${slug}/b/${branchId}/s/${semesterId}/sub/${subjectId}`}>
+          {subjectName}
+        </Link>
+      </Button>
+    </div>
+  );
+}
+
 export const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: "name",
     header: "Name",
     cell(props) {
-      return <div className="min-w-4xl">{props.getValue() as string}</div>;
+      const original = props.row.original;
+      return (
+        <SubjectCell subjectId={original.id} subjectName={original.name} />
+      );
     },
   },
   {

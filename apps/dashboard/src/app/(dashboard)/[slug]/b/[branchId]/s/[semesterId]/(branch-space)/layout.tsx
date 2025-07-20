@@ -1,6 +1,5 @@
 import React from "react";
-import { cookies } from "next/headers";
-import { SemesterSwitcher } from "@/components/semester-switcher";
+import SemesterSwitcherServer from "@/components/semester-switcher/server";
 import { SiteHeader } from "@/components/site-header";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 
@@ -17,16 +16,11 @@ export default async function Layout({
   prefetch(trpc.branch.getByBranchId.queryOptions({ branchId }));
   prefetch(trpc.branch.getSemesterList.queryOptions({ branchId }));
 
-  const cookieStore = await cookies();
-  const semesterCookieRaw = cookieStore.get("semester")?.value ?? "null";
-
   return (
     <HydrateClient>
       <SiteHeader
         startElement={<BranchTabs />}
-        endElement={
-          <SemesterSwitcher defaultSemesterCookie={semesterCookieRaw} />
-        }
+        endElement={<SemesterSwitcherServer />}
       />
 
       {children}

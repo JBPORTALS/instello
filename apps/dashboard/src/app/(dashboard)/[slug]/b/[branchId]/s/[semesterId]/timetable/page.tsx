@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Container from "@/components/container";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
+import { Protect } from "@clerk/nextjs";
 import { Button } from "@instello/ui/components/button";
 import { PlusIcon } from "@phosphor-icons/react/ssr";
 
@@ -19,12 +20,16 @@ export default async function Page({
       <Container className="px-16">
         <div className="inline-flex w-full justify-between">
           <h2 className="text-3xl font-semibold">Timetable</h2>
-          <Button asChild>
-            <Link href={`/${slug}/b/${branchId}/s/${semesterId}/timetable/new`}>
-              <PlusIcon />
-              New
-            </Link>
-          </Button>
+          <Protect permission={"org:timetables:create"}>
+            <Button asChild>
+              <Link
+                href={`/${slug}/b/${branchId}/s/${semesterId}/timetable/new`}
+              >
+                <PlusIcon />
+                New
+              </Link>
+            </Button>
+          </Protect>
         </div>
 
         <TimetableClient />

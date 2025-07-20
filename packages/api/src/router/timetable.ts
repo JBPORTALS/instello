@@ -9,11 +9,13 @@ import {
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
-import { branchProcedure } from "../trpc";
+import { branchProcedure, hasPermission } from "../trpc";
 
 export const timetableRouter = {
   /** Create new time table */
   create: branchProcedure
+    .use(hasPermission({ permission: "org:timetables:create" }))
+    .use(hasPermission({ permission: "org:timetables:update" }))
     .input(
       CreateTimetableSchema.and(
         z.object({ slots: z.array(CreateTimetableSlotsSchema) }),

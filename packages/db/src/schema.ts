@@ -156,7 +156,7 @@ export const timetableSlot = pgTable(
       .text()
       .notNull()
       .references(() => subject.id, { onDelete: "cascade" }),
-    staffClerkUserId: t.text().notNull(),
+    staffClerkUserId: t.text(),
   }),
   (s) => [check("check_dayOfCheck", sql`${s.dayOfWeek} BETWEEN 0 AND 6`)],
 );
@@ -174,4 +174,10 @@ export const timetableSlotsRealations = relations(timetableSlot, ({ one }) => ({
 
 export const CreateTimetableSlotsSchema = createInsertSchema(
   timetableSlot,
-).omit({ id: true, timetableId: true });
+).omit({
+  id: true,
+  timetableId: true,
+  createdAt: true,
+  staffClerkUserId: true,
+  updatedAt: true,
+});

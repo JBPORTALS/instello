@@ -20,6 +20,8 @@ export interface TimetableData {
   subjectName: string;
 }
 
+export type TimetableInput = Omit<TimetableData, "_id">;
+
 /** Utility to get weekday name from index */
 function getWeekdayName(dayIndex: number) {
   const baseDate = new Date(2025, 5, 15 + dayIndex);
@@ -35,7 +37,8 @@ interface ReactTimetableProps
     "timetableSlots" | "addSlot" | "removeSlot"
   > {
   numberOfHours?: number;
-  timetableSlots: Omit<TimetableData, "_id">[];
+  timetableSlots: TimetableInput[];
+  onDataChange?: (data: TimetableData[]) => void;
 }
 
 export interface PopoverState {
@@ -48,6 +51,7 @@ export function ReactTimetable({
   numberOfHours = 7,
   editable = false,
   timetableSlots = [],
+  onDataChange,
 }: ReactTimetableProps) {
   const inputSlots = timetableSlots.map((s) => ({ ...s, _id: createId() }));
   const [slots, setSlots] = React.useState<TimetableData[]>(inputSlots);
@@ -86,6 +90,10 @@ export function ReactTimetable({
   const removeSlot = React.useCallback((_id: string) => {
     setSlots((prev) => prev.filter((s) => s._id === _id));
   }, []);
+
+  React.useEffect(() => {
+    onDataChange?.(slots);
+  }, [slots, onDataChange]);
 
   return (
     <ReactTimetableContext.Provider

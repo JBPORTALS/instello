@@ -2,6 +2,7 @@ import { and, desc, eq, isDrizzleQueryError } from "@instello/db";
 import {
   CreateTimetableSchema,
   CreateTimetableSlotsSchema,
+  subject,
   timetable,
   timetableSlot,
 } from "@instello/db/schema";
@@ -48,10 +49,25 @@ export const timetableRouter = {
               message: "Couldn't able to create timetable right now",
             });
 
-          const slotsWithTimetable = slots.map((s) => ({
-            ...s,
-            timetableId: newTimetable.id,
-          }));
+          const slotsWithTimetable = await Promise.all(
+            slots.map(async (s) => {
+              const sub = await tx.query.subject.findFirst({
+                where: eq(subject.id, s.subjectId),
+              });
+
+              if (!sub)
+                throw new TRPCError({
+                  message: `One of the subjects doesn't exists`,
+                  code: "NOT_FOUND",
+                });
+
+              return {
+                ...s,
+                staffClerkUserId: sub.staffClerkUserId,
+                timetableId: newTimetable.id,
+              };
+            }),
+          );
 
           await tx.insert(timetableSlot).values(slotsWithTimetable).returning();
         } catch (e) {

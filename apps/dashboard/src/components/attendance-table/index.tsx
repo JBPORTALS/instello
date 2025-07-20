@@ -2,6 +2,16 @@
 
 import React from "react";
 import { Avatar, AvatarFallback } from "@instello/ui/components/avatar";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuShortcut,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuTrigger,
+} from "@instello/ui/components/context-menu";
 import { cn } from "@instello/ui/lib/utils";
 import {
   eachDayOfInterval,
@@ -19,10 +29,26 @@ interface Student {
   name: string;
 }
 
+interface SelectedCell {
+  studentId: string;
+  date: string; // ISO format
+  periodId: string; // `slot._id`
+}
+
+interface AttendanceData {
+  _id: string;
+  studentId: string;
+  date: Date;
+  hourSlotId: string;
+  status: "present" | "absent";
+}
+
 interface AttendanceTableContextProps {
   students: Student[];
   timetableShema: TimetableData[];
   selectedDate: Date;
+  selectedCell: SelectedCell | null;
+  setSelectedCell: React.Dispatch<React.SetStateAction<SelectedCell | null>>;
 }
 
 const AttendanceTableContext =
@@ -52,7 +78,7 @@ function useAttendance() {
 
 interface AttendanceTableProps
   extends React.HTMLAttributes<HTMLDivElement>,
-    AttendanceTableContextProps {}
+    Omit<AttendanceTableContextProps, "selectedCell" | "setSelectedCell"> {}
 
 export function AttendanceTable({
   className,
@@ -62,9 +88,21 @@ export function AttendanceTable({
   selectedDate,
   ...props
 }: AttendanceTableProps) {
+  const [selectedCell, setSelectedCell] = React.useState<SelectedCell | null>(
+    null,
+  );
+
+  const [_value, _setAttendanceData] = React.useState<AttendanceData[]>([]);
+
   return (
     <AttendanceTableContext.Provider
-      value={{ students, timetableShema, selectedDate }}
+      value={{
+        students,
+        timetableShema,
+        selectedDate,
+        selectedCell,
+        setSelectedCell,
+      }}
     >
       <div
         className={cn(
@@ -117,6 +155,73 @@ export function AttendanceTableHeaderRight({
   );
 }
 
+export function AttendanceTableCellContextMenu({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
+      <ContextMenuContent className="w-52">
+        <ContextMenuItem inset>
+          Present
+          <ContextMenuShortcut>P</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuItem inset>
+          Absent
+          <ContextMenuShortcut>A</ContextMenuShortcut>
+        </ContextMenuItem>
+        <ContextMenuSub>
+          <ContextMenuSubTrigger inset>Mark column as</ContextMenuSubTrigger>
+          <ContextMenuSubContent className="w-44">
+            <ContextMenuItem>Present</ContextMenuItem>
+            <ContextMenuItem>Absent</ContextMenuItem>
+          </ContextMenuSubContent>
+        </ContextMenuSub>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+}
+
+function AttendanceTableCell({
+  slot,
+}: {
+  slot: TimetableData & { studentId: string; date: Date };
+}) {
+  const { selectedCell, setSelectedCell } = useAttendance();
+
+  const isSelected =
+    selectedCell?.studentId === slot.studentId &&
+    selectedCell.date === slot.date.toISOString() &&
+    selectedCell.periodId === slot._id;
+  return (
+    <AttendanceTableCellContextMenu>
+      <button
+        key={slot._id}
+        className={cn(
+          "flex h-full w-20 items-center justify-center border-r-[.5px] px-1.5 last:border-r-0",
+          isSelected && "outline-primary/60 outline outline-offset-[-2px]",
+        )}
+        onClick={() => {
+          setSelectedCell({
+            studentId: slot.studentId,
+            date: slot.date.toISOString(),
+            periodId: slot._id,
+          });
+        }}
+        onContextMenu={() => {
+          setSelectedCell({
+            studentId: slot.studentId,
+            date: slot.date.toISOString(),
+            periodId: slot._id,
+          });
+        }}
+      />
+    </AttendanceTableCellContextMenu>
+  );
+}
+
 export function AttendanceTableData() {
   const { students, dates, getPeriodsByDate } = useAttendance();
 
@@ -139,6 +244,7 @@ export function AttendanceTableData() {
           >
             {dates.map((date, i) => {
               const periods = getPeriodsByDate(date);
+
               return (
                 <div
                   className="flex h-full max-w-max min-w-20 border-r-2"
@@ -148,9 +254,9 @@ export function AttendanceTableData() {
                     <div className="bg-accent pattern-diagnol-v3 h-full w-full opacity-15" />
                   ) : (
                     periods.map((slot) => (
-                      <div
+                      <AttendanceTableCell
                         key={slot._id}
-                        className="flex h-full w-20 items-center justify-center border-r-[.5px] px-1.5 last:border-r-0"
+                        slot={{ ...slot, studentId: s.id, date }}
                       />
                     ))
                   )}

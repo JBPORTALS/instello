@@ -32,6 +32,11 @@ export function TimetableClient() {
           Create new week schedule for the selected branch and semester by click
           on new button up there
         </p>
+        <Button asChild>
+          <Link href={`/${slug}/b/${branchId}/s/${semesterId}/timetable/new`}>
+            Create New
+          </Link>
+        </Button>
       </div>
     );
 

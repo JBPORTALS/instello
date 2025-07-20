@@ -150,9 +150,10 @@ export function ReactTimetable({
                       data-slot="empty"
                       key={`empty-${dayIdx}-${i}`}
                       className={cn(
-                        "hover:bg-muted bg-muted/20 absolute top-0 bottom-0 cursor-pointer transition-colors",
+                        "hover:bg-muted bg-muted/10 absolute top-0 bottom-0 cursor-pointer transition-colors",
                         occupied &&
                           "pointer-events-none h-0 opacity-0 hover:bg-transparent",
+                        !editable && "hover:bg-muted/10 hover:cursor-auto",
                       )}
                       style={{
                         left,

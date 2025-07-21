@@ -225,6 +225,9 @@ importers:
       '@instello/tsconfig':
         specifier: workspace:^
         version: link:../../tooling/typescript
+      '@storybook/addon-themes':
+        specifier: ^9.0.17
+        version: 9.0.17(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))
       '@storybook/nextjs':
         specifier: ^9.0.17
         version: 9.0.17(esbuild@0.25.6)(next@15.4.2(@babel/core@7.28.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))(type-fest@4.41.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.100.2(esbuild@0.25.6))
@@ -425,7 +428,7 @@ importers:
         version: link:../../tooling/typescript
       '@storybook/nextjs':
         specifier: ^9.0.17
-        version: 9.0.17(next@15.4.2(@babel/core@7.28.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))(type-fest@4.41.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.100.2)
+        version: 9.0.17(next@15.4.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))(type-fest@4.41.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.100.2)
       '@storybook/react':
         specifier: ^9.0.17
         version: 9.0.17(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.7.3)
@@ -2452,6 +2455,11 @@ packages:
 
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
+
+  '@storybook/addon-themes@9.0.17':
+    resolution: {integrity: sha512-qQCoWig+wPVVuiibk8AuUUH/hS9hbLFt2IdjpiCIObAjStqSQMosr/1b95FcxppBCEa8uTltEkGdxQPdpdVZEQ==}
+    peerDependencies:
+      storybook: ^9.0.17
 
   '@storybook/builder-webpack5@9.0.17':
     resolution: {integrity: sha512-LiP/nq3qv+Nowxeo4v/p/Rv7FkZS347iBnjTQJxXWpFXrCjfJujzcYizQ1WXKC5jXnLSl4hqLmaB0tzMc/zFiQ==}
@@ -8565,6 +8573,11 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
+  '@storybook/addon-themes@9.0.17(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))':
+    dependencies:
+      storybook: 9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2)
+      ts-dedent: 2.2.0
+
   '@storybook/builder-webpack5@9.0.17(esbuild@0.25.6)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))(typescript@5.7.3)':
     dependencies:
       '@storybook/core-webpack': 9.0.17(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))
@@ -8686,7 +8699,7 @@ snapshots:
       - webpack-hot-middleware
       - webpack-plugin-serve
 
-  '@storybook/nextjs@9.0.17(next@15.4.2(@babel/core@7.28.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))(type-fest@4.41.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.100.2)':
+  '@storybook/nextjs@9.0.17(next@15.4.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react-dom@19.1.0(react@19.1.0))(react@19.1.0)(storybook@9.0.17(@testing-library/dom@10.4.0)(prettier@3.6.2))(type-fest@4.41.0)(typescript@5.7.3)(webpack-hot-middleware@2.26.1)(webpack@5.100.2)':
     dependencies:
       '@babel/core': 7.28.0
       '@babel/plugin-syntax-bigint': 7.8.3(@babel/core@7.28.0)

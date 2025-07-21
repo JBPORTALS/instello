@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { DotsSixVerticalIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { motion } from "motion/react";
 
@@ -143,12 +144,32 @@ function TimeTableSlot({
   containerRef: React.RefObject<HTMLDivElement | null>;
   slot: Slot;
 }) {
+  const { editable } = useTimeTable();
+
   return (
     <motion.div
-      className="bg-accent h-full rounded-md p-4"
+      className="bg-accent/50 relative z-50 flex h-full overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75"
       dragConstraints={containerRef}
     >
-      {slot.subject}
+      {/* LEFT HANDLE */}
+      <button
+        className={cn(
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 left-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
+          !editable && "hidden",
+        )}
+      >
+        <DotsSixVerticalIcon weight="duotone" className="size-full" />
+      </button>
+      <div className="w-full p-4 text-sm">{slot.subject}</div>
+      {/* RIGHT HANDLE */}
+      <button
+        className={cn(
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 right-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
+          !editable && "hidden",
+        )}
+      >
+        <DotsSixVerticalIcon weight="duotone" className="size-full" />
+      </button>
     </motion.div>
   );
 }

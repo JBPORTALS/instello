@@ -23,3 +23,24 @@ export const Secondary: Story = {
     variant: "secondary",
   },
 };
+
+export const Outline: Story = {
+  args: {
+    children: "Get Started",
+    variant: "outline",
+  },
+};
+
+export const Ghost: Story = {
+  args: {
+    children: "Get Started",
+    variant: "ghost",
+  },
+};
+
+export const Link: Story = {
+  args: {
+    children: "Get Started",
+    variant: "link",
+  },
+};

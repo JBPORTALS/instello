@@ -1,9 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { DotsSixVerticalIcon } from "@phosphor-icons/react";
+import { useDrag } from "@use-gesture/react";
 import { format } from "date-fns";
-import { motion } from "motion/react";
+import { motion, useMotionValue, useSpring } from "motion/react";
 
 import { cn } from "../lib/utils";
 
@@ -29,6 +30,7 @@ interface TimeTableContextValue {
    */
   editable: boolean;
   onChangeSlots: (slots: Slot[]) => void;
+  defaultSlotWidth?: number;
 }
 
 const TimeTableContext = React.createContext<TimeTableContextValue | null>(
@@ -70,14 +72,36 @@ export function TimeTable({
     return;
   },
 }: TimeTableProps) {
+  const [defaultSlotWidth, setDefaultSlotWidth] = React.useState<
+    number | undefined
+  >(undefined);
+  const hourSlotRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry && entry.contentRect.width > 0) {
+        setDefaultSlotWidth(entry.contentRect.width);
+      }
+    });
+
+    if (hourSlotRef.current) {
+      observer.observe(hourSlotRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const contextValue = React.useMemo(
     () => ({
       editable,
       numberOfHours,
       slots,
       onChangeSlots,
+      defaultSlotWidth,
     }),
-    [editable, numberOfHours, slots, onChangeSlots],
+    [editable, numberOfHours, slots, onChangeSlots, defaultSlotWidth],
   );
 
   return (
@@ -89,6 +113,7 @@ export function TimeTable({
           {Array.from({ length: numberOfHours }).map((_, i) => (
             <div
               key={`h-${i}`}
+              ref={i === 0 ? hourSlotRef : null}
               className="bg-accent/20 col-span-1 flex h-12 items-center justify-center border-r"
             >
               H{i + 1}
@@ -119,7 +144,7 @@ function TimeTableDayRow({
   dayIdx: number;
 }) {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const { numberOfHours, getSlotsByDayIdx } = useTimeTable();
+  const { numberOfHours, defaultSlotWidth, getSlotsByDayIdx } = useTimeTable();
   const daySlots = getSlotsByDayIdx(dayIdx);
 
   console.log(daySlots);
@@ -130,9 +155,17 @@ function TimeTableDayRow({
       className={cn(`col-span-[${numberOfHours}] bg-accent/40 p-1`, className)}
       {...props}
     >
-      {daySlots.map((slot) => (
-        <TimeTableSlot key={slot.id} containerRef={containerRef} slot={slot} />
-      ))}
+      {daySlots.map((slot) => {
+        if (!defaultSlotWidth) return null;
+        return (
+          <TimeTableSlot
+            key={slot.id}
+            defaultSlotWidth={defaultSlotWidth}
+            containerRef={containerRef}
+            slot={slot}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -140,36 +173,85 @@ function TimeTableDayRow({
 function TimeTableSlot({
   containerRef,
   slot,
+  defaultSlotWidth,
 }: {
   containerRef: React.RefObject<HTMLDivElement | null>;
   slot: Slot;
+  defaultSlotWidth: number;
 }) {
   const { editable } = useTimeTable();
 
+  const x = useMotionValue((slot.startOfPeriod - 1) * defaultSlotWidth);
+  const width = useMotionValue(
+    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth,
+  );
+
+  const springX = useSpring(x, {
+    duration: 0.005,
+    mass: 0.5,
+  });
+  const springWidth = useSpring(width, {
+    duration: 0.005,
+    mass: 0.5,
+  });
+  // Resizing from the right
+  const bindRightResize = useDrag(({ movement: [dx] }) => {
+    const initialWidth =
+      (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
+
+    const newWidth = initialWidth + dx;
+    const snappedWidth =
+      Math.round(newWidth / defaultSlotWidth) * defaultSlotWidth;
+
+    if (snappedWidth >= defaultSlotWidth) width.set(snappedWidth);
+  });
+
+  // Resizing from the left
+  const bindLeftResize = useDrag(({ movement: [dx] }) => {
+    const initialX = (slot.startOfPeriod - 1) * defaultSlotWidth;
+    const initialWidth =
+      (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
+
+    const newX = initialX + dx;
+    const newWidth = initialWidth - dx;
+
+    const snappedX = Math.round(newX / defaultSlotWidth) * defaultSlotWidth;
+    const snappedWidth =
+      Math.round(newWidth / defaultSlotWidth) * defaultSlotWidth;
+
+    if (snappedWidth >= defaultSlotWidth) {
+      x.set(snappedX);
+      width.set(snappedWidth);
+    }
+  });
+
   return (
     <motion.div
-      className="bg-accent/50 relative z-50 flex h-full overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75"
+      className="bg-accent/50 relative z-50 flex h-full overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75 hover:cursor-grab active:cursor-grabbing"
       dragConstraints={containerRef}
+      style={{ x: springX, width: springWidth }}
     >
       {/* LEFT HANDLE */}
-      <button
+      <div
+        {...bindLeftResize()}
         className={cn(
           "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 left-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >
         <DotsSixVerticalIcon weight="duotone" className="size-full" />
-      </button>
+      </div>
       <div className="w-full p-4 text-sm">{slot.subject}</div>
       {/* RIGHT HANDLE */}
-      <button
+      <div
+        {...bindRightResize()}
         className={cn(
           "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 right-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >
         <DotsSixVerticalIcon weight="duotone" className="size-full" />
-      </button>
+      </div>
     </motion.div>
   );
 }

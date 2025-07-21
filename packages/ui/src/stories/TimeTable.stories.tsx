@@ -32,8 +32,8 @@ export const WithSlots: StoryObj = {
         {
           id: "2",
           dayOfWeek: 2,
-          startOfPeriod: 4,
-          endOfPeriod: 5,
+          startOfPeriod: 1,
+          endOfPeriod: 2,
           subject: "Physics",
         },
       ]}

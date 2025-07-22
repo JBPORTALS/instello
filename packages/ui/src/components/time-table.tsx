@@ -207,8 +207,8 @@ function TimeTableSlot({
 
   // Resizing from the right
   const bindRightResize = useDrag(
-    ({ movement: [dx], velocity: [vx], last }) => {
-      const newWidth = initialWidth + dx + vx;
+    ({ movement: [dx], last }) => {
+      const newWidth = initialWidth + dx;
       const snappedColumn = Math.min(
         numberOfHours,
         Math.max(1, Math.floor(newWidth / defaultSlotWidth)),
@@ -232,34 +232,29 @@ function TimeTableSlot({
     ({ movement: [dx], last }) => {
       const newX = initialX + dx;
 
-      const snappedStartColumn = Math.max(
+      const snappedStartCol = Math.max(
         1,
-        Math.floor(newX / defaultSlotWidth),
+        Math.min(
+          slot.endOfPeriod,
+          Math.floor((newX - defaultSlotWidth / 2) / defaultSlotWidth),
+        ),
       );
-      const snappedX = snappedStartColumn * defaultSlotWidth;
 
-      const snappedWidth =
-        (slot.endOfPeriod - snappedStartColumn) * defaultSlotWidth;
+      const newSpan = slot.endOfPeriod - snappedStartCol + 1;
+      const snappedX = (slot.endOfPeriod - newSpan + 1 - 1) * defaultSlotWidth;
+      const snappedWidth = newSpan * defaultSlotWidth;
 
-      if (newX >= 0 && snappedWidth >= defaultSlotWidth) {
-        x.set(newX);
-        width.set(snappedWidth);
-      }
+      x.set(snappedX);
+      width.set(snappedWidth);
 
       if (last) {
-        // Prevent dragging beyond bounds or shrinking too small
-        if (snappedX >= 0 && snappedWidth >= defaultSlotWidth) {
-          x.set(snappedX);
-          width.set(snappedWidth);
-        }
-
         updateDaySlot({
           ...slot,
-          startOfPeriod: snappedStartColumn,
+          startOfPeriod: snappedStartCol,
         });
       }
     },
-    { filterTaps: true },
+    { filterTaps: true, threshold: -800 },
   );
 
   return (

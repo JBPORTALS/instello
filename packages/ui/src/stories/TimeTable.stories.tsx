@@ -30,8 +30,8 @@ function TimeTableStory() {
     {
       id: "2",
       dayOfWeek: 2,
-      startOfPeriod: 1,
-      endOfPeriod: 2,
+      startOfPeriod: 2,
+      endOfPeriod: 4,
       subject: "Physics",
     },
   ]);

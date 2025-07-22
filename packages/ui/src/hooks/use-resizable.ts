@@ -1,103 +1,101 @@
-import type { MotionValue } from "framer-motion";
-import { useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useDrag } from "@use-gesture/react";
+import { useMotionValue } from "framer-motion";
 
-interface UseResizableSlotProps {
-  x: MotionValue<number>;
-  width: MotionValue<number>;
+interface UseResizableSlotParams {
   slot: {
     startOfPeriod: number;
     endOfPeriod: number;
+    dayOfWeek: number;
   };
+  onResize: (updated: { startOfPeriod: number; endOfPeriod: number }) => void;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  totalColumns: number;
   defaultSlotWidth: number;
-  numberOfHours: number;
-  onResizeEnd: (updatedPeriods: {
-    startOfPeriod: number;
-    endOfPeriod: number;
-  }) => void;
 }
 
 export function useResizableSlot({
-  x,
-  width,
   slot,
+  onResize,
+  totalColumns,
   defaultSlotWidth,
-  numberOfHours,
-  onResizeEnd,
-}: UseResizableSlotProps) {
-  const initialXRef = useRef(0);
-  const initialWidthRef = useRef(0);
+}: UseResizableSlotParams) {
+  const x = useMotionValue((slot.startOfPeriod - 1) * defaultSlotWidth);
+  const width = useMotionValue(
+    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth,
+  );
 
-  const bindLeftResize = useDrag(
-    ({ movement: [dx], first, last }) => {
-      if (first) {
-        initialXRef.current = (slot.startOfPeriod - 1) * defaultSlotWidth;
-        initialWidthRef.current =
-          (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
-      }
+  const startRef = useRef(slot.startOfPeriod);
+  const endRef = useRef(slot.endOfPeriod);
 
-      const initialX = initialXRef.current;
-      const newX = initialX + dx;
+  useEffect(() => {
+    x.set((slot.startOfPeriod - 1) * defaultSlotWidth);
+    width.set((slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth);
+  }, [slot, defaultSlotWidth, width, x]);
 
-      const snappedStart = Math.max(
-        1,
-        Math.min(
-          slot.endOfPeriod,
-          Math.round((newX - defaultSlotWidth / 2) / defaultSlotWidth),
-        ),
+  const updateStart = useCallback(
+    (dx: number) => {
+      const snapCols = Math.round(dx / defaultSlotWidth);
+      const newStart = Math.min(
+        Math.max(1, startRef.current + snapCols),
+        endRef.current - 1,
       );
 
-      const columnsSpanned = slot.endOfPeriod - snappedStart + 1;
-      const snappedX = (snappedStart - 1) * defaultSlotWidth;
-      const snappedWidth = columnsSpanned * defaultSlotWidth;
+      // update x and width
+      const newX = (newStart - 1) * defaultSlotWidth;
+      const newWidth = (endRef.current - newStart + 1) * defaultSlotWidth;
 
-      x.set(snappedX);
-      width.set(snappedWidth);
+      x.set(newX);
+      width.set(newWidth);
 
-      if (last) {
-        onResizeEnd({
-          ...slot,
-          startOfPeriod: snappedStart,
-        });
-      }
+      onResize({ startOfPeriod: newStart, endOfPeriod: endRef.current });
     },
-    { filterTaps: true },
+    [onResize, defaultSlotWidth, x, width],
+  );
+
+  const updateEnd = useCallback(
+    (dx: number) => {
+      const snapCols = Math.round(dx / defaultSlotWidth);
+      const newEnd = Math.max(
+        Math.min(totalColumns, endRef.current + snapCols),
+        startRef.current + 1,
+      );
+
+      // update width only
+      const newWidth = (newEnd - startRef.current + 1) * defaultSlotWidth;
+
+      width.set(newWidth);
+
+      onResize({ startOfPeriod: startRef.current, endOfPeriod: newEnd });
+    },
+    [onResize, defaultSlotWidth, totalColumns, width],
+  );
+
+  const bindLeftResize = useDrag(
+    ({ delta: [dx], first }) => {
+      if (first) startRef.current = slot.startOfPeriod;
+      updateStart(dx);
+    },
+    { axis: "x", pointer: { touch: true } },
   );
 
   const bindRightResize = useDrag(
-    ({ movement: [dx], first, last }) => {
-      if (first) {
-        initialWidthRef.current =
-          (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
-      }
-
-      const initialWidth = initialWidthRef.current;
-      const newWidth = initialWidth + dx;
-
-      const snappedColumns = Math.max(
-        1,
-        Math.min(
-          numberOfHours - slot.startOfPeriod + 1,
-          Math.round((newWidth + defaultSlotWidth / 2) / defaultSlotWidth),
-        ),
-      );
-
-      const snappedWidth = snappedColumns * defaultSlotWidth;
-
-      width.set(snappedWidth);
-
-      if (last) {
-        const newEnd = slot.startOfPeriod + snappedColumns - 1;
-        onResizeEnd({
-          ...slot,
-          endOfPeriod: newEnd,
-        });
-      }
+    ({ delta: [dx], first }) => {
+      if (first) endRef.current = slot.endOfPeriod;
+      updateEnd(dx);
     },
-    { filterTaps: true },
+    { axis: "x", pointer: { touch: true } },
   );
 
+  console.log(x.get(), width.get());
+
   return {
+    motionProps: {
+      style: {
+        x,
+        width,
+      },
+    },
     bindLeftResize,
     bindRightResize,
   };

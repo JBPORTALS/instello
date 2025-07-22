@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useLayoutEffect } from "react";
+import React, { useEffect } from "react";
 import { DotsSixVerticalIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { motion } from "motion/react";
 
 import { useResizableSlot } from "../hooks/use-resizable";
 import { cn } from "../lib/utils";
@@ -184,42 +184,19 @@ function TimeTableSlot({
 }) {
   const { editable, updateDaySlot, numberOfHours } = useTimeTable();
 
-  const initialWidth =
-    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
-  const initialX = (slot.startOfPeriod - 1) * defaultSlotWidth;
-
-  const x = useMotionValue(initialWidth);
-  const width = useMotionValue(initialWidth);
-
-  useLayoutEffect(() => {
-    x.set(initialX);
-    width.set(initialWidth);
-  }, [width, x, initialX, initialWidth]);
-
-  const springX = useSpring(x, {
-    duration: 0.005,
-    mass: 0.5,
-  });
-  const springWidth = useSpring(width, {
-    duration: 0.005,
-    mass: 0.5,
-  });
-
-  const { bindLeftResize, bindRightResize } = useResizableSlot({
-    x,
-    width,
+  const { bindLeftResize, bindRightResize, motionProps } = useResizableSlot({
+    totalColumns: numberOfHours,
     slot,
     defaultSlotWidth,
-    numberOfHours,
-    onResizeEnd: (updatedPeriods) =>
-      updateDaySlot({ ...slot, ...updatedPeriods }),
+    onResize: (updatedPeriods) => updateDaySlot({ ...slot, ...updatedPeriods }),
+    containerRef,
   });
 
   return (
     <motion.div
       className="bg-accent/50 relative z-50 flex h-full overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75 hover:cursor-grab active:cursor-grabbing"
       dragConstraints={containerRef}
-      style={{ x: springX, width: springWidth }}
+      {...motionProps}
     >
       {/* LEFT HANDLE */}
       <div

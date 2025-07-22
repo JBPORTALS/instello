@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { DotsSixVerticalIcon } from "@phosphor-icons/react";
 import { useDrag } from "@use-gesture/react";
 import { format } from "date-fns";
@@ -50,7 +50,12 @@ function useTimeTable() {
     return slots.filter((s) => s.dayOfWeek === dayIdx);
   }
 
-  return { ...ctx, getSlotsByDayIdx };
+  /** Update day slot */
+  function updateDaySlot(slot: Slot) {
+    ctx?.onChangeSlots([...slots.filter((s) => s.id !== slot.id), slot]);
+  }
+
+  return { ...ctx, getSlotsByDayIdx, updateDaySlot };
 }
 
 /** Utility to get weekday name from index */
@@ -147,12 +152,11 @@ function TimeTableDayRow({
   const { numberOfHours, defaultSlotWidth, getSlotsByDayIdx } = useTimeTable();
   const daySlots = getSlotsByDayIdx(dayIdx);
 
-  console.log(daySlots);
-
   return (
     <div
       ref={containerRef}
-      className={cn(`col-span-[${numberOfHours}] bg-accent/40 p-1`, className)}
+      className={cn(`bg-accent/40 p-1`, className)}
+      style={{ gridColumn: `span ${numberOfHours}/ span ${numberOfHours}` }}
       {...props}
     >
       {daySlots.map((slot) => {
@@ -179,12 +183,19 @@ function TimeTableSlot({
   slot: Slot;
   defaultSlotWidth: number;
 }) {
-  const { editable } = useTimeTable();
+  const { editable, updateDaySlot } = useTimeTable();
 
-  const x = useMotionValue((slot.startOfPeriod - 1) * defaultSlotWidth);
-  const width = useMotionValue(
-    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth,
-  );
+  const initialWidth =
+    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
+  const initialX = (slot.startOfPeriod - 1) * defaultSlotWidth;
+
+  const x = useMotionValue(initialWidth);
+  const width = useMotionValue(initialWidth);
+
+  useLayoutEffect(() => {
+    x.set(initialX);
+    width.set(initialWidth);
+  }, [width, x, initialX, initialWidth]);
 
   const springX = useSpring(x, {
     duration: 0.005,
@@ -194,24 +205,23 @@ function TimeTableSlot({
     duration: 0.005,
     mass: 0.5,
   });
-  // Resizing from the right
-  const bindRightResize = useDrag(({ movement: [dx] }) => {
-    const initialWidth =
-      (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
 
+  // Resizing from the right
+  const bindRightResize = useDrag(({ movement: [dx], last }) => {
     const newWidth = initialWidth + dx;
     const snappedWidth =
       Math.round(newWidth / defaultSlotWidth) * defaultSlotWidth;
 
     if (snappedWidth >= defaultSlotWidth) width.set(snappedWidth);
+
+    if (last) {
+      const snappedColumn = Math.round(snappedWidth / defaultSlotWidth);
+      updateDaySlot({ ...slot, endOfPeriod: snappedColumn });
+    }
   });
 
   // Resizing from the left
-  const bindLeftResize = useDrag(({ movement: [dx] }) => {
-    const initialX = (slot.startOfPeriod - 1) * defaultSlotWidth;
-    const initialWidth =
-      (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
-
+  const bindLeftResize = useDrag(({ movement: [dx], last }) => {
     const newX = initialX + dx;
     const newWidth = initialWidth - dx;
 
@@ -222,6 +232,11 @@ function TimeTableSlot({
     if (snappedWidth >= defaultSlotWidth) {
       x.set(snappedX);
       width.set(snappedWidth);
+    }
+
+    if (last) {
+      const snappedColumn = Math.round(snappedWidth / defaultSlotWidth);
+      updateDaySlot({ ...slot, startOfPeriod: snappedColumn });
     }
   });
 

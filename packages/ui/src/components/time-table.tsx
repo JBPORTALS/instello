@@ -132,7 +132,7 @@ export function TimeTable({
             <div className="bg-accent/20 text-accent-foreground/40 col-span-1 flex h-24 items-center border-r p-6 text-xl font-medium">
               {getWeekdayName(dayIdx)}
             </div>
-            <TimeTableDayRow numberOfHours={numberOfHours} dayIdx={dayIdx} />
+            <TimeTableDayRow dayIdx={dayIdx} />
           </TimeTableGridRow>
         ))}
       </div>
@@ -145,7 +145,6 @@ function TimeTableDayRow({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
-  numberOfHours: number;
   dayIdx: number;
 }) {
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -183,7 +182,7 @@ function TimeTableSlot({
   slot: Slot;
   defaultSlotWidth: number;
 }) {
-  const { editable, updateDaySlot } = useTimeTable();
+  const { editable, updateDaySlot, numberOfHours } = useTimeTable();
 
   const initialWidth =
     (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth;
@@ -207,38 +206,61 @@ function TimeTableSlot({
   });
 
   // Resizing from the right
-  const bindRightResize = useDrag(({ movement: [dx], last }) => {
-    const newWidth = initialWidth + dx;
-    const snappedWidth =
-      Math.round(newWidth / defaultSlotWidth) * defaultSlotWidth;
+  const bindRightResize = useDrag(
+    ({ movement: [dx], velocity: [vx], last }) => {
+      const newWidth = initialWidth + dx + vx;
+      const snappedColumn = Math.min(
+        numberOfHours,
+        Math.max(1, Math.floor(newWidth / defaultSlotWidth)),
+      );
+      const snappedWidth = Math.max(
+        defaultSlotWidth,
+        snappedColumn * defaultSlotWidth,
+      );
 
-    if (snappedWidth >= defaultSlotWidth) width.set(snappedWidth);
+      width.set(snappedWidth);
 
-    if (last) {
-      const snappedColumn = Math.round(snappedWidth / defaultSlotWidth);
-      updateDaySlot({ ...slot, endOfPeriod: snappedColumn });
-    }
-  });
+      if (last) {
+        updateDaySlot({ ...slot, endOfPeriod: snappedColumn });
+      }
+    },
+    { filterTaps: true },
+  );
 
   // Resizing from the left
-  const bindLeftResize = useDrag(({ movement: [dx], last }) => {
-    const newX = initialX + dx;
-    const newWidth = initialWidth - dx;
+  const bindLeftResize = useDrag(
+    ({ movement: [dx], last }) => {
+      const newX = initialX + dx;
 
-    const snappedX = Math.round(newX / defaultSlotWidth) * defaultSlotWidth;
-    const snappedWidth =
-      Math.round(newWidth / defaultSlotWidth) * defaultSlotWidth;
+      const snappedStartColumn = Math.max(
+        1,
+        Math.floor(newX / defaultSlotWidth),
+      );
+      const snappedX = snappedStartColumn * defaultSlotWidth;
 
-    if (snappedWidth >= defaultSlotWidth) {
-      x.set(snappedX);
-      width.set(snappedWidth);
-    }
+      const snappedWidth =
+        (slot.endOfPeriod - snappedStartColumn) * defaultSlotWidth;
 
-    if (last) {
-      const snappedColumn = Math.round(snappedWidth / defaultSlotWidth);
-      updateDaySlot({ ...slot, startOfPeriod: snappedColumn });
-    }
-  });
+      if (newX >= 0 && snappedWidth >= defaultSlotWidth) {
+        x.set(newX);
+        width.set(snappedWidth);
+      }
+
+      if (last) {
+        // Prevent dragging beyond bounds or shrinking too small
+        if (snappedX >= 0 && snappedWidth >= defaultSlotWidth) {
+          x.set(snappedX);
+          width.set(snappedWidth);
+        }
+
+        updateDaySlot({
+          ...slot,
+          startOfPeriod: snappedStartColumn,
+        });
+      }
+    },
+    { filterTaps: true },
+  );
 
   return (
     <motion.div

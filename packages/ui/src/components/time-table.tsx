@@ -2,10 +2,10 @@
 
 import React, { useEffect, useLayoutEffect } from "react";
 import { DotsSixVerticalIcon } from "@phosphor-icons/react";
-import { useDrag } from "@use-gesture/react";
 import { format } from "date-fns";
 import { motion, useMotionValue, useSpring } from "motion/react";
 
+import { useResizableSlot } from "../hooks/use-resizable";
 import { cn } from "../lib/utils";
 
 interface Slot {
@@ -205,57 +205,15 @@ function TimeTableSlot({
     mass: 0.5,
   });
 
-  // Resizing from the right
-  const bindRightResize = useDrag(
-    ({ movement: [dx], last }) => {
-      const newWidth = initialWidth + dx;
-      const snappedColumn = Math.min(
-        numberOfHours,
-        Math.max(1, Math.floor(newWidth / defaultSlotWidth)),
-      );
-      const snappedWidth = Math.max(
-        defaultSlotWidth,
-        snappedColumn * defaultSlotWidth,
-      );
-
-      width.set(snappedWidth);
-
-      if (last) {
-        updateDaySlot({ ...slot, endOfPeriod: snappedColumn });
-      }
-    },
-    { filterTaps: true },
-  );
-
-  // Resizing from the left
-  const bindLeftResize = useDrag(
-    ({ movement: [dx], last }) => {
-      const newX = initialX + dx;
-
-      const snappedStartCol = Math.max(
-        1,
-        Math.min(
-          slot.endOfPeriod,
-          Math.floor((newX - defaultSlotWidth / 2) / defaultSlotWidth),
-        ),
-      );
-
-      const newSpan = slot.endOfPeriod - snappedStartCol + 1;
-      const snappedX = (slot.endOfPeriod - newSpan + 1 - 1) * defaultSlotWidth;
-      const snappedWidth = newSpan * defaultSlotWidth;
-
-      x.set(snappedX);
-      width.set(snappedWidth);
-
-      if (last) {
-        updateDaySlot({
-          ...slot,
-          startOfPeriod: snappedStartCol,
-        });
-      }
-    },
-    { filterTaps: true, threshold: -800 },
-  );
+  const { bindLeftResize, bindRightResize } = useResizableSlot({
+    x,
+    width,
+    slot,
+    defaultSlotWidth,
+    numberOfHours,
+    onResizeEnd: (updatedPeriods) =>
+      updateDaySlot({ ...slot, ...updatedPeriods }),
+  });
 
   return (
     <motion.div

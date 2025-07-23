@@ -8,7 +8,7 @@ if (!process.env.POSTGRES_URL) {
 const nonPoolingUrl = process.env.POSTGRES_URL;
 
 export default {
-  schema: "./src/schema.ts",
+  schema: "./src/schema",
   dialect: "postgresql",
   dbCredentials: { url: nonPoolingUrl },
   casing: "snake_case",

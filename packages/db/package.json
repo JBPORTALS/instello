@@ -8,17 +8,13 @@
       "types": "./dist/index.d.ts",
       "default": "./src/index.ts"
     },
-    "./errors/*": {
-      "types": "./dist/errros/*.d.ts",
-      "default": "./src/errors/*.ts"
-    },
     "./client": {
       "types": "./dist/client.d.ts",
       "default": "./src/client.ts"
     },
     "./schema": {
-      "types": "./dist/schema.d.ts",
-      "default": "./src/schema.ts"
+      "types": "./dist/schema/index.d.ts",
+      "default": "./src/schema/index.ts"
     }
   },
   "license": "MIT",

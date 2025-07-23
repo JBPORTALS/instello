@@ -72,7 +72,7 @@ export function useResizableSlot({
   );
 
   const bindLeftResize = useDrag(
-    ({ delta: [dx], first }) => {
+    ({ movement: [dx], first }) => {
       if (first) startRef.current = slot.startOfPeriod;
       updateStart(dx);
     },
@@ -80,7 +80,7 @@ export function useResizableSlot({
   );
 
   const bindRightResize = useDrag(
-    ({ delta: [dx], first }) => {
+    ({ movement: [dx], first }) => {
       if (first) endRef.current = slot.endOfPeriod;
       updateEnd(dx);
     },

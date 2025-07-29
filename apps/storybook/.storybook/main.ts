@@ -15,6 +15,6 @@ const config: StorybookConfig = {
     name: getAbsolutePath("@storybook/nextjs"),
     options: {},
   },
-  staticDirs: ["../../../packages/ui/public"],
+  staticDirs: ["../public"],
 };
 export default config;

@@ -3,5 +3,6 @@
   "buildCommand": "turbo run build:storybook",
   "devCommand": "pnpm run dev",
   "installCommand": "pnpm install",
-  "framework": null
+  "framework": null,
+  "outputDirectory": "./storybook-static"
 }

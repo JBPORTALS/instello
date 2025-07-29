@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "storybook dev -p 6006",
-    "build:storybook": "storybook build"
+    "build:storybook": "storybook build",
+    "start": "pnpx serve storybook-static"
   },
   "dependencies": {
     "@instello/ui": "workspace:^",

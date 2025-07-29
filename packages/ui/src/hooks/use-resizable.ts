@@ -34,11 +34,17 @@ export function useResizableSlot({
   }, [slot, defaultSlotWidth, width, x]);
 
   const updateStart = useCallback(
-    (dx: number) => {
-      const snapCols = Math.round(dx / defaultSlotWidth);
+    (mx: number) => {
+      const snapCols = Math.round(mx / defaultSlotWidth);
+
+      /**
+       * Get new start by adding snapped column to current start period value.
+       * @max one slot should have start period equals to end period
+       * @min one slot can have start period value to be equal to 1
+       */
       const newStart = Math.min(
         Math.max(1, startRef.current + snapCols),
-        endRef.current - 1,
+        endRef.current,
       );
 
       // update x and width
@@ -54,11 +60,17 @@ export function useResizableSlot({
   );
 
   const updateEnd = useCallback(
-    (dx: number) => {
-      const snapCols = Math.round(dx / defaultSlotWidth);
+    (mx: number) => {
+      const snapCols = Math.round(mx / defaultSlotWidth);
+
+      /**
+       * Get new end by increasing the current end slot by adding snapped column value.
+       * @max one slot should have end slot value to be total columns value
+       * @min one slot can have only one period where it's initially starting
+       */
       const newEnd = Math.max(
         Math.min(totalColumns, endRef.current + snapCols),
-        startRef.current + 1,
+        startRef.current,
       );
 
       // update width only
@@ -72,17 +84,23 @@ export function useResizableSlot({
   );
 
   const bindLeftResize = useDrag(
-    ({ movement: [dx], first }) => {
-      if (first) startRef.current = slot.startOfPeriod;
-      updateStart(dx);
+    ({ movement: [mx], first }) => {
+      if (first) {
+        startRef.current = slot.startOfPeriod;
+        endRef.current = slot.endOfPeriod;
+      }
+      updateStart(mx);
     },
     { axis: "x", pointer: { touch: true } },
   );
 
   const bindRightResize = useDrag(
-    ({ movement: [dx], first }) => {
-      if (first) endRef.current = slot.endOfPeriod;
-      updateEnd(dx);
+    ({ movement: [mx], first }) => {
+      if (first) {
+        startRef.current = slot.startOfPeriod;
+        endRef.current = slot.endOfPeriod;
+      }
+      updateEnd(mx);
     },
     { axis: "x", pointer: { touch: true } },
   );

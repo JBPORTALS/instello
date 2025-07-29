@@ -38,7 +38,7 @@ function TimeTableStory() {
 
   return (
     <>
-      <pre>{JSON.stringify(slots, undefined, 1)}</pre>
+      {/* <pre>{JSON.stringify(slots, undefined, 1)}</pre> */}
       <TimeTable editable slots={slots} onChangeSlots={setSlots} />
     </>
   );

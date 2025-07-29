@@ -3,7 +3,7 @@
 import React, { useEffect } from "react";
 import { DotsSixVerticalIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
-import { motion } from "motion/react";
+import { motion, useSpring } from "motion/react";
 
 import { useResizableSlot } from "../hooks/use-resizable";
 import { cn } from "../lib/utils";
@@ -192,17 +192,26 @@ function TimeTableSlot({
     containerRef,
   });
 
+  const xWithSpring = useSpring(motionProps.style.x, {
+    stiffness: 400,
+    damping: 30,
+  });
+  const widthWithSpring = useSpring(motionProps.style.width, {
+    stiffness: 400,
+    damping: 30,
+  });
+
   return (
     <motion.div
       className="bg-accent/50 relative z-50 flex h-full overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75 hover:cursor-grab active:cursor-grabbing"
       dragConstraints={containerRef}
-      {...motionProps}
+      style={{ x: xWithSpring, width: widthWithSpring }}
     >
       {/* LEFT HANDLE */}
       <div
         {...bindLeftResize()}
         className={cn(
-          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 left-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 left-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >
@@ -213,7 +222,7 @@ function TimeTableSlot({
       <div
         {...bindRightResize()}
         className={cn(
-          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 right-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 right-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >

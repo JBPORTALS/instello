@@ -61,7 +61,7 @@ export function useResizableSlot({
       if (last)
         onResize({ startOfPeriod: newStart, endOfPeriod: endRef.current });
     },
-    [onResize, defaultSlotWidth, x, width],
+    [onResize, defaultSlotWidth, x, width, offset],
   );
 
   const updateEnd = useCallback(
@@ -86,7 +86,7 @@ export function useResizableSlot({
       if (last)
         onResize({ startOfPeriod: startRef.current, endOfPeriod: newEnd });
     },
-    [onResize, defaultSlotWidth, totalColumns, width],
+    [onResize, defaultSlotWidth, totalColumns, width, offset],
   );
 
   const bindLeftResize = useDrag(
@@ -97,7 +97,7 @@ export function useResizableSlot({
       }
       updateStart(mx, last);
     },
-    { axis: "x", pointer: { touch: true } },
+    { axis: "x", preventDefault: true },
   );
 
   const bindRightResize = useDrag(
@@ -108,10 +108,8 @@ export function useResizableSlot({
       }
       updateEnd(mx, last);
     },
-    { axis: "x", pointer: { touch: true } },
+    { axis: "x", preventDefault: true },
   );
-
-  console.log(x.get(), width.get());
 
   return {
     motionProps: {

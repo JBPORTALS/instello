@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs";
 import React from "react";
 import { action } from "storybook/actions";
 
-import { Popover, PopoverContent } from "../components/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "../components/popover";
 import { TimeTable } from "../components/time-table";
 
 const meta = {
@@ -50,12 +50,11 @@ function TimeTableStory(args: Partial<React.ComponentProps<typeof TimeTable>>) {
         }}
         EmptySlotPopoverComponent={({ position, slotInfo, actions, close }) => (
           <Popover open onOpenChange={close}>
-            <PopoverContent
+            <PopoverTrigger
               style={{ position: "fixed", top: position.y, left: position.x }}
-              align="start"
-              side="right"
-              className="w-64"
-            >
+              className="size-2"
+            />
+            <PopoverContent align="start" side="right" className="w-64">
               <div className="text-sm">
                 <div className="mb-2 font-medium">
                   Add subject for H{slotInfo.startOfPeriod} (

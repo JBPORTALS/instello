@@ -211,19 +211,7 @@ function TimeTableDayRow({
   const handleClose = () => setPopoverState(null);
 
   return (
-    <div
-      ref={containerRef}
-      className={cn(
-        `relative`,
-        editable && "bg-accent/20 pattern-polka",
-        className,
-      )}
-      onClick={handleClick}
-      style={{
-        gridColumn: `span ${numberOfHours}/ span ${numberOfHours}`,
-      }}
-      {...props}
-    >
+    <>
       {popoverState &&
         EmptySlotPopoverComponent?.({
           ...popoverState,
@@ -235,19 +223,32 @@ function TimeTableDayRow({
           },
           close: handleClose,
         })}
-
-      {daySlots.map((slot) => {
-        if (!defaultSlotWidth) return null;
-        return (
-          <TimeTableSlot
-            key={slot.id}
-            defaultSlotWidth={defaultSlotWidth}
-            containerRef={containerRef}
-            slot={slot}
-          />
-        );
-      })}
-    </div>
+      <div
+        ref={containerRef}
+        className={cn(
+          `relative`,
+          editable && "bg-accent/20 pattern-polka",
+          className,
+        )}
+        onClick={handleClick}
+        style={{
+          gridColumn: `span ${numberOfHours}/ span ${numberOfHours}`,
+        }}
+        {...props}
+      >
+        {daySlots.map((slot) => {
+          if (!defaultSlotWidth) return null;
+          return (
+            <TimeTableSlot
+              key={slot.id}
+              defaultSlotWidth={defaultSlotWidth}
+              containerRef={containerRef}
+              slot={slot}
+            />
+          );
+        })}
+      </div>
+    </>
   );
 }
 

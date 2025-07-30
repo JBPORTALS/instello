@@ -42,6 +42,12 @@ interface TimeTableContextValue {
     };
     close: () => void;
   }) => React.ReactNode;
+
+  /** Custom slot render */
+  slotRender?: (
+    slot: Slot,
+    actions: { updateSlot: () => void },
+  ) => React.ReactNode;
 }
 
 const TimeTableContext = React.createContext<TimeTableContextValue | null>(
@@ -128,6 +134,7 @@ export function TimeTable({
     return;
   },
   EmptySlotPopoverComponent,
+  slotRender,
 }: TimeTableProps) {
   const [defaultSlotWidth, setDefaultSlotWidth] = React.useState<
     number | undefined
@@ -158,6 +165,7 @@ export function TimeTable({
       onChangeSlots,
       defaultSlotWidth,
       EmptySlotPopoverComponent,
+      slotRender,
     }),
     [
       editable,
@@ -166,6 +174,7 @@ export function TimeTable({
       onChangeSlots,
       defaultSlotWidth,
       EmptySlotPopoverComponent,
+      slotRender,
     ],
   );
 
@@ -315,6 +324,7 @@ function TimeTableSlot({
     deleteSlot,
     numberOfHours,
     getSlotResizeBounds,
+    slotRender,
   } = useTimeTable();
 
   const { maxEndPeriod, maxStartPeriod } = getSlotResizeBounds(slot);
@@ -340,7 +350,7 @@ function TimeTableSlot({
 
   return (
     <motion.div
-      className="bg-accent/50 absolute top-1 bottom-1 flex overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75"
+      className="bg-accent absolute top-1 bottom-1 flex overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75"
       dragConstraints={containerRef}
       style={{
         x: xWithSpring,
@@ -358,7 +368,17 @@ function TimeTableSlot({
       >
         <DotsSixVerticalIcon weight="duotone" className="size-full" />
       </div>
-      <div className="w-full p-4 text-sm">{slot.subject}</div>
+
+      {/* SLOT RENDERER */}
+      {slotRender ? (
+        slotRender(slot, {
+          updateSlot: () => {
+            console.log("updating");
+          },
+        })
+      ) : (
+        <div className="w-full p-4 text-sm">{slot.subject}</div>
+      )}
 
       <Button
         title="Delete Slot"

@@ -12,6 +12,8 @@ interface UseResizableSlotParams {
   containerRef: React.RefObject<HTMLDivElement | null>;
   totalColumns: number;
   defaultSlotWidth: number;
+  maxStartPeriod: number;
+  maxEndPeriod: number;
   offset?: number;
 }
 
@@ -21,6 +23,8 @@ export function useResizableSlot({
   totalColumns,
   defaultSlotWidth,
   offset = 5,
+  maxEndPeriod,
+  maxStartPeriod,
 }: UseResizableSlotParams) {
   const calcInitialX = (slot.startOfPeriod - 1) * defaultSlotWidth + offset;
   const calcInitialWidth =
@@ -43,11 +47,11 @@ export function useResizableSlot({
 
       /**
        * Get new start by adding snapped column to current start period value.
-       * @max one slot should have start period equals to end period
+       * @max one slot should have start period equals to end period or current slot's maxStartPeriod
        * @min one slot can have start period value to be equal to 1
        */
       const newStart = Math.min(
-        Math.max(1, startRef.current + snapCols),
+        Math.max(1, maxStartPeriod, startRef.current + snapCols),
         endRef.current,
       );
 
@@ -61,7 +65,7 @@ export function useResizableSlot({
       if (last)
         onResize({ startOfPeriod: newStart, endOfPeriod: endRef.current });
     },
-    [onResize, defaultSlotWidth, x, width, offset],
+    [onResize, defaultSlotWidth, x, width, offset, maxStartPeriod],
   );
 
   const updateEnd = useCallback(
@@ -70,11 +74,11 @@ export function useResizableSlot({
 
       /**
        * Get new end by increasing the current end slot by adding snapped column value.
-       * @max one slot should have end slot value to be total columns value
+       * @max one slot should have end slot value to be total columns value or current slot's maxEndPeriod
        * @min one slot can have only one period where it's initially starting
        */
       const newEnd = Math.max(
-        Math.min(totalColumns, endRef.current + snapCols),
+        Math.min(totalColumns, maxEndPeriod, endRef.current + snapCols),
         startRef.current,
       );
 
@@ -86,7 +90,7 @@ export function useResizableSlot({
       if (last)
         onResize({ startOfPeriod: startRef.current, endOfPeriod: newEnd });
     },
-    [onResize, defaultSlotWidth, totalColumns, width, offset],
+    [onResize, defaultSlotWidth, totalColumns, width, offset, maxEndPeriod],
   );
 
   const bindLeftResize = useDrag(

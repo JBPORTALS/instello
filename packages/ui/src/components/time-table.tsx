@@ -53,7 +53,7 @@ function useTimeTable() {
   if (!ctx)
     throw new Error("useTimeTable must be used within <TimeTableProvider />");
 
-  const { slots } = ctx;
+  const { slots, numberOfHours } = ctx;
 
   /** Get all slots by dayIdx */
   function getSlotsByDayIdx(dayIdx: number) {
@@ -65,7 +65,36 @@ function useTimeTable() {
     ctx?.onChangeSlots([...slots.filter((s) => s.id !== slot.id), slot]);
   }
 
-  return { ...ctx, getSlotsByDayIdx, updateDaySlot };
+  function getSlotResizeBounds(currentSlot: Slot) {
+    const slotsOnSameDay = slots
+      .filter(
+        (s) => s.dayOfWeek === currentSlot.dayOfWeek && s.id !== currentSlot.id,
+      )
+      .sort((a, b) => a.startOfPeriod - b.startOfPeriod);
+
+    let maxStart = 1;
+    let maxEnd = numberOfHours;
+
+    for (const slot of slotsOnSameDay) {
+      // Check for left neighbor
+      if (slot.endOfPeriod < currentSlot.startOfPeriod) {
+        maxStart = Math.max(maxStart, slot.endOfPeriod + 1);
+      }
+
+      // Check for right neighbor
+      if (slot.startOfPeriod > currentSlot.endOfPeriod) {
+        maxEnd = Math.min(maxEnd, slot.startOfPeriod - 1);
+        break; // Since sorted, no need to check further
+      }
+    }
+
+    return {
+      maxStartPeriod: maxStart,
+      maxEndPeriod: maxEnd,
+    };
+  }
+
+  return { ...ctx, getSlotsByDayIdx, updateDaySlot, getSlotResizeBounds };
 }
 
 /** Utility to get weekday name from index */
@@ -268,7 +297,10 @@ function TimeTableSlot({
   slot: Slot;
   defaultSlotWidth: number;
 }) {
-  const { editable, updateDaySlot, numberOfHours } = useTimeTable();
+  const { editable, updateDaySlot, numberOfHours, getSlotResizeBounds } =
+    useTimeTable();
+
+  const { maxEndPeriod, maxStartPeriod } = getSlotResizeBounds(slot);
 
   const { bindLeftResize, bindRightResize, motionProps } = useResizableSlot({
     totalColumns: numberOfHours,
@@ -276,6 +308,8 @@ function TimeTableSlot({
     defaultSlotWidth,
     onResize: (updatedPeriods) => updateDaySlot({ ...slot, ...updatedPeriods }),
     containerRef,
+    maxEndPeriod,
+    maxStartPeriod,
   });
 
   const xWithSpring = useSpring(motionProps.style.x, {

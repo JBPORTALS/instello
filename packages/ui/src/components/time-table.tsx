@@ -3,7 +3,7 @@
 import React from "react";
 import { DotsSixVerticalIcon, XIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
-import { motion, useSpring } from "motion/react";
+import { AnimatePresence, motion, useSpring } from "motion/react";
 
 import { useResizableSlot } from "../hooks/use-resizable-slot";
 import { cn } from "../lib/utils";
@@ -293,17 +293,19 @@ function TimeTableDayRow({
         }}
         {...props}
       >
-        {daySlots.map((slot) => {
-          if (!defaultSlotWidth) return null;
-          return (
-            <TimeTableSlot
-              key={slot.id}
-              defaultSlotWidth={defaultSlotWidth}
-              containerRef={containerRef}
-              slot={slot}
-            />
-          );
-        })}
+        <AnimatePresence>
+          {daySlots.map((slot) => {
+            if (!defaultSlotWidth) return null;
+            return (
+              <TimeTableSlot
+                key={slot.id}
+                defaultSlotWidth={defaultSlotWidth}
+                containerRef={containerRef}
+                slot={slot}
+              />
+            );
+          })}
+        </AnimatePresence>
       </div>
     </>
   );
@@ -350,6 +352,10 @@ function TimeTableSlot({
 
   return (
     <motion.div
+      initial={editable ? { opacity: 0, scale: 0.95, y: 10 } : false}
+      animate={{ opacity: 1, scale: 1, y: 0 }}
+      exit={{ opacity: 0, scale: 0.95, y: 10 }}
+      transition={{ duration: 0.2 }}
       className="bg-accent absolute top-1 bottom-1 flex overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75"
       dragConstraints={containerRef}
       style={{

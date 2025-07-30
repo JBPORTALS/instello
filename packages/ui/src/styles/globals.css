@@ -124,7 +124,6 @@
     @apply bg-background text-foreground;
   }
   .pattern-diagnol-v3 {
-    background-color: #e5e5f7;
     background-size: 8px 8px;
     background-image: repeating-linear-gradient(
       45deg,
@@ -133,5 +132,14 @@
       var(--color-muted) 0,
       var(--color-muted) 50%
     );
+  }
+
+  .pattern-polka {
+    background-color: transparent;
+    background-image: radial-gradient(
+      color-mix(in oklab, var(--color-accent-foreground) 20%, transparent) 0.5px,
+      color-mix(in oklab, var(--color-accent) 20%, transparent) 0.5px
+    );
+    background-size: 10px 10px;
   }
 }

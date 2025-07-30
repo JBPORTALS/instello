@@ -5,7 +5,7 @@ import { DotsSixVerticalIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { motion, useSpring } from "motion/react";
 
-import { useResizableSlot } from "../hooks/use-resizable";
+import { useResizableSlot } from "../hooks/use-resizable-slot";
 import { cn } from "../lib/utils";
 
 interface Slot {
@@ -148,13 +148,14 @@ function TimeTableDayRow({
   dayIdx: number;
 }) {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const { numberOfHours, defaultSlotWidth, getSlotsByDayIdx } = useTimeTable();
+  const { numberOfHours, defaultSlotWidth, editable, getSlotsByDayIdx } =
+    useTimeTable();
   const daySlots = getSlotsByDayIdx(dayIdx);
 
   return (
     <div
       ref={containerRef}
-      className={cn(`bg-accent/40 p-1`, className)}
+      className={cn(`p-1`, editable && "bg-accent/20 pattern-polka", className)}
       style={{ gridColumn: `span ${numberOfHours}/ span ${numberOfHours}` }}
       {...props}
     >

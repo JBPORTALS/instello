@@ -1,12 +1,13 @@
 "use client";
 
 import React from "react";
-import { DotsSixVerticalIcon } from "@phosphor-icons/react";
+import { DotsSixVerticalIcon, XIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { motion, useSpring } from "motion/react";
 
 import { useResizableSlot } from "../hooks/use-resizable-slot";
 import { cn } from "../lib/utils";
+import { Button } from "./button";
 
 interface Slot {
   id: string;
@@ -65,6 +66,11 @@ function useTimeTable() {
     ctx?.onChangeSlots([...slots.filter((s) => s.id !== slot.id), slot]);
   }
 
+  /** Delete slot by Id */
+  function deleteSlot(slotId: string) {
+    ctx?.onChangeSlots([...slots.filter((s) => s.id !== slotId)]);
+  }
+
   function getSlotResizeBounds(currentSlot: Slot) {
     const slotsOnSameDay = slots
       .filter(
@@ -94,7 +100,13 @@ function useTimeTable() {
     };
   }
 
-  return { ...ctx, getSlotsByDayIdx, updateDaySlot, getSlotResizeBounds };
+  return {
+    ...ctx,
+    getSlotsByDayIdx,
+    updateDaySlot,
+    getSlotResizeBounds,
+    deleteSlot,
+  };
 }
 
 /** Utility to get weekday name from index */
@@ -297,8 +309,13 @@ function TimeTableSlot({
   slot: Slot;
   defaultSlotWidth: number;
 }) {
-  const { editable, updateDaySlot, numberOfHours, getSlotResizeBounds } =
-    useTimeTable();
+  const {
+    editable,
+    updateDaySlot,
+    deleteSlot,
+    numberOfHours,
+    getSlotResizeBounds,
+  } = useTimeTable();
 
   const { maxEndPeriod, maxStartPeriod } = getSlotResizeBounds(slot);
 
@@ -342,6 +359,19 @@ function TimeTableSlot({
         <DotsSixVerticalIcon weight="duotone" className="size-full" />
       </div>
       <div className="w-full p-4 text-sm">{slot.subject}</div>
+
+      <Button
+        onClick={() => deleteSlot(slot.id)}
+        variant={"ghost"}
+        disabled={!editable}
+        size={"icon"}
+        className={cn(
+          "text-destructive hover:text-destructive hover:bg-destructive/10 relative top-2 right-2 size-5 [&>svg]:!size-3.5",
+          !editable && "hidden",
+        )}
+      >
+        <XIcon />
+      </Button>
       {/* RIGHT HANDLE */}
       <div
         {...bindRightResize()}

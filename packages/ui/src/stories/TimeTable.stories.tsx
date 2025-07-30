@@ -11,12 +11,25 @@ const meta = {
   parameters: {
     layout: "fullscreen",
   },
+  argTypes: {
+    numberOfHours: {
+      type: "number",
+      table: { category: "settings" },
+    },
+    editable: {
+      type: "boolean",
+      table: {
+        category: "settings",
+      },
+    },
+    onChangeSlots: { type: "function" },
+  },
 } satisfies Meta<typeof TimeTable>;
 
 export default meta;
 
 export const Default: StoryObj = {
-  render: () => <TimeTable editable />,
+  render: (args) => <TimeTable {...args} />,
 };
 
 function TimeTableStory(args: Partial<React.ComponentProps<typeof TimeTable>>) {
@@ -67,9 +80,6 @@ export const WithSlots: StoryObj<React.ComponentProps<typeof TimeTable>> = {
     editable: true,
     numberOfHours: 7,
   },
-  argTypes: {
-    editable: { type: "boolean" },
-    onChangeSlots: { type: "function" },
-  },
+
   render: TimeTableStory,
 };

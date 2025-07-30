@@ -77,7 +77,9 @@ const meta = {
 
 export default meta;
 
-export const Default: StoryObj = {
+export type Story = StoryObj<typeof TimeTable>;
+
+export const Default: Story = {
   render: (args) => <TimeTable {...args} />,
 };
 
@@ -147,17 +149,13 @@ function TimeTableStory(args: Partial<React.ComponentProps<typeof TimeTable>>) {
   );
 }
 
-export const WithSlotsEditable: StoryObj<
-  React.ComponentProps<typeof TimeTable>
-> = {
+export const WithSlotsEditable: Story = {
   args: {
     editable: true,
   },
   render: TimeTableStory,
 };
 
-export const WithSlotsReadOnly: StoryObj<
-  React.ComponentProps<typeof TimeTable>
-> = {
+export const WithSlotsReadOnly: Story = {
   render: TimeTableStory,
 };

@@ -2,8 +2,23 @@ import type { Meta, StoryObj } from "@storybook/nextjs";
 import React from "react";
 import { action } from "storybook/actions";
 
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "../components/command";
 import { Popover, PopoverContent, PopoverTrigger } from "../components/popover";
 import { TimeTable } from "../components/time-table";
+
+const subjects = [
+  { id: crypto.randomUUID(), value: "Mathemetics", label: "Mathemetics" },
+  { id: crypto.randomUUID(), value: "Science", label: "Science" },
+  { id: crypto.randomUUID(), value: "Urdu", label: "Urdu" },
+  { id: crypto.randomUUID(), value: "Kannada", label: "Kannada" },
+  { id: crypto.randomUUID(), value: "English", label: "English" },
+];
 
 const meta = {
   title: "UI/TimeTable",
@@ -54,25 +69,25 @@ function TimeTableStory(args: Partial<React.ComponentProps<typeof TimeTable>>) {
               style={{ position: "fixed", top: position.y, left: position.x }}
               className="size-2"
             />
-            <PopoverContent align="start" side="right" className="w-64">
-              <div className="text-sm">
-                <div className="mb-2 font-medium">
-                  Add subject for H{slotInfo.startOfPeriod} (
-                  {slotInfo.dayOfWeek})
-                </div>
-                <button
-                  onClick={() => {
-                    actions.addSlot({
-                      subject: "Math",
-                      ...slotInfo,
-                    });
-                    close();
-                  }}
-                  className="rounded bg-blue-600 px-3 py-1 text-white"
-                >
-                  Add Math
-                </button>
-              </div>
+            <PopoverContent align="center" className="w-52 p-0">
+              <Command>
+                <CommandInput />
+                <CommandGroup>
+                  <CommandList>
+                    {subjects.map((subject) => (
+                      <CommandItem
+                        key={subject.id}
+                        value={subject.value}
+                        onSelect={(subject) => {
+                          actions.addSlot({ ...slotInfo, subject });
+                        }}
+                      >
+                        {subject.label}
+                      </CommandItem>
+                    ))}
+                  </CommandList>
+                </CommandGroup>
+              </Command>
             </PopoverContent>
           </Popover>
         )}

@@ -190,7 +190,10 @@ function TimeTableDayRow({
     if (!bounds) return;
 
     const x = e.clientX - bounds.left;
-    const hourIndex = Math.floor(x / defaultSlotWidth) + 1;
+    const hourIndex = Math.max(
+      Math.min(Math.floor(x / defaultSlotWidth) + 1, numberOfHours),
+      1,
+    );
 
     const isOccupied = daySlots.some(
       (s) => hourIndex >= s.startOfPeriod && hourIndex <= s.endOfPeriod,

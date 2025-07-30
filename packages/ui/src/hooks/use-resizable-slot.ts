@@ -2,6 +2,8 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDrag } from "@use-gesture/react";
 import { useMotionValue } from "framer-motion";
 
+const OFFSET = 10;
+
 interface UseResizableSlotParams {
   slot: {
     startOfPeriod: number;
@@ -20,18 +22,20 @@ export function useResizableSlot({
   totalColumns,
   defaultSlotWidth,
 }: UseResizableSlotParams) {
-  const x = useMotionValue((slot.startOfPeriod - 1) * defaultSlotWidth);
-  const width = useMotionValue(
-    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth,
-  );
+  const calcInitialX = (slot.startOfPeriod - 1) * defaultSlotWidth + OFFSET;
+  const calcInitialWidth =
+    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth - OFFSET;
+
+  const x = useMotionValue(calcInitialX);
+  const width = useMotionValue(calcInitialWidth);
 
   const startRef = useRef(slot.startOfPeriod);
   const endRef = useRef(slot.endOfPeriod);
 
   useEffect(() => {
-    x.set((slot.startOfPeriod - 1) * defaultSlotWidth);
-    width.set((slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth);
-  }, [slot, defaultSlotWidth, width, x]);
+    x.set(calcInitialX);
+    width.set(calcInitialWidth);
+  }, [slot, defaultSlotWidth, width, x, calcInitialX, calcInitialWidth]);
 
   const updateStart = useCallback(
     (mx: number, last: boolean) => {
@@ -51,8 +55,8 @@ export function useResizableSlot({
       const newX = (newStart - 1) * defaultSlotWidth;
       const newWidth = (endRef.current - newStart + 1) * defaultSlotWidth;
 
-      x.set(newX);
-      width.set(newWidth);
+      x.set(newX + OFFSET);
+      width.set(newWidth - OFFSET);
 
       if (last)
         onResize({ startOfPeriod: newStart, endOfPeriod: endRef.current });
@@ -77,7 +81,7 @@ export function useResizableSlot({
       // update width only
       const newWidth = (newEnd - startRef.current + 1) * defaultSlotWidth;
 
-      width.set(newWidth);
+      width.set(newWidth - OFFSET);
 
       if (last)
         onResize({ startOfPeriod: startRef.current, endOfPeriod: newEnd });

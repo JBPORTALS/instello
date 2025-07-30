@@ -2,8 +2,6 @@ import { useCallback, useEffect, useRef } from "react";
 import { useDrag } from "@use-gesture/react";
 import { useMotionValue } from "framer-motion";
 
-const OFFSET = 10;
-
 interface UseResizableSlotParams {
   slot: {
     startOfPeriod: number;
@@ -14,6 +12,7 @@ interface UseResizableSlotParams {
   containerRef: React.RefObject<HTMLDivElement | null>;
   totalColumns: number;
   defaultSlotWidth: number;
+  offset?: number;
 }
 
 export function useResizableSlot({
@@ -21,10 +20,11 @@ export function useResizableSlot({
   onResize,
   totalColumns,
   defaultSlotWidth,
+  offset = 5,
 }: UseResizableSlotParams) {
-  const calcInitialX = (slot.startOfPeriod - 1) * defaultSlotWidth + OFFSET;
+  const calcInitialX = (slot.startOfPeriod - 1) * defaultSlotWidth + offset;
   const calcInitialWidth =
-    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth - OFFSET;
+    (slot.endOfPeriod - slot.startOfPeriod + 1) * defaultSlotWidth - offset;
 
   const x = useMotionValue(calcInitialX);
   const width = useMotionValue(calcInitialWidth);
@@ -55,8 +55,8 @@ export function useResizableSlot({
       const newX = (newStart - 1) * defaultSlotWidth;
       const newWidth = (endRef.current - newStart + 1) * defaultSlotWidth;
 
-      x.set(newX + OFFSET);
-      width.set(newWidth - OFFSET);
+      x.set(newX + offset);
+      width.set(newWidth - offset);
 
       if (last)
         onResize({ startOfPeriod: newStart, endOfPeriod: endRef.current });
@@ -81,7 +81,7 @@ export function useResizableSlot({
       // update width only
       const newWidth = (newEnd - startRef.current + 1) * defaultSlotWidth;
 
-      width.set(newWidth - OFFSET);
+      width.set(newWidth - offset);
 
       if (last)
         onResize({ startOfPeriod: startRef.current, endOfPeriod: newEnd });
@@ -122,5 +122,6 @@ export function useResizableSlot({
     },
     bindLeftResize,
     bindRightResize,
+    offset,
   };
 }

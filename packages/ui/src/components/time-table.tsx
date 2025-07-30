@@ -281,9 +281,13 @@ function TimeTableSlot({
 
   return (
     <motion.div
-      className="bg-accent/50 absolute flex h-full overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75 hover:cursor-grab active:cursor-grabbing"
+      className="bg-accent/50 absolute top-1 bottom-1 flex overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75"
       dragConstraints={containerRef}
-      style={{ x: xWithSpring, width: widthWithSpring }}
+      style={{
+        x: xWithSpring,
+        width: widthWithSpring,
+        height: `calc(calc(var(--spacing)*22)`,
+      }}
     >
       {/* LEFT HANDLE */}
       <div

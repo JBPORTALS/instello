@@ -1,5 +1,5 @@
 import { dirname, join } from "path";
-import type { StorybookConfig } from "@storybook/nextjs";
+import type { StorybookConfig } from "@storybook/nextjs-vite";
 
 /**
  * This function is used to resolve the absolute path of a package.
@@ -10,9 +10,9 @@ function getAbsolutePath(value: string): string {
 }
 const config: StorybookConfig = {
   stories: ["../../../packages/ui/src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
-  addons: ["@storybook/addon-themes"],
+  addons: ["@storybook/addon-themes", getAbsolutePath("@storybook/addon-vitest")],
   framework: {
-    name: getAbsolutePath("@storybook/nextjs"),
+    name: getAbsolutePath("@storybook/nextjs-vite"),
     options: {},
   },
   staticDirs: ["../public"],

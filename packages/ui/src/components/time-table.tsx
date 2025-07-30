@@ -195,7 +195,11 @@ function TimeTableDayRow({
     const isOccupied = daySlots.some(
       (s) => hourIndex >= s.startOfPeriod && hourIndex <= s.endOfPeriod,
     );
-    if (isOccupied) return;
+
+    if (isOccupied) {
+      setPopoverState(null);
+      return;
+    }
 
     setPopoverState({
       position: { x: e.clientX, y: e.clientY },

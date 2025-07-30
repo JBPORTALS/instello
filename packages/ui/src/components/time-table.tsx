@@ -361,6 +361,7 @@ function TimeTableSlot({
       <div className="w-full p-4 text-sm">{slot.subject}</div>
 
       <Button
+        title="Delete Slot"
         onClick={() => deleteSlot(slot.id)}
         variant={"ghost"}
         disabled={!editable}
@@ -370,7 +371,7 @@ function TimeTableSlot({
           !editable && "hidden",
         )}
       >
-        <XIcon />
+        <XIcon weight="bold" />
       </Button>
       {/* RIGHT HANDLE */}
       <div

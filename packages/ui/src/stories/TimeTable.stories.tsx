@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/nextjs";
 import React from "react";
 import { action } from "storybook/actions";
 
+import { Popover, PopoverContent } from "../components/popover";
 import { TimeTable } from "../components/time-table";
 
 const meta = {
@@ -47,6 +48,35 @@ function TimeTableStory(args: Partial<React.ComponentProps<typeof TimeTable>>) {
           setSlots(slots);
           logAction(slots);
         }}
+        EmptySlotPopoverComponent={({ position, slotInfo, actions, close }) => (
+          <Popover open onOpenChange={close}>
+            <PopoverContent
+              style={{ position: "fixed", top: position.y, left: position.x }}
+              align="start"
+              side="right"
+              className="w-64"
+            >
+              <div className="text-sm">
+                <div className="mb-2 font-medium">
+                  Add subject for H{slotInfo.startOfPeriod} (
+                  {slotInfo.dayOfWeek})
+                </div>
+                <button
+                  onClick={() => {
+                    actions.addSlot({
+                      subject: "Math",
+                      ...slotInfo,
+                    });
+                    close();
+                  }}
+                  className="rounded bg-blue-600 px-3 py-1 text-white"
+                >
+                  Add Math
+                </button>
+              </div>
+            </PopoverContent>
+          </Popover>
+        )}
       />
     </>
   );
@@ -56,21 +86,28 @@ export const WithSlots: StoryObj<React.ComponentProps<typeof TimeTable>> = {
   args: {
     slots: [
       {
-        id: "1",
+        id: crypto.randomUUID(),
         dayOfWeek: 1,
         startOfPeriod: 1,
         endOfPeriod: 3,
         subject: "Math",
       },
       {
-        id: "2",
+        id: crypto.randomUUID(),
+        dayOfWeek: 1,
+        startOfPeriod: 4,
+        endOfPeriod: 5,
+        subject: "Math",
+      },
+      {
+        id: crypto.randomUUID(),
         dayOfWeek: 2,
         startOfPeriod: 2,
         endOfPeriod: 4,
         subject: "Physics",
       },
       {
-        id: "3",
+        id: crypto.randomUUID(),
         dayOfWeek: 3,
         startOfPeriod: 2,
         endOfPeriod: 4,

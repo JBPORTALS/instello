@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { DotsSixVerticalIcon } from "@phosphor-icons/react";
 import { format } from "date-fns";
 import { motion, useSpring } from "motion/react";
@@ -31,6 +31,16 @@ interface TimeTableContextValue {
   editable: boolean;
   onChangeSlots: (slots: Slot[]) => void;
   defaultSlotWidth?: number;
+
+  /** triggers, When user click's on the empty area AKA where no slot's placed then this component will be placed over there */
+  EmptySlotPopoverComponent?: (params: {
+    slotInfo: Omit<Slot, "subject">;
+    position: { x: number; y: number };
+    actions: {
+      addSlot: (slot: Slot) => void;
+    };
+    close: () => void;
+  }) => React.ReactNode;
 }
 
 const TimeTableContext = React.createContext<TimeTableContextValue | null>(
@@ -73,16 +83,17 @@ export function TimeTable({
   editable = false,
   numberOfHours = 7,
   slots = [],
-  onChangeSlots = function () {
+  onChangeSlots = () => {
     return;
   },
+  EmptySlotPopoverComponent,
 }: TimeTableProps) {
   const [defaultSlotWidth, setDefaultSlotWidth] = React.useState<
     number | undefined
   >(undefined);
   const hourSlotRef = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const observer = new ResizeObserver(([entry]) => {
       if (entry && entry.contentRect.width > 0) {
         setDefaultSlotWidth(entry.contentRect.width);
@@ -105,8 +116,16 @@ export function TimeTable({
       slots,
       onChangeSlots,
       defaultSlotWidth,
+      EmptySlotPopoverComponent,
     }),
-    [editable, numberOfHours, slots, onChangeSlots, defaultSlotWidth],
+    [
+      editable,
+      numberOfHours,
+      slots,
+      onChangeSlots,
+      defaultSlotWidth,
+      EmptySlotPopoverComponent,
+    ],
   );
 
   return (
@@ -148,17 +167,75 @@ function TimeTableDayRow({
   dayIdx: number;
 }) {
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const { numberOfHours, defaultSlotWidth, editable, getSlotsByDayIdx } =
-    useTimeTable();
+  const {
+    slots,
+    numberOfHours,
+    defaultSlotWidth,
+    editable,
+    getSlotsByDayIdx,
+    EmptySlotPopoverComponent,
+    onChangeSlots,
+  } = useTimeTable();
   const daySlots = getSlotsByDayIdx(dayIdx);
+
+  const [popoverState, setPopoverState] = React.useState<{
+    position: { x: number; y: number };
+    slotInfo: Omit<Slot, "subject">;
+  } | null>(null);
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!editable || !defaultSlotWidth || !EmptySlotPopoverComponent) return;
+
+    const bounds = containerRef.current?.getBoundingClientRect();
+    if (!bounds) return;
+
+    const x = e.clientX - bounds.left;
+    const hourIndex = Math.floor(x / defaultSlotWidth) + 1;
+
+    const isOccupied = daySlots.some(
+      (s) => hourIndex >= s.startOfPeriod && hourIndex <= s.endOfPeriod,
+    );
+    if (isOccupied) return;
+
+    setPopoverState({
+      position: { x: e.clientX, y: e.clientY },
+      slotInfo: {
+        id: crypto.randomUUID(),
+        dayOfWeek: dayIdx,
+        startOfPeriod: hourIndex,
+        endOfPeriod: hourIndex,
+      },
+    });
+  };
+
+  const handleClose = () => setPopoverState(null);
 
   return (
     <div
       ref={containerRef}
-      className={cn(`p-1`, editable && "bg-accent/20 pattern-polka", className)}
-      style={{ gridColumn: `span ${numberOfHours}/ span ${numberOfHours}` }}
+      className={cn(
+        `relative`,
+        editable && "bg-accent/20 pattern-polka",
+        className,
+      )}
+      onClick={handleClick}
+      style={{
+        gridColumn: `span ${numberOfHours}/ span ${numberOfHours}`,
+      }}
       {...props}
     >
+      {popoverState &&
+        EmptySlotPopoverComponent?.({
+          ...popoverState,
+          actions: {
+            addSlot: (slot) => {
+              onChangeSlots([...slots, slot]);
+              handleClose();
+            },
+          },
+          close: handleClose,
+        })}
+
       {daySlots.map((slot) => {
         if (!defaultSlotWidth) return null;
         return (
@@ -204,7 +281,7 @@ function TimeTableSlot({
 
   return (
     <motion.div
-      className="bg-accent/50 relative z-50 flex h-full overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75 hover:cursor-grab active:cursor-grabbing"
+      className="bg-accent/50 absolute flex h-full overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75 hover:cursor-grab active:cursor-grabbing"
       dragConstraints={containerRef}
       style={{ x: xWithSpring, width: widthWithSpring }}
     >
@@ -212,7 +289,7 @@ function TimeTableSlot({
       <div
         {...bindLeftResize()}
         className={cn(
-          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 left-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted relative top-0 left-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >
@@ -223,7 +300,7 @@ function TimeTableSlot({
       <div
         {...bindRightResize()}
         className={cn(
-          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 right-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted relative top-0 right-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >

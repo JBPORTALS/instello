@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/nextjs";
 import React from "react";
+import { action } from "storybook/actions";
 
 import { TimeTable } from "../components/time-table";
 
@@ -21,10 +22,19 @@ export const Default: StoryObj = {
 function TimeTableStory(args: Partial<React.ComponentProps<typeof TimeTable>>) {
   const [slots, setSlots] = React.useState(args.slots);
 
+  const logAction = action("onChangeSlots");
+
   return (
     <>
       {/* <pre>{JSON.stringify(slots, undefined, 1)}</pre> */}
-      <TimeTable {...args} slots={slots} onChangeSlots={setSlots} />
+      <TimeTable
+        {...args}
+        slots={slots}
+        onChangeSlots={(slots) => {
+          setSlots(slots);
+          logAction(slots);
+        }}
+      />
     </>
   );
 }
@@ -56,6 +66,10 @@ export const WithSlots: StoryObj<React.ComponentProps<typeof TimeTable>> = {
     ],
     editable: true,
     numberOfHours: 7,
+  },
+  argTypes: {
+    editable: { type: "boolean" },
+    onChangeSlots: { type: "function" },
   },
   render: TimeTableStory,
 };

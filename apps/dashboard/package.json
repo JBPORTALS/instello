@@ -15,7 +15,7 @@
     "with-env": "dotenv -e ../../.env --"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.25.1",
+    "@clerk/nextjs": "catalog:",
     "@hookform/resolvers": "catalog:",
     "@instello/api": "workspace:*",
     "@instello/db": "workspace:*",
@@ -43,7 +43,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@clerk/types": "^4.65.0",
+    "@clerk/types": "catalog:",
     "@instello/eslint-config": "workspace:*",
     "@instello/prettier-config": "workspace:*",
     "@instello/tsconfig": "workspace:*",

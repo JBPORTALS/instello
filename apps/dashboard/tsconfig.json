@@ -21,7 +21,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src"
+    "src",
+    "../studio/src/app/no-access"
   ],
   "exclude": ["node_modules"]
 }

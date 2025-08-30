@@ -1,7 +1,7 @@
 export default function Home() {
   return (
-    <div className="grid min-h-screen grid-rows-[20px_1fr_20px] items-center justify-items-center gap-16 p-8 pb-20 font-sans sm:p-20">
-      <h1>Instello Studio</h1>
+    <div className="flex h-full w-full px-8 py-6">
+      <h1>Instello Studio Home</h1>
     </div>
   );
 }

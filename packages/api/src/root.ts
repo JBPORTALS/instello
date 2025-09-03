@@ -1,5 +1,5 @@
+import * as erpRouter from "./erp-router";
 import * as lmsRouter from "./lms-router";
-import * as erpRouter from "./router";
 import { createTRPCRouter } from "./trpc";
 
 export const appRouter = createTRPCRouter({

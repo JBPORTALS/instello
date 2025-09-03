@@ -1,4 +1,4 @@
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
@@ -25,5 +25,19 @@ export const CreateChannelSchema = createInsertSchema(channel, {
   createdAt: true,
   createdByClerkUserId: true,
   isPublished: true,
+  updatedAt: true,
+});
+
+export const UpdateChannelSchema = createUpdateSchema(channel, {
+  id: z.string().min(1, "Channel ID is required for updation"),
+  title: z
+    .string()
+    .min(3, "Title of the channel must be atlease 3 characters long"),
+  description: z.string().optional(),
+  thumbneilId: z.string().min(1, "Thumbneil required"),
+  isPublished: z.boolean().optional(),
+}).omit({
+  createdAt: true,
+  createdByClerkUserId: true,
   updatedAt: true,
 });

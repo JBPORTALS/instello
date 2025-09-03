@@ -13,6 +13,10 @@ catalog:
   "react-hook-form": ^7.60.0
   "@clerk/nextjs": "^6.25.1"
   "@clerk/types": "^4.65.0"
+  "@tanstack/react-query": "^5.83.0"
+  "@tanstack/react-table": "^8.21.3"
+  "@trpc/client": "^11.4.3"
+  "@trpc/tanstack-react-query": "^11.4.3"
 
 catalogs:
   react19:

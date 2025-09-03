@@ -7,7 +7,7 @@ await jiti.import("./src/env");
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@instello/ui"],
+  transpilePackages: ["@instello/ui", "@instello/db", "@instello/api"],
   experimental: {
     optimizePackageImports: ["@phosphor-icons/react"],
   },

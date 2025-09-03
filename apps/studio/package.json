@@ -15,11 +15,16 @@
   },
   "dependencies": {
     "@clerk/nextjs": "catalog:",
+    "@hookform/resolvers": "catalog:",
+    "@instello/api": "workspace:^",
+    "@instello/db": "workspace:*",
     "@instello/ui": "workspace:*",
     "@phosphor-icons/react": "catalog:",
     "next": "15.5.0",
     "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react-dom": "19.1.0",
+    "react-hook-form": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@clerk/types": "catalog:",

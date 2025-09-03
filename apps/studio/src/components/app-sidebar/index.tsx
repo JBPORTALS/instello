@@ -13,6 +13,8 @@ import {
 } from "@instello/ui/components/sidebar";
 import { CircleIcon, HouseIcon, PlusIcon } from "@phosphor-icons/react/ssr";
 
+import { CreateChannelDialog } from "../dialogs/create-channel-dialog";
+
 const channels = [
   {
     id: "1",
@@ -39,15 +41,17 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>
             Channels
-            <SidebarGroupAction asChild>
-              <Button
-                size={"icon"}
-                className="size-5 [&>svg]:size-4"
-                variant={"outline"}
-              >
-                <PlusIcon />
-              </Button>
-            </SidebarGroupAction>
+            <CreateChannelDialog>
+              <SidebarGroupAction asChild>
+                <Button
+                  size={"icon"}
+                  className="size-5 [&>svg]:size-4"
+                  variant={"outline"}
+                >
+                  <PlusIcon />
+                </Button>
+              </SidebarGroupAction>
+            </CreateChannelDialog>
           </SidebarGroupLabel>
           <SidebarMenu>
             {channels.map((item) => (

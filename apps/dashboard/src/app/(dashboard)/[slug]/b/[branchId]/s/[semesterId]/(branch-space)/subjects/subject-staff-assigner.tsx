@@ -35,9 +35,11 @@ export function SubjectStaffAssigner({
   const { memberships, isLoaded } = useOrganization({ memberships: true });
   const { branchId } = useParams<{ branchId: string }>();
   const { mutateAsync: assignStaff } = useMutation(
-    trpc.subject.assignStaff.mutationOptions({
+    trpc.erp.subject.assignStaff.mutationOptions({
       async onSuccess() {
-        await queryClient.invalidateQueries(trpc.subject.list.queryFilter());
+        await queryClient.invalidateQueries(
+          trpc.erp.subject.list.queryFilter(),
+        );
         setOpen(false);
       },
       onError(error) {

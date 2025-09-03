@@ -13,7 +13,7 @@ export default async function Page({
   params: Promise<{ branchId: string }>;
 }) {
   const { branchId } = await params;
-  prefetch(trpc.subject.list.queryOptions({ branchId }));
+  prefetch(trpc.erp.subject.list.queryOptions({ branchId }));
 
   return (
     <HydrateClient>

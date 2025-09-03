@@ -58,9 +58,9 @@ export function CreateBranchDialog(
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { mutateAsync: createBranch } = useMutation(
-    trpc.branch.create.mutationOptions({
+    trpc.erp.branch.create.mutationOptions({
       async onSuccess(_data, variables) {
-        await queryClient.invalidateQueries(trpc.branch.list.queryFilter());
+        await queryClient.invalidateQueries(trpc.erp.branch.list.queryFilter());
         toast.success(`${variables.name} created.`);
         setOpen(false);
         form.reset();

@@ -13,8 +13,8 @@ export default async function Layout({
   params: Promise<{ branchId: string }>;
 }) {
   const { branchId } = await params;
-  prefetch(trpc.branch.getByBranchId.queryOptions({ branchId }));
-  prefetch(trpc.branch.getSemesterList.queryOptions({ branchId }));
+  prefetch(trpc.erp.branch.getByBranchId.queryOptions({ branchId }));
+  prefetch(trpc.erp.branch.getSemesterList.queryOptions({ branchId }));
 
   return (
     <HydrateClient>

@@ -15,7 +15,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Member =
-  RouterOutputs["organization"]["getOrganizationMembers"]["members"][number];
+  RouterOutputs["erp"]["organization"]["getOrganizationMembers"]["members"][number];
 
 export const columns: ColumnDef<Member>[] = [
   {

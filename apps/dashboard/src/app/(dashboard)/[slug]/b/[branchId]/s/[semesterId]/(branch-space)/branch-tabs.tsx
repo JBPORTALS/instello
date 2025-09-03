@@ -51,7 +51,7 @@ export function BranchTabs() {
   const router = useRouter();
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.branch.getByBranchId.queryOptions({ branchId }),
+    trpc.erp.branch.getByBranchId.queryOptions({ branchId }),
   );
 
   return (

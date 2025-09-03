@@ -32,7 +32,7 @@ export function TimetableClient() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { data } = useSuspenseQuery(
-    trpc.timetable.findByActiveSemester.queryOptions({ branchId }),
+    trpc.erp.timetable.findByActiveSemester.queryOptions({ branchId }),
   );
 
   const timetableSlots = data.timetableData?.timetableSlots.map((s) => ({
@@ -46,9 +46,9 @@ export function TimetableClient() {
   const [message, setMessage] = React.useState("");
   const router = useRouter();
   const { mutate: createTimetable, isPending } = useMutation(
-    trpc.timetable.create.mutationOptions({
+    trpc.erp.timetable.create.mutationOptions({
       async onSuccess() {
-        await queryClient.invalidateQueries(trpc.timetable.pathFilter());
+        await queryClient.invalidateQueries(trpc.erp.timetable.pathFilter());
         router.replace(`/${slug}/b/${branchId}/s/${semesterId}/timetable`);
         toast.success(`Timetable updated`);
       },

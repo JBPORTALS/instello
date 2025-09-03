@@ -11,7 +11,7 @@ export default function DataTableClient() {
   const trpc = useTRPC();
   const { branchId } = useParams<{ branchId: string }>();
   const { data } = useSuspenseQuery(
-    trpc.student.list.queryOptions({ branchId }),
+    trpc.erp.student.list.queryOptions({ branchId }),
   );
 
   return <DataTable columns={columns} data={data} />;

@@ -10,7 +10,7 @@ export function BranchInfoRow() {
   const trpc = useTRPC();
   const { branchId } = useParams<{ branchId: string }>();
   const { data } = useSuspenseQuery(
-    trpc.branch.getByBranchId.queryOptions({ branchId }),
+    trpc.erp.branch.getByBranchId.queryOptions({ branchId }),
   );
 
   return (

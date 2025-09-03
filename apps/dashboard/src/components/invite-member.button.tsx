@@ -63,9 +63,9 @@ export function InviteMemberButton() {
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { mutateAsync: createInvitationBulk } = useMutation(
-    trpc.organization.createInvitationBulk.mutationOptions({
+    trpc.erp.organization.createInvitationBulk.mutationOptions({
       async onSuccess(data) {
-        await queryClient.invalidateQueries(trpc.organization.pathFilter());
+        await queryClient.invalidateQueries(trpc.erp.organization.pathFilter());
         toast.success(`${data.length} members invited`);
         form.reset();
         setOpen(false);

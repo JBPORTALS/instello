@@ -28,7 +28,7 @@ export function NavBranches() {
   const { slug } = useParams<{ slug: string }>();
   const pathname = usePathname();
   const trpc = useTRPC();
-  const branches = useSuspenseQuery(trpc.branch.list.queryOptions());
+  const branches = useSuspenseQuery(trpc.erp.branch.list.queryOptions());
 
   return (
     <SidebarGroup>

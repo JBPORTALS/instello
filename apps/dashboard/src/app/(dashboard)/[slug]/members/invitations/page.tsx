@@ -6,7 +6,7 @@ import { MembersTabs } from "../members-tabs";
 import DataTableClient from "./data-table.client";
 
 export default function Page() {
-  prefetch(trpc.organization.getInviationList.queryOptions());
+  prefetch(trpc.erp.organization.getInviationList.queryOptions());
   return (
     <HydrateClient>
       <SiteHeader startElement={<MembersTabs />} />

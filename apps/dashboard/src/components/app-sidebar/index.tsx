@@ -22,7 +22,7 @@ export async function AppSidebar({
 
   if (!user) return null;
 
-  prefetch(trpc.branch.list.queryOptions());
+  prefetch(trpc.erp.branch.list.queryOptions());
 
   return (
     <HydrateClient>

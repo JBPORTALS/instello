@@ -25,7 +25,7 @@ export function SubjectPopover({
   const trpc = useTRPC();
   const { branchId } = useParams<{ branchId: string }>();
   const { data, isLoading } = useQuery(
-    trpc.subject.list.queryOptions({ branchId }),
+    trpc.erp.subject.list.queryOptions({ branchId }),
   );
   const { addSlot } = useReactTimetable();
 

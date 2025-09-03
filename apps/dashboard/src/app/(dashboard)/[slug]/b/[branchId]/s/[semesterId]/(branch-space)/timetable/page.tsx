@@ -9,7 +9,7 @@ export default async function Page({
   params: Promise<{ branchId: string }>;
 }) {
   const { branchId } = await params;
-  prefetch(trpc.timetable.findByActiveSemester.queryOptions({ branchId }));
+  prefetch(trpc.erp.timetable.findByActiveSemester.queryOptions({ branchId }));
 
   return (
     <HydrateClient>

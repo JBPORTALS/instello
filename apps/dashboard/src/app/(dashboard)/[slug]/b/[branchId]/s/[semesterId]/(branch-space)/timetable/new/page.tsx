@@ -19,7 +19,7 @@ export default async function Page({
   )
     notFound();
 
-  prefetch(trpc.timetable.findByActiveSemester.queryOptions({ branchId }));
+  prefetch(trpc.erp.timetable.findByActiveSemester.queryOptions({ branchId }));
 
   return (
     <HydrateClient>

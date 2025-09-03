@@ -21,7 +21,7 @@ export function SemesterSwitcher({
     slug: string;
   }>();
   const { data } = useSuspenseQuery(
-    trpc.branch.getSemesterList.queryOptions({ branchId }),
+    trpc.erp.branch.getSemesterList.queryOptions({ branchId }),
   );
   const router = useRouter();
 

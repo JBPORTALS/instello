@@ -13,7 +13,7 @@ import { SubjectStaffAssigner } from "./subject-staff-assigner";
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
-export type Payment = RouterOutputs["subject"]["list"][number];
+export type Payment = RouterOutputs["erp"]["subject"]["list"][number];
 
 function SubjectCell({
   subjectId,

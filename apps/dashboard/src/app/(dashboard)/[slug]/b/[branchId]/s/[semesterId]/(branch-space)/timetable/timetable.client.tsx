@@ -20,7 +20,7 @@ export function TimetableClient() {
   }>();
   const trpc = useTRPC();
   const { data } = useSuspenseQuery(
-    trpc.timetable.findByActiveSemester.queryOptions({ branchId }),
+    trpc.erp.timetable.findByActiveSemester.queryOptions({ branchId }),
   );
 
   if (!data.timetableData)

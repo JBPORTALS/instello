@@ -48,9 +48,11 @@ export function CreateStudentDialog(
   const trpc = useTRPC();
   const queryClient = useQueryClient();
   const { mutateAsync: createStudent } = useMutation(
-    trpc.student.create.mutationOptions({
+    trpc.erp.student.create.mutationOptions({
       async onSuccess(_data, variables) {
-        await queryClient.invalidateQueries(trpc.student.list.queryFilter());
+        await queryClient.invalidateQueries(
+          trpc.erp.student.list.queryFilter(),
+        );
         toast.success(`${variables.firstName} ${variables.lastName} added.`);
         setOpen(false);
         form.reset();

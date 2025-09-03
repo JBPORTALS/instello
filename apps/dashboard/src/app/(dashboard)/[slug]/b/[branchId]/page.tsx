@@ -16,7 +16,7 @@ export default async function Page({
   const queryClient = createQueryClient();
 
   const firstSemester = await queryClient.fetchQuery(
-    trpc.branch.getFirstSemester.queryOptions({ branchId }),
+    trpc.erp.branch.getFirstSemester.queryOptions({ branchId }),
   );
 
   if (!semesterCookieRaw)

@@ -45,10 +45,10 @@ export function SubjectTabs() {
   const router = useRouter();
   const trpc = useTRPC();
   const { data: subject } = useSuspenseQuery(
-    trpc.subject.getBySubjectId.queryOptions({ branchId, subjectId }),
+    trpc.erp.subject.getBySubjectId.queryOptions({ branchId, subjectId }),
   );
   const { data: branch } = useSuspenseQuery(
-    trpc.branch.getByBranchId.queryOptions({ branchId }),
+    trpc.erp.branch.getByBranchId.queryOptions({ branchId }),
   );
 
   return (

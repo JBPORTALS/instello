@@ -10,7 +10,7 @@ import { columns } from "./columns";
 export default function DataTableClient() {
   const trpc = useTRPC();
   const { data, isRefetching } = useSuspenseQuery(
-    trpc.organization.getInviationList.queryOptions(),
+    trpc.erp.organization.getInviationList.queryOptions(),
   );
 
   if (isRefetching)

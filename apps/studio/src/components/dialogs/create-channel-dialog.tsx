@@ -40,8 +40,7 @@ export function CreateChannelDialog({
     defaultValues: {
       title: "",
       description: "",
-      thumbneilId:
-        "https://i.ytimg.com/vi/uciCa1BoMfM/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCGFmp8eCO2Fb1Jz7CRM41e9BZfbg",
+      thumbneilId: "https://i.ytimg.com",
     },
   });
 
@@ -55,6 +54,7 @@ export function CreateChannelDialog({
           trpc.lms.channel.list.queryFilter(),
         );
         setOpen(false);
+        form.reset();
       },
       onError() {
         toast.error("Failed to create channel");

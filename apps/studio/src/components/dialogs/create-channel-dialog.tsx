@@ -20,9 +20,11 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@instello/ui/components/form";
 import { Input } from "@instello/ui/components/input";
+import { Textarea } from "@instello/ui/components/textarea";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -38,7 +40,8 @@ export function CreateChannelDialog({
     defaultValues: {
       title: "",
       description: "",
-      thumbneilId: "",
+      thumbneilId:
+        "https://i.ytimg.com/vi/uciCa1BoMfM/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCGFmp8eCO2Fb1Jz7CRM41e9BZfbg",
     },
   });
 
@@ -66,32 +69,56 @@ export function CreateChannelDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent>
+      <DialogContent className="@container/dialog-content sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>New Channel</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3.5">
-            <DialogBody>
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        className="h-11 text-2xl font-semibold"
-                        placeholder="eg. Artificial Intelligence"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <DialogBody className="flex gap-5">
+              <div>
+                <div className="bg-accent/60 aspect-video h-auto rounded-md @sm:w-lg"></div>
+              </div>
+              <div className="w-full space-y-3.5">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title</FormLabel>
+                      <FormControl>
+                        <Input
+                          {...field}
+                          className="h-11 text-2xl font-semibold"
+                          placeholder="eg. Artificial Intelligence"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>{"Description (Optional)"}</FormLabel>
+                      <FormControl className="h-full">
+                        <Textarea
+                          {...field}
+                          maxLength={256}
+                          className="h-28 resize-none"
+                          placeholder="Add description..."
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </DialogBody>
             <DialogFooter>
-              <Button>Create</Button>
+              <Button loading={form.formState.isSubmitting}>Create</Button>
             </DialogFooter>
           </form>
         </Form>

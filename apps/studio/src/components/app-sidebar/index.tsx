@@ -11,7 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@instello/ui/components/sidebar";
-import { HouseIcon, PlusIcon } from "@phosphor-icons/react/ssr";
+import { CircleIcon, HouseIcon, PlusIcon } from "@phosphor-icons/react/ssr";
 
 const channels = [
   {
@@ -30,7 +30,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
-              <HouseIcon /> Home
+              <HouseIcon weight="duotone" /> Home
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
@@ -52,7 +52,10 @@ export function AppSidebar() {
           <SidebarMenu>
             {channels.map((item) => (
               <SidebarMenuItem key={item.id}>
-                <SidebarMenuButton>{item.name}</SidebarMenuButton>
+                <SidebarMenuButton>
+                  <CircleIcon weight="duotone" />
+                  {item.name}
+                </SidebarMenuButton>
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

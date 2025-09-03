@@ -3,6 +3,7 @@ import { Geist_Mono, Montserrat } from "next/font/google";
 
 import "@instello/ui/globals.css";
 
+import { Providers } from "@/components/provicers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { buttonVariants } from "@instello/ui/components/button";
 import { cn } from "@instello/ui/lib/utils";
@@ -57,11 +58,11 @@ export default function RootLayout({
         },
       }}
     >
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
           className={`${montserrat.variable} ${geistMono.variable} antialiased`}
         >
-          {children}
+          <Providers>{children}</Providers>
         </body>
       </html>
     </ClerkProvider>

@@ -28,6 +28,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "catalog:",
+    "sonner": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

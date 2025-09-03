@@ -2,6 +2,7 @@
 
 import type { z } from "zod/v4";
 import React, { useState } from "react";
+import { useTRPC } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CreateChannelSchema } from "@instello/db/lms";
 import { Button } from "@instello/ui/components/button";
@@ -22,7 +23,9 @@ import {
   FormMessage,
 } from "@instello/ui/components/form";
 import { Input } from "@instello/ui/components/input";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 export function CreateChannelDialog({
   children,
@@ -39,7 +42,26 @@ export function CreateChannelDialog({
     },
   });
 
-  async function onSubmit(values: z.infer<typeof CreateChannelSchema>) {}
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
+
+  const { mutateAsync: createChannel } = useMutation(
+    trpc.lms.channel.createChannel.mutationOptions({
+      async onSuccess() {
+        await queryClient.invalidateQueries(
+          trpc.lms.channel.list.queryFilter(),
+        );
+        setOpen(false);
+      },
+      onError() {
+        toast.error("Failed to create channel");
+      },
+    }),
+  );
+
+  async function onSubmit(values: z.infer<typeof CreateChannelSchema>) {
+    await createChannel(values);
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

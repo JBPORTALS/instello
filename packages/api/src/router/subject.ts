@@ -1,5 +1,5 @@
 import { and, desc, eq } from "@instello/db";
-import { CreateSubjectSchema, subject } from "@instello/db/schema";
+import { CreateSubjectSchema, subject } from "@instello/db/erp";
 import { z } from "zod/v4";
 
 import { branchProcedure, hasPermission } from "../trpc";

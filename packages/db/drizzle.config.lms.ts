@@ -8,8 +8,10 @@ if (!process.env.POSTGRES_URL) {
 const nonPoolingUrl = process.env.POSTGRES_URL;
 
 export default {
-  schema: "./src/schema",
+  schema: "./src/lms",
   dialect: "postgresql",
   dbCredentials: { url: nonPoolingUrl },
   casing: "snake_case",
+  out: "./drizzle/lms",
+  tablesFilter: "lms_*",
 } satisfies Config;

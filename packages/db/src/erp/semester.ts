@@ -1,9 +1,8 @@
-import { pgTable } from "drizzle-orm/pg-core";
-
 import { initialColumns } from "../columns.helpers";
+import { erpPgTable } from "../helper";
 import { branch } from "./branch";
 
-export const semester = pgTable("semester", (t) => ({
+export const semester = erpPgTable("semester", (t) => ({
   ...initialColumns,
   branchId: t
     .text()

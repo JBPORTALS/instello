@@ -1,11 +1,11 @@
-import { pgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
+import { erpPgTable } from "../helper";
 import { branch } from "./branch";
 
-export const subject = pgTable("subject", (t) => ({
+export const subject = erpPgTable("subject", (t) => ({
   ...initialColumns,
   name: t.text().notNull(),
   semesterValue: t.numeric({ mode: "number" }).notNull(),

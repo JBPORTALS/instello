@@ -5,7 +5,7 @@ import {
   subject,
   timetable,
   timetableSlot,
-} from "@instello/db/schema";
+} from "@instello/db/erp";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 

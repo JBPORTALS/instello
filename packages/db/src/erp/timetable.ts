@@ -1,14 +1,14 @@
 import { relations, sql } from "drizzle-orm";
 import { check } from "drizzle-orm/gel-core";
-import { pgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 
 import { initialColumns } from "../columns.helpers";
+import { erpPgTable } from "../helper";
 import { branch } from "./branch";
 import { semester } from "./semester";
 import { subject } from "./subject";
 
-export const timetable = pgTable("timetable", (t) => ({
+export const timetable = erpPgTable("timetable", (t) => ({
   ...initialColumns,
   branchId: t
     .text()
@@ -35,7 +35,7 @@ export const CreateTimetableSchema = createInsertSchema(timetable).omit({
   version: true,
 });
 
-export const timetableSlot = pgTable(
+export const timetableSlot = erpPgTable(
   "timetable_slot",
   (t) => ({
     ...initialColumns,

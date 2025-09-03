@@ -1,11 +1,11 @@
-import { pgTable } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
+import { erpPgTable } from "../helper";
 
 export type SemesterMode = "odd" | "even";
-export const branch = pgTable("branch", (t) => ({
+export const branch = erpPgTable("branch", (t) => ({
   ...initialColumns,
   name: t.text().notNull(),
   icon: t.varchar({ length: 256 }).notNull(),

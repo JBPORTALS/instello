@@ -6,7 +6,7 @@ import type { CheckAuthorizationParamsFromSessionClaims } from "@clerk/types";
 import { createClerkClient } from "@clerk/backend";
 import { eq } from "@instello/db";
 import { db } from "@instello/db/client";
-import { branch, semester } from "@instello/db/schema";
+import { branch, semester } from "@instello/db/erp";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import z, { ZodError } from "zod/v4";

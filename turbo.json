@@ -35,7 +35,11 @@
     "//#clean": {
       "cache": false
     },
-    "push": {
+    "push-erp": {
+      "cache": false,
+      "interactive": true
+    },
+    "push-lms": {
       "cache": false,
       "interactive": true
     },

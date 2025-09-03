@@ -9,7 +9,8 @@
   "scripts": {
     "build": "turbo build",
     "dev": "turbo dev",
-    "db:push": "turbo -F @instello/db push",
+    "db:push-erp": "turbo -F @instello/db push-erp",
+    "db:push-lms": "turbo -F @instello/db push-lms",
     "db:studio": "turbo -F @instello/db studio",
     "clean": "git clean -xdf node_modules",
     "clean:workspaces": "turbo run clean",

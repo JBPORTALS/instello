@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { useParams } from "next/navigation";
 import { useTRPC } from "@/trpc/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateStudentSchema } from "@instello/db/schema";
+import { CreateStudentSchema } from "@instello/db/erp";
 import { Button } from "@instello/ui/components/button";
 import {
   Dialog,

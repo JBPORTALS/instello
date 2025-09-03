@@ -1,5 +1,5 @@
 import { and, asc, eq, not } from "@instello/db";
-import { branch, CreateBranchSchema, semester } from "@instello/db/schema";
+import { branch, CreateBranchSchema, semester } from "@instello/db/erp";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 

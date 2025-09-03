@@ -1,5 +1,5 @@
 import { and, eq, isDrizzleQueryError } from "@instello/db";
-import { CreateStudentSchema, student } from "@instello/db/schema";
+import { CreateStudentSchema, student } from "@instello/db/erp";
 import { TRPCError } from "@trpc/server";
 
 import { branchProcedure, hasPermission } from "../trpc";

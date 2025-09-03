@@ -1,14 +1,15 @@
 import type { SQL } from "drizzle-orm";
 import { sql } from "drizzle-orm";
-import { pgTable, unique } from "drizzle-orm/pg-core";
+import { unique } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import z from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
+import { erpPgTable } from "../helper";
 import { branch } from "./branch";
 import { semester } from "./semester";
 
-export const student = pgTable(
+export const student = erpPgTable(
   "student",
   (t) => ({
     ...initialColumns,

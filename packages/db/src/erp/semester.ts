@@ -1,5 +1,5 @@
 import { initialColumns } from "../columns.helpers";
-import { erpPgTable } from "../helper";
+import { erpPgTable } from "../table.helpers";
 import { branch } from "./branch";
 
 export const semester = erpPgTable("semester", (t) => ({

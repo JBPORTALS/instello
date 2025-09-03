@@ -1,5 +1,5 @@
 import { initialColumns } from "../columns.helpers";
-import { lmsPgTable } from "../helper";
+import { lmsPgTable } from "../table.helpers";
 
 export const channel = lmsPgTable("channel", (d) => ({
   ...initialColumns,

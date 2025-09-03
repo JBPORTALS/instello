@@ -2,7 +2,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
-import { erpPgTable } from "../helper";
+import { erpPgTable } from "../table.helpers";
 import { branch } from "./branch";
 
 export const subject = erpPgTable("subject", (t) => ({

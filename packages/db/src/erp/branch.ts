@@ -2,7 +2,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
-import { erpPgTable } from "../helper";
+import { erpPgTable } from "../table.helpers";
 
 export type SemesterMode = "odd" | "even";
 export const branch = erpPgTable("branch", (t) => ({

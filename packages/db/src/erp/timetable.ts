@@ -3,7 +3,7 @@ import { check } from "drizzle-orm/gel-core";
 import { createInsertSchema } from "drizzle-zod";
 
 import { initialColumns } from "../columns.helpers";
-import { erpPgTable } from "../helper";
+import { erpPgTable } from "../table.helpers";
 import { branch } from "./branch";
 import { semester } from "./semester";
 import { subject } from "./subject";

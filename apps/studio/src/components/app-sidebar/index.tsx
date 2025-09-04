@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { Button } from "@instello/ui/components/button";
 import {
@@ -23,7 +24,18 @@ export function AppSidebar() {
     <HydrateClient>
       <Sidebar>
         <SidebarHeader>
-          <div className="text-lg font-bold">Instello Studio</div>
+          <SidebarMenu className="h-9 flex-row items-center gap-2 px-2">
+            <Image
+              src={`/instello.svg`}
+              width={100}
+              height={32}
+              alt="Instello Logo"
+            />{" "}
+            <span className="text-xl">·</span>
+            <span className="mt-1 text-lg font-bold text-[#F7941D]">
+              STUDIO
+            </span>
+          </SidebarMenu>
           <SidebarMenu>
             <NavMain />
           </SidebarMenu>

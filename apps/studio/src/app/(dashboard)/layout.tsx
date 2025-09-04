@@ -13,12 +13,16 @@ export default async function Layout({
   if (!sessionClaims?.metadata?.hasCreatorRole) redirect("/no-access");
 
   return (
-    <SidebarProvider>
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "calc(var(--spacing) * 64)",
+          "--header-height": "calc(var(--spacing) * 14)",
+        } as React.CSSProperties
+      }
+    >
       <AppSidebar />
-      <SidebarInset>
-        <header className="h-[44px] border-b"></header>
-        {children}
-      </SidebarInset>
+      <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
   );
 }

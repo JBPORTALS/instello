@@ -1,4 +1,4 @@
-import { eq } from "@instello/db";
+import { and, eq } from "@instello/db";
 import {
   channel,
   CreateChannelSchema,
@@ -24,6 +24,17 @@ export const channelRouter = {
       .from(channel)
       .where(eq(channel.createdByClerkUserId, ctx.auth.userId));
   }),
+
+  getById: protectedProcedure
+    .input(z.object({ channelId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.query.channel.findFirst({
+        where: and(
+          eq(channel.createdByClerkUserId, ctx.auth.userId),
+          eq(channel.id, input.channelId),
+        ),
+      });
+    }),
 
   update: protectedProcedure
     .input(UpdateChannelSchema)

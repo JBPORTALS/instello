@@ -24,7 +24,7 @@ export function AppSidebar() {
     <HydrateClient>
       <Sidebar>
         <SidebarHeader>
-          <SidebarMenu className="h-9 flex-row items-center gap-2 px-2">
+          <SidebarMenu className="h-11 flex-row items-center gap-2 px-2">
             <Image
               src={`/instello.svg`}
               width={100}

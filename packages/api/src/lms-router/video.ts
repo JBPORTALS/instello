@@ -1,43 +1,39 @@
-import { eq } from "@instello/db";
-import {
-  chapter,
-  CreateChapterSchema,
-  UpdateChapterSchema,
-} from "@instello/db/lms";
+import { and, eq } from "@instello/db";
+import { CreateVideoSchema, UpdateVideoSchema, video } from "@instello/db/lms";
 import { z } from "zod/v4";
 
 import { protectedProcedure } from "../trpc";
 
 export const chapterRouter = {
   create: protectedProcedure
-    .input(CreateChapterSchema)
+    .input(CreateVideoSchema)
     .mutation(async ({ ctx, input }) => {
       return await ctx.db
-        .insert(chapter)
+        .insert(video)
         .values({ ...input, createdByClerkUserId: ctx.auth.userId })
         .returning();
     }),
 
   list: protectedProcedure
-    .input(z.object({ channelId: z.string() }))
+    .input(z.object({ chapterId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.query.chapter.findMany({
-        where: eq(chapter.channelId, input.channelId),
+      return await ctx.db.query.video.findMany({
+        where: and(eq(video.chapterId, input.chapterId)),
       });
     }),
 
   update: protectedProcedure
-    .input(UpdateChapterSchema)
+    .input(UpdateVideoSchema)
     .mutation(async ({ ctx, input }) => {
       return await ctx.db
-        .update(chapter)
+        .update(video)
         .set({ ...input })
-        .where(eq(chapter.id, input.id));
+        .where(eq(video.id, input.id));
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ videoId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.delete(chapter).where(eq(chapter.id, input.id));
+      return await ctx.db.delete(video).where(eq(video.id, input.videoId));
     }),
 };

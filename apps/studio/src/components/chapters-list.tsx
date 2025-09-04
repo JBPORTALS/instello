@@ -11,6 +11,8 @@ import {
 import { HashIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { VideosList } from "./videos-list";
+
 export function ChapterList() {
   const trpc = useTRPC();
   const { channelId } = useParams<{ channelId: string }>();
@@ -35,11 +37,13 @@ export function ChapterList() {
     );
 
   return (
-    <Accordion collapsible type="single">
+    <Accordion defaultValue={data.at(0)?.id} type="single">
       {data.map((item) => (
         <AccordionItem key={item.id} value={item.id}>
           <AccordionTrigger>{item.title}</AccordionTrigger>
-          <AccordionContent></AccordionContent>
+          <AccordionContent>
+            <VideosList chapterId={item.id} />
+          </AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>

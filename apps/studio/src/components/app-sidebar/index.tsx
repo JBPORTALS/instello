@@ -28,11 +28,11 @@ export function AppSidebar() {
             <Image
               src={`/instello.svg`}
               width={100}
-              height={32}
+              height={48}
               alt="Instello Logo"
             />{" "}
             <span className="text-xl">·</span>
-            <span className="mt-1 text-lg font-bold text-[#F7941D]">
+            <span className="mt-1 text-lg font-bold text-[#F2B900]">
               STUDIO
             </span>
           </SidebarMenu>

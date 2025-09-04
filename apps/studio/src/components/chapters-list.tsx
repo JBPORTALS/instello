@@ -5,10 +5,12 @@ import { useTRPC } from "@/trpc/react";
 import {
   Accordion,
   AccordionContent,
+  AccordionHeader,
   AccordionItem,
   AccordionTrigger,
 } from "@instello/ui/components/accordion";
-import { HashIcon } from "@phosphor-icons/react";
+import { Button } from "@instello/ui/components/button";
+import { DotsThreeOutlineIcon, HashIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { VideosList } from "./videos-list";
@@ -40,7 +42,18 @@ export function ChapterList() {
     <Accordion defaultValue={data.at(0)?.id} type="single">
       {data.map((item) => (
         <AccordionItem key={item.id} value={item.id}>
-          <AccordionTrigger>{item.title}</AccordionTrigger>
+          <AccordionHeader className="group inline-flex w-full flex-1 items-center justify-between space-x-3.5">
+            <AccordionTrigger className="w-full!">
+              {item.title}
+            </AccordionTrigger>
+            <Button
+              variant={"outline"}
+              size={"icon"}
+              className="size-6 opacity-0 group-hover:opacity-100 [&>svg]:size-3!"
+            >
+              <DotsThreeOutlineIcon weight="duotone" />
+            </Button>
+          </AccordionHeader>
           <AccordionContent>
             <VideosList chapterId={item.id} />
           </AccordionContent>

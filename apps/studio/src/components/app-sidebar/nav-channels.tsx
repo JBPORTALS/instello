@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTRPC } from "@/trpc/react";
 import {
   SidebarMenuButton,
@@ -10,6 +12,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 export function NavChannels() {
   const trpc = useTRPC();
+  const pathname = usePathname();
   const { data: channels } = useSuspenseQuery(
     trpc.lms.channel.list.queryOptions(),
   );
@@ -29,9 +32,11 @@ export function NavChannels() {
     <>
       {channels.map((item) => (
         <SidebarMenuItem key={item.id}>
-          <SidebarMenuButton>
-            <CircleIcon weight="duotone" />
-            {item.title}
+          <SidebarMenuButton isActive={pathname === `/c/${item.id}`} asChild>
+            <Link href={`/c/${item.id}`}>
+              <CircleIcon weight="duotone" />
+              {item.title}
+            </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
       ))}

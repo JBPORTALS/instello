@@ -9,13 +9,12 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@instello/ui/components/sidebar";
-import { HouseIcon, PlusIcon } from "@phosphor-icons/react/ssr";
+import { PlusIcon } from "@phosphor-icons/react/ssr";
 
 import { CreateChannelDialog } from "../dialogs/create-channel-dialog";
 import { NavChannels } from "./nav-channels";
+import { NavMain } from "./nav-main";
 
 export function AppSidebar() {
   prefetch(trpc.lms.channel.list.queryOptions());
@@ -26,11 +25,7 @@ export function AppSidebar() {
         <SidebarHeader>
           <div className="text-lg font-bold">Instello Studio</div>
           <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton>
-                <HouseIcon weight="duotone" /> Home
-              </SidebarMenuButton>
-            </SidebarMenuItem>
+            <NavMain />
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent>

@@ -10,7 +10,19 @@ import {
   AccordionTrigger,
 } from "@instello/ui/components/accordion";
 import { Button } from "@instello/ui/components/button";
-import { DotsThreeOutlineIcon, HashIcon } from "@phosphor-icons/react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@instello/ui/components/dropdown-menu";
+import {
+  DotsThreeOutlineIcon,
+  HashIcon,
+  PenNibIcon,
+  PlusSquareIcon,
+  TrashSimpleIcon,
+} from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { VideosList } from "./videos-list";
@@ -52,13 +64,30 @@ export function ChapterList() {
         >
           <AccordionHeader className="group inline-flex w-full flex-1 items-center justify-between space-x-3.5">
             <AccordionTrigger>{item.title}</AccordionTrigger>
-            <Button
-              variant={"outline"}
-              size={"icon"}
-              className="size-6 opacity-0 group-hover:opacity-100 [&>svg]:size-3!"
-            >
-              <DotsThreeOutlineIcon weight="duotone" />
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  size={"icon"}
+                  className="size-6 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100 [&>svg]:size-3!"
+                >
+                  <DotsThreeOutlineIcon weight="duotone" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="min-w-[150px]">
+                <DropdownMenuItem>
+                  <PlusSquareIcon weight="duotone" /> Add video...
+                </DropdownMenuItem>
+                <DropdownMenuItem>
+                  <PenNibIcon weight="duotone" />
+                  Rename
+                </DropdownMenuItem>
+                <DropdownMenuItem variant="destructive">
+                  <TrashSimpleIcon weight="duotone" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </AccordionHeader>
           <AccordionContent>
             <VideosList chapterId={item.id} />

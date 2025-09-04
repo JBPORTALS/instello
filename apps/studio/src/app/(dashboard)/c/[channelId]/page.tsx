@@ -1,6 +1,7 @@
 import { ChannelDetailsSection } from "@/components/channel-details-section";
 import { ChapterList } from "@/components/chapters-list";
 import Container from "@/components/container";
+import { CreateChapterDialog } from "@/components/dialogs/create-chapter-dialog";
 import { SiteHeader } from "@/components/site-header";
 import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { Button } from "@instello/ui/components/button";
@@ -12,7 +13,9 @@ export default async function Page({
   params: Promise<{ channelId: string }>;
 }) {
   const { channelId } = await params;
+
   prefetch(trpc.lms.channel.getById.queryOptions({ channelId }));
+  prefetch(trpc.lms.chapter.list.queryOptions({ channelId }));
 
   return (
     <HydrateClient>
@@ -23,9 +26,11 @@ export default async function Page({
             <div className="flex w-full items-center justify-between">
               <div className="text-lg font-semibold">Chapters</div>
 
-              <Button>
-                New <PlusIcon />
-              </Button>
+              <CreateChapterDialog>
+                <Button>
+                  New <PlusIcon />
+                </Button>
+              </CreateChapterDialog>
             </div>
 
             <ChapterList />

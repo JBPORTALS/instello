@@ -48,7 +48,7 @@ export function CreateChannelDialog({
   const queryClient = useQueryClient();
 
   const { mutateAsync: createChannel } = useMutation(
-    trpc.lms.channel.createChannel.mutationOptions({
+    trpc.lms.channel.create.mutationOptions({
       async onSuccess() {
         await queryClient.invalidateQueries(
           trpc.lms.channel.list.queryFilter(),

@@ -1,53 +1,46 @@
 import { and, eq } from "@instello/db";
 import {
-  channel,
-  CreateChannelSchema,
-  UpdateChannelSchema,
+  chapter,
+  CreateChapterSchema,
+  UpdateChapterSchema,
 } from "@instello/db/lms";
 import { z } from "zod/v4";
 
 import { protectedProcedure } from "../trpc";
 
-export const channelRouter = {
+export const chapterRouter = {
   create: protectedProcedure
-    .input(CreateChannelSchema)
+    .input(CreateChapterSchema)
     .mutation(async ({ ctx, input }) => {
       return await ctx.db
-        .insert(channel)
+        .insert(chapter)
         .values({ ...input, createdByClerkUserId: ctx.auth.userId })
         .returning();
     }),
 
-  list: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db
-      .select()
-      .from(channel)
-      .where(eq(channel.createdByClerkUserId, ctx.auth.userId));
-  }),
-
-  getById: protectedProcedure
+  list: protectedProcedure
     .input(z.object({ channelId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.query.channel.findFirst({
+      return await ctx.db.query.chapter.findMany({
         where: and(
-          eq(channel.createdByClerkUserId, ctx.auth.userId),
-          eq(channel.id, input.channelId),
+          eq(chapter.createdByClerkUserId, ctx.auth.userId),
+          eq(chapter.channelId, input.channelId),
         ),
       });
     }),
 
   update: protectedProcedure
-    .input(UpdateChannelSchema)
+    .input(UpdateChapterSchema)
     .mutation(async ({ ctx, input }) => {
       return await ctx.db
-        .update(channel)
+        .update(chapter)
         .set({ ...input })
-        .where(eq(channel.id, input.id));
+        .where(eq(chapter.id, input.id));
     }),
 
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.delete(channel).where(eq(channel.id, input.id));
+      return await ctx.db.delete(chapter).where(eq(chapter.id, input.id));
     }),
 };

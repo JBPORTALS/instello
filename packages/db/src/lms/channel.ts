@@ -9,7 +9,6 @@ export const channel = lmsPgTable("channel", (d) => ({
   createdByClerkUserId: d.text().notNull(),
   title: d.text().notNull(),
   description: d.varchar({ length: 256 }),
-  createdAt: d.timestamp().defaultNow().notNull(),
   isPublished: d.boolean().default(false),
   thumbneilId: d.varchar({ length: 100 }),
 }));

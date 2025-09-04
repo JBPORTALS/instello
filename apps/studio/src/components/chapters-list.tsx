@@ -39,13 +39,19 @@ export function ChapterList() {
     );
 
   return (
-    <Accordion defaultValue={data.at(0)?.id} type="single">
+    <Accordion
+      defaultValue={data.at(0)?.id}
+      type="single"
+      className="space-y-3.5"
+    >
       {data.map((item) => (
-        <AccordionItem key={item.id} value={item.id}>
+        <AccordionItem
+          key={item.id}
+          className="bg-accent/30 rounded-lg border border-b-0 px-6"
+          value={item.id}
+        >
           <AccordionHeader className="group inline-flex w-full flex-1 items-center justify-between space-x-3.5">
-            <AccordionTrigger className="w-full!">
-              {item.title}
-            </AccordionTrigger>
+            <AccordionTrigger>{item.title}</AccordionTrigger>
             <Button
               variant={"outline"}
               size={"icon"}

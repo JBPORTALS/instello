@@ -1,0 +1,23 @@
+{
+  "extends": "@instello/tsconfig/base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["*"]
+    },
+    "jsx": "react-native",
+    "types": ["nativewind/types"],
+    "checkJs": false,
+    "moduleSuffixes": [".ios", ".android", ".native", ""]
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts",
+    "nativewind-env.d.ts",
+    "metro.config.js",
+    "babel.config.js"
+  ],
+  "exclude": ["node_modules"]
+}

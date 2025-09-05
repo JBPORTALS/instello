@@ -42,5 +42,8 @@
   "dependencies": {
     "@turbo/gen": "^2.4.2"
   },
+  "resolutions": {
+    "lightningcss": "1.27.0"
+  },
   "prettier": "@instello/prettier-config"
 }

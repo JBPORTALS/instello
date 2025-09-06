@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useParams } from "next/navigation";
 import { useTRPC } from "@/trpc/react";
 import {
@@ -35,6 +36,10 @@ export function ChapterList() {
     trpc.lms.chapter.list.queryOptions({ channelId }),
   );
 
+  const [openChapter, setOpenChapter] = useState<string | undefined>(
+    data.at(0)?.id, // default open first
+  );
+
   if (data.length === 0)
     return (
       <div className="flex min-h-40 w-full flex-col items-center justify-center gap-2.5 px-16">
@@ -53,8 +58,10 @@ export function ChapterList() {
 
   return (
     <Accordion
-      defaultValue={data.at(0)?.id}
       type="single"
+      collapsible
+      value={openChapter}
+      onValueChange={(val) => setOpenChapter(val)}
       className="space-y-3.5"
     >
       {data.map((item) => (
@@ -97,7 +104,10 @@ export function ChapterList() {
             </DropdownMenu>
           </AccordionHeader>
           <AccordionContent>
-            <VideosList chapterId={item.id} />
+            {/* Only fetch and render when this chapter is open */}
+            {openChapter === item.id ? (
+              <VideosList chapterId={item.id} />
+            ) : null}
           </AccordionContent>
         </AccordionItem>
       ))}

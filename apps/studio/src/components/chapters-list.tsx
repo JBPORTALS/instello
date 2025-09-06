@@ -25,6 +25,7 @@ import {
 } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { UploadVideoDialog } from "./dialogs/upload-video-dialog";
 import { VideosList } from "./videos-list";
 
 export function ChapterList() {
@@ -69,15 +70,21 @@ export function ChapterList() {
                 <Button
                   variant={"outline"}
                   size={"icon"}
-                  className="size-6 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100 [&>svg]:size-3!"
+                  className="[&>svg]:size-3! size-6 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100"
                 >
                   <DotsThreeOutlineIcon weight="duotone" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-[150px]">
-                <DropdownMenuItem>
-                  <PlusSquareIcon weight="duotone" /> Add video...
-                </DropdownMenuItem>
+                <UploadVideoDialog chapterId={item.id}>
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    <PlusSquareIcon weight="duotone" /> Add video...
+                  </DropdownMenuItem>
+                </UploadVideoDialog>
                 <DropdownMenuItem>
                   <PenNibIcon weight="duotone" />
                   Rename

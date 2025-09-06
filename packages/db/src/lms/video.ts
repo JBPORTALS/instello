@@ -3,51 +3,38 @@ import { z } from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
 import { lmsPgTable } from "../table.helpers";
-import { channel } from "./channel";
 import { chapter } from "./chapter";
 
 export const video = lmsPgTable("video", (d) => ({
   ...initialColumns,
   createdByClerkUserId: d.text().notNull(),
-  channelId: d
-    .text()
-    .notNull()
-    .references(() => channel.id),
   chapterId: d
     .text()
     .notNull()
     .references(() => chapter.id),
-  title: d.varchar({ length: 256 }).notNull(),
-  description: d.text(),
-  duration: d.real().notNull(),
-  utFileKey: d.text().notNull(),
-  viewCount: d.integer().default(0),
+  title: d.varchar({ length: 100 }).notNull(),
+  description: d.varchar({ length: 5000 }),
+  uploadId: d.text().notNull(),
   isPublished: d.boolean().default(false),
 }));
 
 export const CreateVideoSchema = createInsertSchema(video, {
   title: z
     .string()
-    .min(3, "Title of the video must be atleast 2 characters long"),
+    .min(2, "Title of the video should be atlease 2 letters long.")
+    .max(100, "Title is too long"),
+  description: z.string().max(5000, "Description is too long").optional(),
 }).omit({
   id: true,
-  viewCount: true,
   isPublished: true,
-  createdAt: true,
   createdByClerkUserId: true,
+  createdAt: true,
   updatedAt: true,
 });
 
-export const UpdateVideoSchema = createUpdateSchema(video, {
-  id: z.string().min(1, "Video ID is required for updation"),
-  title: z
-    .string()
-    .min(3, "Title of the video must be atlease 2 characters long"),
-}).omit({
-  createdAt: true,
-  channelId: true,
+export const UpdateVideoSchema = createUpdateSchema(video).omit({
   chapterId: true,
-  viewCount: true,
   createdByClerkUserId: true,
+  createdAt: true,
   updatedAt: true,
 });

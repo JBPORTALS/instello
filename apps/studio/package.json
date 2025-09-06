@@ -19,6 +19,7 @@
     "@instello/api": "workspace:^",
     "@instello/db": "workspace:*",
     "@instello/ui": "workspace:*",
+    "@mux/mux-uploader-react": "^1.2.0",
     "@phosphor-icons/react": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-table": "catalog:",

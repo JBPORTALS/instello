@@ -7,6 +7,7 @@ import { createClerkClient } from "@clerk/backend";
 import { eq } from "@instello/db";
 import { db } from "@instello/db/client";
 import { branch, semester } from "@instello/db/erp";
+import Mux from "@mux/mux-node";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import z, { ZodError } from "zod/v4";
@@ -45,7 +46,13 @@ export const createTRPCContext = ({ auth, headers }: AuthContextProps) => {
   console.log(`>>> Request recieved from ${source ?? "UNKNOWN"}`);
   const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
+  const mux = new Mux({
+    tokenId: process.env.MUX_TOKEN_ID,
+    tokenSecret: process.env.MUX_TOKEN_SECRET,
+  });
+
   return {
+    mux,
     auth,
     db,
     clerk,

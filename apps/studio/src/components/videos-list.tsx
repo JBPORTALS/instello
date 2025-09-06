@@ -26,17 +26,22 @@ export function VideosList({ chapterId }: { chapterId: string }) {
     return <div>Couldn't able to fetch the lesson videos of this chapter</div>;
 
   if (data.length === 0)
-    return <div className="text-muted-foreground text-sm">No videos</div>;
+    return (
+      <div className="text-muted-foreground px-2.5 text-sm">
+        No videos, this chapter won't be available to students until it contains
+        videos.
+      </div>
+    );
 
   return (
     <div className="w-full space-y-2">
       {data.map((item) => (
         <div
-          className="bg-accent/60 hover:bg-accent hover:text-accent-foreground flex h-9 w-full items-center gap-2 rounded-md border px-4 hover:cursor-pointer"
+          className="bg-accent/60 hover:bg-accent hover:text-accent-foreground flex h-9 w-full items-center gap-1.5 rounded-md border px-2 hover:cursor-pointer"
           key={item.id}
         >
           <PlayCircleIcon className="size-5" width={"duotone"} />
-          {item.title}
+          <span className="text-xs font-semibold">{item.title}</span>
         </div>
       ))}
     </div>

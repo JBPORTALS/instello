@@ -67,10 +67,10 @@ export function ChapterList() {
       {data.map((item) => (
         <AccordionItem
           key={item.id}
-          className="bg-accent/30 rounded-lg border border-b-0 px-6"
+          className="bg-accent/30 rounded-lg border border-b-0"
           value={item.id}
         >
-          <AccordionHeader className="group inline-flex w-full flex-1 items-center justify-between space-x-3.5">
+          <AccordionHeader className="group inline-flex w-full flex-1 items-center justify-between space-x-3.5 px-6">
             <AccordionTrigger>{item.title}</AccordionTrigger>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -103,7 +103,7 @@ export function ChapterList() {
               </DropdownMenuContent>
             </DropdownMenu>
           </AccordionHeader>
-          <AccordionContent>
+          <AccordionContent className="px-3.5">
             {/* Only fetch and render when this chapter is open */}
             {openChapter === item.id ? (
               <VideosList chapterId={item.id} />

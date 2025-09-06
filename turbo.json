@@ -55,7 +55,8 @@
     "RESEND_API_KEY",
     "PORT",
     "MUX_TOKEN_ID",
-    "MUX_TOKEN_SECRET"
+    "MUX_TOKEN_SECRET",
+    "MUX_WEBHOOK_SECRET"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

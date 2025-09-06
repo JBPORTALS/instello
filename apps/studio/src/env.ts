@@ -16,6 +16,9 @@ export const env = createEnv({
   server: {
     POSTGRES_URL: z.url(),
     CLERK_SECRET_KEY: z.string(),
+    MUX_WEBHOOK_SECRET: z.string(),
+    MUX_TOKEN_SECRET: z.string(),
+    MUX_TOKEN_ID: z.string(),
   },
 
   /**

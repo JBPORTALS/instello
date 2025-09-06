@@ -83,6 +83,7 @@ export function UploadVideoDialog({
                       chapterId,
                       uploadId: upload.id,
                       title: "Untitled",
+                      status: "waiting",
                     });
                   }}
                 >

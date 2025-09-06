@@ -37,7 +37,7 @@ export default async function Page({
 
             <ChapterList />
           </div>
-          <div className="col-span-4 h-full border-l">
+          <div className="col-span-4 h-full">
             <ChannelDetailsSection />
           </div>
         </div>

@@ -15,6 +15,20 @@ export const video = lmsPgTable("video", (d) => ({
   title: d.varchar({ length: 100 }).notNull(),
   description: d.varchar({ length: 5000 }),
   uploadId: d.text().notNull(),
+  assetId: d.text(),
+  playbackId: d.text(),
+  status: d
+    .text({
+      enum: [
+        "errored",
+        "waiting",
+        "asset_created",
+        "cancelled",
+        "timed_out",
+        "ready",
+      ],
+    })
+    .notNull(),
   isPublished: d.boolean().default(false),
 }));
 

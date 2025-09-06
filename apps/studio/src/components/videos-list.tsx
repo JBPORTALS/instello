@@ -8,7 +8,19 @@ import { useQuery } from "@tanstack/react-query";
 export function VideosList({ chapterId }: { chapterId: string }) {
   const trpc = useTRPC();
   const { data, isLoading, isError } = useQuery(
-    trpc.lms.video.list.queryOptions({ chapterId }),
+    trpc.lms.video.list.queryOptions(
+      { chapterId },
+      {
+        refetchInterval: (q) => {
+          // keep polling only if any video is still processing
+          return q.state.data?.some(
+            (v) => v.status === "waiting" || v.status === "asset_created",
+          )
+            ? 3000
+            : false;
+        },
+      },
+    ),
   );
 
   if (isLoading)
@@ -42,6 +54,13 @@ export function VideosList({ chapterId }: { chapterId: string }) {
         >
           <PlayCircleIcon className="size-5" width={"duotone"} />
           <span className="text-xs font-semibold">{item.title}</span>
+          <span className="text-muted-foreground ml-auto text-xs">
+            {item.status === "waiting" && "Processing..."}
+            {item.status === "asset_created" && "Processing asset..."}
+            {item.status === "errored" && "Failed"}
+            {item.status === "cancelled" && "Cancelled"}
+            {item.status === "ready" && "Ready to watch"}
+          </span>
         </div>
       ))}
     </div>

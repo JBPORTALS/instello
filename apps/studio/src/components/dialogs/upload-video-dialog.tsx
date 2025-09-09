@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useTRPC } from "@/trpc/react";
+import { useUploadWorker } from "@/workers/useUploadWorker";
 import {
   Dialog,
   DialogBody,
@@ -11,7 +12,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@instello/ui/components/dialog";
-import * as UpChunk from "@mux/upchunk";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function UploadVideoDialog({
@@ -22,6 +22,7 @@ export function UploadVideoDialog({
   chapterId: string;
 }) {
   const [open, setOpen] = useState(false);
+  const { startUpload, onMessage } = useUploadWorker();
 
   const trpc = useTRPC();
   const queryClient = useQueryClient();
@@ -32,38 +33,24 @@ export function UploadVideoDialog({
         await queryClient.invalidateQueries(
           trpc.lms.video.list.queryOptions({ chapterId }),
         );
-        setOpen(false);
       },
     }),
   );
+
+  onMessage((e) => {
+    console.log("Upload worker message: ", e.data);
+  });
 
   async function handleUpload(inputRef: EventTarget & HTMLInputElement) {
     try {
       const file = inputRef.files?.[0];
 
       if (file) {
-        const { url } = await createUpload({
+        const { url, id } = await createUpload({
           title: "Untitled",
           chapterId,
         });
-        const upload = UpChunk.createUpload({
-          endpoint: url, // Authenticated url
-          file, // File object with your video file’s properties
-          chunkSize: 5120, // Uploads the file in ~5mb chunks
-        });
-
-        // Subscribe to events
-        upload.on("error", (error) => {
-          console.error(error.detail);
-        });
-
-        upload.on("progress", (progress) => {
-          console.log(progress.detail);
-        });
-
-        upload.on("success", () => {
-          console.log("Wrap it up, we're done here. 👋");
-        });
+        startUpload(id, url, file);
       }
     } catch (e) {
       console.log(e);

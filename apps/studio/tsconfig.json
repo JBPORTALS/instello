@@ -1,7 +1,7 @@
 {
   "extends": "@instello/tsconfig/base.json",
   "compilerOptions": {
-    "lib": ["ES2022", "dom", "dom.iterable"],
+    "lib": ["ES2022", "dom", "dom.iterable", "WebWorker"],
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
@@ -13,7 +13,8 @@
         "name": "next"
       }
     ],
-    "module": "esnext"
+    "module": "esnext",
+    "allowJs": true
   },
   "include": [
     "next-env.d.ts",
@@ -22,7 +23,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src",
-    "globals.d.ts"
+    "globals.d.ts",
+    "public/workers/**/*.js"
   ],
   "exclude": ["node_modules"]
 }

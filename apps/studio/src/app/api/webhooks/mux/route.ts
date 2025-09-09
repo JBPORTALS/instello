@@ -9,6 +9,16 @@ export async function POST(req: Request) {
 
   try {
     switch (wbEvent.type) {
+      case "video.upload.created": {
+        const { id: uploadId, status } = wbEvent.data;
+
+        await db
+          .update(video)
+          .set({ status })
+          .where(eq(video.uploadId, uploadId));
+        return NextResponse.json({ message: "Upload created" });
+      }
+
       case "video.upload.errored": {
         const { id: uploadId, status } = wbEvent.data;
 

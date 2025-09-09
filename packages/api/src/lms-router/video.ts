@@ -29,16 +29,16 @@ export const videoRouter = {
           passthrough: id,
           meta: { creator_id: ctx.auth.userId, external_id: input.chapterId },
         },
-        test: process.env.NODE_ENV !== "production",
+        // test: process.env.NODE_ENV !== "production",
       });
 
-      await ctx.db.insert(video).values({
-        ...input,
-        id,
-        uploadId: upload.id,
-        status: "waiting",
-        createdByClerkUserId: ctx.auth.userId,
-      });
+      // await ctx.db.insert(video).values({
+      //   ...input,
+      //   id,
+      //   uploadId: upload.id,
+      //   status: "waiting",
+      //   createdByClerkUserId: ctx.auth.userId,
+      // });
 
       return upload;
     }),

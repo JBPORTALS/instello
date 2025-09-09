@@ -21,6 +21,7 @@
     "@instello/ui": "workspace:*",
     "@mux/mux-node": "^12.7.0",
     "@mux/mux-uploader-react": "^1.2.0",
+    "@mux/upchunk": "^3.5.0",
     "@phosphor-icons/react": "catalog:",
     "@tanstack/react-query": "catalog:",
     "@tanstack/react-table": "catalog:",

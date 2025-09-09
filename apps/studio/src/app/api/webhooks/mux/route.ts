@@ -11,11 +11,12 @@ export async function POST(req: Request) {
     switch (wbEvent.type) {
       case "video.upload.errored": {
         const { id: uploadId, status } = wbEvent.data;
+
         await db
           .update(video)
           .set({ status })
           .where(eq(video.uploadId, uploadId));
-        break;
+        return NextResponse.json({ message: "Upload errored" });
       }
 
       case "video.upload.asset_created": {
@@ -24,7 +25,7 @@ export async function POST(req: Request) {
           .update(video)
           .set({ assetId: asset_id, status: "asset_created" })
           .where(eq(video.uploadId, uploadId));
-        break;
+        return NextResponse.json({ message: "Asset created" });
       }
 
       case "video.asset.ready": {
@@ -34,7 +35,7 @@ export async function POST(req: Request) {
           .update(video)
           .set({ status: "ready", playbackId })
           .where(eq(video.assetId, asset.id));
-        break;
+        return NextResponse.json({ message: "Asset ready to play" });
       }
 
       case "video.asset.errored": {
@@ -43,7 +44,7 @@ export async function POST(req: Request) {
           .update(video)
           .set({ status: "errored" })
           .where(eq(video.assetId, assetId));
-        break;
+        return NextResponse.json({ message: "Asset error occured" });
       }
 
       case "video.upload.cancelled": {
@@ -52,13 +53,13 @@ export async function POST(req: Request) {
           .update(video)
           .set({ status: "cancelled" })
           .where(eq(video.uploadId, uploadId));
-        break;
+        return NextResponse.json({ message: "Upload cancelled" });
       }
 
       case "video.asset.deleted": {
         const { id: assetId } = wbEvent.data;
         await db.delete(video).where(eq(video.assetId, assetId));
-        break;
+        return NextResponse.json({ message: "Asset deleted" });
       }
 
       default:
@@ -67,8 +68,6 @@ export async function POST(req: Request) {
           { status: 400 },
         );
     }
-
-    return NextResponse.json({ message: "ok" });
   } catch (err) {
     console.error("Webhook error:", err);
     return NextResponse.json({ message: "failed" }, { status: 500 });

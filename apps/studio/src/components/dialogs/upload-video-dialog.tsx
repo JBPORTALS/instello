@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useTRPC } from "@/trpc/react";
-import { Button } from "@instello/ui/components/button";
 import {
   Dialog,
   DialogBody,
@@ -12,9 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@instello/ui/components/dialog";
-import { Spinner } from "@instello/ui/components/spinner";
-import MuxUploader from "@mux/mux-uploader-react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import * as UpChunk from "@mux/upchunk";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export function UploadVideoDialog({
   children,
@@ -28,16 +26,8 @@ export function UploadVideoDialog({
   const trpc = useTRPC();
   const queryClient = useQueryClient();
 
-  const {
-    data: upload,
-    isLoading,
-    isError,
-  } = useQuery(
-    trpc.lms.video.getUploadUrl.queryOptions(undefined, { enabled: open }),
-  );
-
-  const { mutateAsync: createVideo } = useMutation(
-    trpc.lms.video.create.mutationOptions({
+  const { mutateAsync: createUpload } = useMutation(
+    trpc.lms.video.createUpload.mutationOptions({
       async onSuccess() {
         await queryClient.invalidateQueries(
           trpc.lms.video.list.queryOptions({ chapterId }),
@@ -46,6 +36,39 @@ export function UploadVideoDialog({
       },
     }),
   );
+
+  async function handleUpload(inputRef: EventTarget & HTMLInputElement) {
+    try {
+      const file = inputRef.files?.[0];
+
+      if (file) {
+        const { url } = await createUpload({
+          title: "Untitled",
+          chapterId,
+        });
+        const upload = UpChunk.createUpload({
+          endpoint: url, // Authenticated url
+          file, // File object with your video file’s properties
+          chunkSize: 5120, // Uploads the file in ~5mb chunks
+        });
+
+        // Subscribe to events
+        upload.on("error", (error) => {
+          console.error(error.detail);
+        });
+
+        upload.on("progress", (progress) => {
+          console.log(progress.detail);
+        });
+
+        upload.on("success", () => {
+          console.log("Wrap it up, we're done here. 👋");
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -57,48 +80,21 @@ export function UploadVideoDialog({
         <DialogHeader>
           <DialogTitle>Upload Video</DialogTitle>
         </DialogHeader>
-        {isLoading ? (
-          <DialogBody className="flex min-h-80 items-center justify-center">
-            <Spinner className="size-8" />
-          </DialogBody>
-        ) : (
-          <>
-            <DialogBody className="@sm:min-h-96 flex gap-5">
-              {isError || !upload ? (
-                <div>Something went wrong, try to reopen it again.</div>
-              ) : (
-                <MuxUploader
-                  endpoint={upload.url}
-                  style={
-                    {
-                      "--overlay-background-color": "var(--background)",
-                      "--progress-bar-fill-color": "var(--foreground)",
-                      "--progress-percentage-display": "var(--foreground)",
-                    } as React.CSSProperties
-                  }
-                  className="w-full"
-                  pausable
-                  onSuccess={async () => {
-                    await createVideo({
-                      chapterId,
-                      uploadId: upload.id,
-                      title: "Untitled",
-                      status: "waiting",
-                    });
-                  }}
-                >
-                  <Button slot="file-select">Select File</Button>
-                </MuxUploader>
-              )}
-            </DialogBody>
-            <DialogFooter className="sm:justify-start">
-              <p className="text-muted-foreground text-sm">
-                By uploading you will agree to our terms and condition for the
-                content you will upload
-              </p>
-            </DialogFooter>
-          </>
-        )}
+
+        <DialogBody className="@sm:min-h-96 flex gap-5">
+          <input
+            type="file"
+            onChange={async (e) => {
+              await handleUpload(e.target);
+            }}
+          />
+        </DialogBody>
+        <DialogFooter className="sm:justify-start">
+          <p className="text-muted-foreground text-sm">
+            By uploading you will agree to our terms and condition for the
+            content you will upload
+          </p>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

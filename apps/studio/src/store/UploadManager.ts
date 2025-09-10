@@ -40,7 +40,6 @@ export class UploadManager {
     // Create upload item in store
     const uploadItem = {
       videoId,
-      uploadId: `${videoId}-${Date.now()}`,
       progress: 0,
       status: "pending" as const,
       fileName: file.name,
@@ -95,6 +94,12 @@ export class UploadManager {
           );
         },
       );
+
+      // When no internet pause the upload
+      upload.on("offline", () => upload.pause());
+
+      // When back to online resume the upload
+      upload.on("online", () => upload.resume());
 
       upload.on(
         "chunkSuccess",

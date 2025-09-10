@@ -12,7 +12,6 @@ type DatabaseVideo = RouterOutputs["lms"]["video"]["list"][number];
 // Type for upload video (from Zustand store)
 interface UploadVideo {
   videoId: string;
-  uploadId: string;
   progress: number;
   status:
     | "pending"
@@ -73,6 +72,8 @@ export function useUnifiedVideoList(chapterId: string) {
   const unifiedVideos = useMemo(() => {
     const dbVideos = dbQuery.data ?? [];
     const uploadVideos = Object.values(uploads);
+
+    console.log("uploadVideos", uploadVideos, dbVideos);
 
     // Create a map of upload videos by videoId for quick lookup
     const uploadMap = new Map<string, UploadVideo>();

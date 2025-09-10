@@ -56,14 +56,17 @@ export function UploadVideoDialog({
     if (selectedFile) {
       try {
         // Create video in database first (this also creates the Mux upload)
-        const { url, id } = await createUpload({
+        const { url, new_asset_settings } = await createUpload({
           title: selectedFile.name,
           chapterId,
         });
 
+        if (!new_asset_settings?.passthrough)
+          throw new Error("No passthrough id recieved");
+
         // Start the upload using UploadManager with the database video ID
         uploadManager.startUpload({
-          videoId: id, // This is the same ID used in the database
+          videoId: new_asset_settings.passthrough, // This is the same ID used in the database
           file: selectedFile,
           endpoint: url,
           onProgress: (progress, uploadedBytes) => {

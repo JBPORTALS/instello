@@ -11,7 +11,6 @@ type UploadStatus =
 
 interface UploadItem {
   videoId: string;
-  uploadId: string;
   progress: number;
   status: UploadStatus;
   error?: string;

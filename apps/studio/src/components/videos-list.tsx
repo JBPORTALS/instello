@@ -7,7 +7,6 @@ import {
   formatUploadSpeed,
   useUnifiedVideoList,
 } from "@/hooks/useUnifiedVideoList";
-import { uploadManager } from "@/store/UploadManager";
 import { Skeleton } from "@instello/ui/components/skeleton";
 
 export function VideosList({ chapterId }: { chapterId: string }) {
@@ -39,32 +38,39 @@ export function VideosList({ chapterId }: { chapterId: string }) {
     <div className="w-full space-y-2">
       {data.map((item) => (
         <div
-          className={`hover:bg-accent/50 hover:text-accent-foreground flex w-full items-center gap-1.5 rounded-md px-2 ${
-            item.isUploading ? "min-h-16" : "h-16"
+          className={`hover:bg-accent/50 hover:text-accent-foreground flex w-full items-center gap-2.5 rounded-md px-2 ${
+            item.isUploading ? "min-h-20" : "h-20"
           } ${item.isUploading ? "hover:cursor-default" : "hover:cursor-pointer"}`}
           key={item.id}
         >
           {/* Status Icon */}
           <div className="flex-shrink-0">
             <div className="bg-accent relative aspect-video h-full w-20 overflow-hidden rounded-sm">
-              <Image
-                src={`https://image.mux.com/${item.playbackId}/thumbnail.png?width=214&height=121&time=15`}
-                fill
-                alt={`${item.title}'s thumbneil`}
-                className="aspect-video h-full w-full"
-              />
+              {item.status === "ready" && (
+                <Image
+                  src={`https://image.mux.com/${item.playbackId}/thumbnail.png?width=214&height=121&time=15`}
+                  fill
+                  alt={`${item.title}'s thumbneil`}
+                  className="aspect-video h-full w-full"
+                />
+              )}
             </div>
           </div>
 
           {/* Video Info */}
-          <div className="min-w-0 flex-1">
-            <div className="flex items-center justify-between">
-              <span className="truncate text-xs font-semibold">
-                {item.title}
-              </span>
+          <div className="min-w-0 flex-1 space-y-2.5">
+            <div className="flex justify-between">
+              <div className="h-full space-y-1.5">
+                <span className="truncate text-sm">{item.title}</span>
+                {item.status === "ready" && (
+                  <p className="text-muted-foreground text-xs">
+                    {item.description ?? "Add description..."}
+                  </p>
+                )}
+              </div>
               <span className="text-muted-foreground ml-2 flex-shrink-0 text-xs">
                 {item.isUploading ? (
-                  <span className="text-blue-600">
+                  <span className="text-accent-foreground">
                     {item.uploadStatus === "uploading" &&
                       `Uploading... ${item.uploadProgress}%`}
                     {item.uploadStatus === "paused" && "Paused"}
@@ -75,8 +81,7 @@ export function VideosList({ chapterId }: { chapterId: string }) {
                   </span>
                 ) : (
                   <>
-                    {item.status === "waiting" &&
-                      `Uploading... ${item.progress}%`}
+                    {item.status === "waiting" && `Waiting...`}
                     {item.status === "asset_created" && "Processing asset..."}
                     {item.status === "errored" && "Failed"}
                     {item.status === "cancelled" && "Cancelled"}
@@ -87,102 +92,36 @@ export function VideosList({ chapterId }: { chapterId: string }) {
             </div>
 
             {/* Upload Progress Bar and Details */}
-            {item.isUploading && (
-              <div className="mt-1 space-y-1">
-                {/* Progress Bar */}
-                <div className="bg-muted h-1.5 w-full rounded-full">
-                  <div
-                    className="h-1.5 rounded-full bg-blue-500 transition-all duration-300"
-                    style={{ width: `${item.uploadProgress ?? 0}%` }}
-                  />
-                </div>
-
-                {/* Upload Details */}
-                <div className="text-muted-foreground flex justify-between text-xs">
-                  <span>
-                    {item.uploadedBytes && item.fileSize ? (
-                      <>
-                        {formatFileSize(item.uploadedBytes)} /{" "}
-                        {formatFileSize(item.fileSize)}
-                      </>
-                    ) : (
-                      `${item.uploadProgress ?? 0}%`
-                    )}
-                  </span>
-
-                  {item.uploadSpeed && item.uploadSpeed > 0 && (
-                    <span>{formatUploadSpeed(item.uploadSpeed)}</span>
+            {item.isUploading && !item.uploadError && (
+              <div className="text-muted-foreground flex gap-1.5 text-xs">
+                <span>
+                  {item.uploadedBytes && item.fileSize ? (
+                    <>
+                      {formatFileSize(item.uploadedBytes)} /{" "}
+                      {formatFileSize(item.fileSize)}
+                    </>
+                  ) : (
+                    `${item.uploadProgress ?? 0}%`
                   )}
-
-                  {item.estimatedTimeRemaining &&
-                    item.estimatedTimeRemaining > 0 && (
-                      <span>
-                        {formatTimeRemaining(item.estimatedTimeRemaining)}
-                      </span>
-                    )}
-                </div>
-
-                {/* Error Message */}
-                {item.uploadError && (
-                  <div className="rounded bg-red-50 p-1 text-xs text-red-600">
-                    {item.uploadError}
-                  </div>
+                </span>
+                <span>ᐧ</span>
+                {item.uploadSpeed && item.uploadSpeed > 0 && (
+                  <span>{formatUploadSpeed(item.uploadSpeed)}</span>
                 )}
 
-                {/* Upload Controls */}
-                {item.uploadStatus === "uploading" && (
-                  <div className="mt-1 flex gap-1">
-                    <button
-                      onClick={() => uploadManager.pauseUpload(item.id)}
-                      className="rounded bg-yellow-100 px-2 py-0.5 text-xs text-yellow-800 hover:bg-yellow-200"
-                    >
-                      Pause
-                    </button>
-                    <button
-                      onClick={() => uploadManager.cancelUpload(item.id)}
-                      className="rounded bg-red-100 px-2 py-0.5 text-xs text-red-800 hover:bg-red-200"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
+                {item.estimatedTimeRemaining &&
+                  item.estimatedTimeRemaining > 0 && (
+                    <span>
+                      {formatTimeRemaining(item.estimatedTimeRemaining)}
+                    </span>
+                  )}
+              </div>
+            )}
 
-                {item.uploadStatus === "paused" && (
-                  <div className="mt-1 flex gap-1">
-                    <button
-                      onClick={() => uploadManager.resumeUpload(item.id)}
-                      className="rounded bg-green-100 px-2 py-0.5 text-xs text-green-800 hover:bg-green-200"
-                    >
-                      Resume
-                    </button>
-                    <button
-                      onClick={() => uploadManager.cancelUpload(item.id)}
-                      className="rounded bg-red-100 px-2 py-0.5 text-xs text-red-800 hover:bg-red-200"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-
-                {item.uploadStatus === "error" && (
-                  <div className="mt-1 flex gap-1">
-                    <button
-                      onClick={() => {
-                        // Note: This would need the original file and endpoint to retry
-                        console.log("Retry upload for", item.id);
-                      }}
-                      className="rounded bg-blue-100 px-2 py-0.5 text-xs text-blue-800 hover:bg-blue-200"
-                    >
-                      Retry
-                    </button>
-                    <button
-                      onClick={() => uploadManager.removeUpload(item.id)}
-                      className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-800 hover:bg-gray-200"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                )}
+            {/* Error Message */}
+            {item.uploadError && (
+              <div className="text-destructive rounded p-1 text-xs">
+                {item.uploadError}
               </div>
             )}
           </div>

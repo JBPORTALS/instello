@@ -1,5 +1,5 @@
 import { eq } from "@instello/db";
-import { CreateVideoSchema, video } from "@instello/db/lms";
+import { CreateVideoSchema, UpdateVideoSchema, video } from "@instello/db/lms";
 import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
@@ -50,6 +50,17 @@ export const videoRouter = {
         where: eq(video.chapterId, input.chapterId),
       }),
   ),
+
+  update: protectedProcedure
+    .input(UpdateVideoSchema.and(z.object({ videoId: z.string().min(1) })))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db
+        .update(video)
+        .set({ ...input })
+        .where(eq(video.id, input.videoId))
+        .returning()
+        .then((r) => r.at(0));
+    }),
 
   getById: protectedProcedure.input(z.object({ videoId: z.string() })).query(
     async ({ ctx, input }) =>

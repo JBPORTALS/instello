@@ -22,7 +22,7 @@ export default async function Layout({
       }
     >
       <AppSidebar />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset className="@container/main">{children}</SidebarInset>
     </SidebarProvider>
   );
 }

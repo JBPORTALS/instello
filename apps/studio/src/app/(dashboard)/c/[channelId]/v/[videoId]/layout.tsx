@@ -17,12 +17,12 @@ export default async function Layout({
   prefetch(trpc.lms.video.getById.queryOptions({ videoId }));
   return (
     <HydrateClient>
-      <div className="relative">
-        <SiteHeader startElement={<VideoPageBreadcrumb />} />
+      <SiteHeader startElement={<VideoPageBreadcrumb />} />
 
-        <VideoSidebar />
-        <SidebarInset className="pl-16 pr-52">{children}</SidebarInset>
-      </div>
+      <VideoSidebar />
+      <SidebarInset className="@sm:max-w-4xl @md:max-w-5xl @lg:max-w-6xl @xl:max-w-7xl w-full px-16">
+        {children}
+      </SidebarInset>
     </HydrateClient>
   );
 }

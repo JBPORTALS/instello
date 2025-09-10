@@ -47,8 +47,20 @@ export const CreateVideoSchema = createInsertSchema(video, {
   updatedAt: true,
 });
 
-export const UpdateVideoSchema = createUpdateSchema(video).omit({
+export const UpdateVideoSchema = createUpdateSchema(video, {
+  title: z
+    .string()
+    .min(2, "Title of the video should be atlease 2 letters long.")
+    .max(100, "Title is too long"),
+  description: z.string().max(5000, "Description is too long").optional(),
+  isPublished: z.boolean(),
+}).omit({
+  id: true,
   chapterId: true,
+  assetId: true,
+  uploadId: true,
+  playbackId: true,
+  status: true,
   createdByClerkUserId: true,
   createdAt: true,
   updatedAt: true,

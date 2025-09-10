@@ -20,6 +20,7 @@
     "@instello/db": "workspace:*",
     "@instello/ui": "workspace:*",
     "@mux/mux-node": "^12.7.0",
+    "@mux/mux-player-react": "^3.6.0",
     "@mux/mux-uploader-react": "^1.2.0",
     "@mux/upchunk": "^3.5.0",
     "@phosphor-icons/react": "catalog:",

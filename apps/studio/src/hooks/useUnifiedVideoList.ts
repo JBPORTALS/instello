@@ -56,11 +56,10 @@ export function useUnifiedVideoList(chapterId: string) {
         refetchInterval: (q) => {
           // Keep polling if any video is still processing or if there are active uploads
           const hasProcessingVideos = q.state.data?.some(
-            (v) => v.status === "asset_created" || v.status === "waiting",
+            (v) => v.status === "asset_created",
           );
           const hasActiveUploads = Object.values(uploads).some(
-            (upload) =>
-              upload.status === "uploading" || upload.status === "paused",
+            (upload) => upload.status === "success",
           );
           return hasProcessingVideos || hasActiveUploads ? 3000 : false;
         },

@@ -69,19 +69,18 @@ export function VideosList({ chapterId }: { chapterId: string }) {
                 )}
               </div>
               <span className="text-muted-foreground ml-2 flex-shrink-0 text-xs">
-                {item.isUploading ? (
+                {item.isUploading && item.uploadStatus !== "success" ? (
                   <span className="text-accent-foreground">
                     {item.uploadStatus === "uploading" &&
                       `Uploading... ${item.uploadProgress}%`}
                     {item.uploadStatus === "paused" && "Paused"}
                     {item.uploadStatus === "error" && "Failed"}
-                    {item.uploadStatus === "success" && "Upload Complete"}
                     {item.uploadStatus === "cancelled" && "Cancelled"}
                     {item.uploadStatus === "pending" && "Preparing..."}
                   </span>
                 ) : (
                   <>
-                    {item.status === "waiting" && `Waiting...`}
+                    {item.status === "waiting" && `Processing...`}
                     {item.status === "asset_created" && "Processing asset..."}
                     {item.status === "errored" && "Failed"}
                     {item.status === "cancelled" && "Cancelled"}
@@ -92,31 +91,33 @@ export function VideosList({ chapterId }: { chapterId: string }) {
             </div>
 
             {/* Upload Progress Bar and Details */}
-            {item.isUploading && !item.uploadError && (
-              <div className="text-muted-foreground flex gap-1.5 text-xs">
-                <span>
-                  {item.uploadedBytes && item.fileSize ? (
-                    <>
-                      {formatFileSize(item.uploadedBytes)} /{" "}
-                      {formatFileSize(item.fileSize)}
-                    </>
-                  ) : (
-                    `${item.uploadProgress ?? 0}%`
+            {item.isUploading &&
+              !item.uploadError &&
+              item.uploadStatus !== "success" && (
+                <div className="text-muted-foreground flex gap-1.5 text-xs">
+                  <span>
+                    {item.uploadedBytes && item.fileSize ? (
+                      <>
+                        {formatFileSize(item.uploadedBytes)} /{" "}
+                        {formatFileSize(item.fileSize)}
+                      </>
+                    ) : (
+                      `${item.uploadProgress ?? 0}%`
+                    )}
+                  </span>
+                  <span>ᐧ</span>
+                  {item.uploadSpeed && item.uploadSpeed > 0 && (
+                    <span>{formatUploadSpeed(item.uploadSpeed)}</span>
                   )}
-                </span>
-                <span>ᐧ</span>
-                {item.uploadSpeed && item.uploadSpeed > 0 && (
-                  <span>{formatUploadSpeed(item.uploadSpeed)}</span>
-                )}
 
-                {item.estimatedTimeRemaining &&
-                  item.estimatedTimeRemaining > 0 && (
-                    <span>
-                      {formatTimeRemaining(item.estimatedTimeRemaining)}
-                    </span>
-                  )}
-              </div>
-            )}
+                  {item.estimatedTimeRemaining &&
+                    item.estimatedTimeRemaining > 0 && (
+                      <span>
+                        {formatTimeRemaining(item.estimatedTimeRemaining)}
+                      </span>
+                    )}
+                </div>
+              )}
 
             {/* Error Message */}
             {item.uploadError && (

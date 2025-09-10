@@ -14,6 +14,7 @@ import { useUploadManager } from "@/hooks/useUploadManager";
 import { Button } from "@instello/ui/components/button";
 import { Skeleton } from "@instello/ui/components/skeleton";
 import { cn } from "@instello/ui/lib/utils";
+import { PenNibIcon, TrashIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 
 export function VideosList({ chapterId }: { chapterId: string }) {
@@ -82,10 +83,10 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
   return (
     <div
       className={cn(
-        "flex h-16 max-h-16 w-full items-center gap-2.5 rounded-md px-2",
+        "group relative flex h-16 max-h-16 w-full items-center gap-2.5 overflow-hidden rounded-md px-2",
         video.isUploading
-          ? "hover:cursor-default"
-          : "hover:bg-accent/50 hover:text-accent-foreground hover:cursor-pointer",
+          ? "bg-transparent"
+          : "hover:bg-accent/25 hover:text-accent-foreground",
       )}
       key={video.id}
     >
@@ -207,6 +208,23 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
               Remove
             </Button>
           </>
+        )}
+
+        {video.status == "ready" && (
+          <div className="from-accent/50 to-accent/0 absolute bottom-0 right-0 top-0 flex h-16 items-center gap-1.5 bg-gradient-to-l px-2 opacity-0 group-hover:opacity-100">
+            <Button size={"sm"} variant={"secondary"} className="rounded-full">
+              <PenNibIcon weight="duotone" />
+              Edit
+            </Button>
+            <Button
+              size={"sm"}
+              variant={"secondary"}
+              className="text-destructive rounded-full"
+            >
+              <TrashIcon weight="duotone" />
+              Delete
+            </Button>
+          </div>
         )}
       </div>
     </div>

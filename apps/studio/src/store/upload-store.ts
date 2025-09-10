@@ -82,6 +82,7 @@ export const useUploadStore = create(
           const updates: Partial<UploadItem> = { status };
 
           if (error) updates.error = error;
+
           if (
             status === "success" ||
             status === "error" ||
@@ -108,8 +109,9 @@ export const useUploadStore = create(
               [videoId]: {
                 ...upload,
                 interrupted,
-                error:
-                  "Uploading has been interupted select same file to continue.",
+                error: interrupted
+                  ? "Uploading has been interupted select same file to continue."
+                  : undefined,
               },
             },
           };
@@ -173,6 +175,7 @@ export const useUploadStore = create(
               ...state.uploads,
               [videoId]: {
                 ...upload,
+                interrupted: false,
                 status: "pending",
                 progress: 0,
                 uploadedBytes: 0,

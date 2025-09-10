@@ -79,7 +79,7 @@ export class UploadManager {
       });
 
       upload.on("success", (response: CustomEvent<unknown>) => {
-        this.store.updateStatus(videoId, "success");
+        this.store.removeUpload(videoId);
         this.uploads.delete(videoId);
         onSuccess?.(response.detail);
       });

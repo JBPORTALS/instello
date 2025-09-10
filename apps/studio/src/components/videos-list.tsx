@@ -1,16 +1,20 @@
 "use client";
 
+import type { UnifiedVideo } from "@/hooks/useUnifiedVideoList";
+import type { ChangeEvent } from "react";
+import { useRef } from "react";
 import Image from "next/image";
 import {
   formatFileSize,
   formatTimeRemaining,
   formatUploadSpeed,
-  UnifiedVideo,
   useUnifiedVideoList,
 } from "@/hooks/useUnifiedVideoList";
+import { useUploadManager } from "@/hooks/useUploadManager";
 import { Button } from "@instello/ui/components/button";
 import { Skeleton } from "@instello/ui/components/skeleton";
 import { cn } from "@instello/ui/lib/utils";
+import { toast } from "sonner";
 
 export function VideosList({ chapterId }: { chapterId: string }) {
   const { data, isLoading, isError } = useUnifiedVideoList(chapterId);
@@ -47,11 +51,38 @@ export function VideosList({ chapterId }: { chapterId: string }) {
 }
 
 function VideoItem({ video }: { video: UnifiedVideo }) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { retryUpload, getUpload } = useUploadManager();
+
+  function handleReselectFile(e: ChangeEvent<HTMLInputElement>) {
+    const selectedFile = e.target.files?.[0];
+    const upload = getUpload(video.id);
+
+    if (selectedFile) {
+      if (upload?.fileName !== selectedFile.name) {
+        toast.error("Invalid file selected", {
+          description: "Select same file to continue upload",
+        });
+        return;
+      }
+      const endpoint = upload.endpoint;
+
+      if (!endpoint) {
+        toast.error("Can't upload the file, remove and reupload");
+        return;
+      }
+
+      retryUpload(upload.videoId, {
+        endpoint,
+        file: selectedFile,
+      });
+    }
+  }
+
   return (
     <div
       className={cn(
-        "flex w-full items-center gap-2.5 rounded-md px-2",
-        video.isUploading ? "min-h-20" : "h-20",
+        "flex h-16 max-h-16 w-full items-center gap-2.5 rounded-md px-2",
         video.isUploading
           ? "hover:cursor-default"
           : "hover:bg-accent/50 hover:text-accent-foreground hover:cursor-pointer",
@@ -85,7 +116,7 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
           </div>
           <span className="text-muted-foreground ml-2 flex-shrink-0 text-xs">
             {/** Local Uploading status */}
-            {video.isUploading && !video.interrupted && (
+            {video.isUploading && !video.interrupted ? (
               <span className="text-accent-foreground">
                 {video.uploadStatus === "uploading" &&
                   `Uploading... ${video.uploadProgress}%`}
@@ -94,15 +125,15 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
                 {video.uploadStatus === "cancelled" && "Cancelled"}
                 {video.uploadStatus === "pending" && "Preparing..."}
               </span>
-            )}
-            {/** Mux asset processing status */}
-            {video.uploadStatus === "success" && (
+            ) : (
               <>
                 {video.status === "waiting" && `Processing...`}
                 {video.status === "asset_created" && "Processing asset..."}
                 {video.status === "errored" && "Failed"}
                 {video.status === "cancelled" && "Cancelled"}
-                {video.status === "ready" && "Ready to watch"}
+                {video.status === "ready" && video.isPublished
+                  ? "Published"
+                  : "Private"}
               </>
             )}
           </span>
@@ -147,7 +178,25 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
       <div className="space-x-1.5">
         {video.interrupted && (
           <>
-            <Button size={"sm"} variant={"secondary"} className="rounded-full">
+            <input
+              type="file"
+              hidden
+              accept={`video/*`}
+              ref={fileInputRef}
+              onChange={(e) => {
+                if (fileInputRef.current) {
+                  handleReselectFile(e);
+                  // Remove the selected file from input
+                  fileInputRef.current.value = "";
+                }
+              }}
+            />
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              size={"sm"}
+              variant={"secondary"}
+              className="rounded-full"
+            >
               Select
             </Button>
             <Button

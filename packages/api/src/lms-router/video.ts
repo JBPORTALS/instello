@@ -51,6 +51,16 @@ export const videoRouter = {
       }),
   ),
 
+  getById: protectedProcedure.input(z.object({ videoId: z.string() })).query(
+    async ({ ctx, input }) =>
+      await ctx.db.query.video.findFirst({
+        where: eq(video.id, input.videoId),
+        with: {
+          chapter: true,
+        },
+      }),
+  ),
+
   delete: protectedProcedure.input(z.object({ videoId: z.string() })).mutation(
     async ({ ctx, input }) =>
       await ctx.db.transaction(async (tx) => {

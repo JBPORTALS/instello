@@ -4,6 +4,7 @@ import type { UnifiedVideo } from "@/hooks/useUnifiedVideoList";
 import type { ChangeEvent } from "react";
 import { useRef } from "react";
 import Image from "next/image";
+import { useParams, useRouter } from "next/navigation";
 import {
   formatFileSize,
   formatTimeRemaining,
@@ -57,6 +58,8 @@ export function VideosList({ chapterId }: { chapterId: string }) {
 function VideoItem({ video }: { video: UnifiedVideo }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { retryUpload, getUpload } = useUploadManager();
+  const router = useRouter();
+  const { channelId } = useParams<{ channelId: string }>();
 
   function handleReselectFile(e: ChangeEvent<HTMLInputElement>) {
     const selectedFile = e.target.files?.[0];
@@ -94,6 +97,7 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
       key={video.id}
     >
       {/* Status Icon */}
+
       <div className="flex-shrink-0">
         <div className="bg-accent relative aspect-video h-full w-20 overflow-hidden rounded-sm">
           {video.status === "ready" && (
@@ -221,7 +225,12 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
 
         {video.status == "ready" && (
           <div className="from-accent/50 to-accent/0 absolute bottom-0 right-0 top-0 flex h-16 items-center gap-1.5 bg-gradient-to-l px-2 opacity-0 group-hover:opacity-100">
-            <Button size={"sm"} variant={"secondary"} className="rounded-full">
+            <Button
+              onClick={() => router.push(`/c/${channelId}/v/${video.id}`)}
+              size={"sm"}
+              variant={"secondary"}
+              className="rounded-full"
+            >
               <PenNibIcon weight="duotone" />
               Edit
             </Button>

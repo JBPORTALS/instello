@@ -11,7 +11,7 @@ import {
 import { CircleIcon } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
-export function ChannelBreadcrumb() {
+export function ChannelPageBreadcrumb() {
   const trpc = useTRPC();
   const { channelId } = useParams<{ channelId: string }>();
   const { data } = useSuspenseQuery(

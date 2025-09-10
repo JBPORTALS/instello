@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -52,3 +53,10 @@ export const UpdateVideoSchema = createUpdateSchema(video).omit({
   createdAt: true,
   updatedAt: true,
 });
+
+export const videoRealations = relations(video, ({ one }) => ({
+  chapter: one(chapter, {
+    fields: [video.chapterId],
+    references: [chapter.id],
+  }),
+}));

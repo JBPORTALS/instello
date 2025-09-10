@@ -7,7 +7,7 @@ import { HydrateClient, prefetch, trpc } from "@/trpc/server";
 import { Button } from "@instello/ui/components/button";
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 
-import { ChannelBreadcrumb } from "./channel-breadcrumb";
+import { ChannelPageBreadcrumb } from "./channel-breadcrumb";
 
 export default async function Page({
   params,
@@ -21,7 +21,7 @@ export default async function Page({
 
   return (
     <HydrateClient>
-      <SiteHeader startElement={<ChannelBreadcrumb />} />
+      <SiteHeader startElement={<ChannelPageBreadcrumb />} />
       <Container className="px-16">
         <div className="grid grid-cols-10 gap-8">
           <div className="col-span-7 space-y-3.5">

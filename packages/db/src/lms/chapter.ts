@@ -1,9 +1,11 @@
+import { relations } from "drizzle-orm";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
 import { lmsPgTable } from "../table.helpers";
 import { channel } from "./channel";
+import { video } from "./video";
 
 export const chapter = lmsPgTable("chapter", (d) => ({
   ...initialColumns,
@@ -37,3 +39,7 @@ export const UpdateChapterSchema = createUpdateSchema(chapter, {
   createdByClerkUserId: true,
   updatedAt: true,
 });
+
+export const chapterRealations = relations(chapter, ({ many }) => ({
+  videos: many(video),
+}));

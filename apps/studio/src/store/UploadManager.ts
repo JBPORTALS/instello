@@ -1,5 +1,6 @@
 import * as UpChunk from "@mux/upchunk";
 
+import type { UploadItem } from "./upload-store";
 import { useUploadStore } from "./upload-store";
 
 export interface UploadOptions {
@@ -38,7 +39,7 @@ export class UploadManager {
     const { videoId, file, endpoint, onProgress, onSuccess, onError } = options;
 
     // Create upload item in store
-    const uploadItem = {
+    const uploadItem: UploadItem = {
       videoId,
       progress: 0,
       status: "pending" as const,
@@ -46,6 +47,8 @@ export class UploadManager {
       fileSize: file.size,
       uploadedBytes: 0,
       startTime: Date.now(),
+      endpoint,
+      interrupted: false,
     };
 
     this.store.addUpload(uploadItem);
@@ -64,6 +67,7 @@ export class UploadManager {
 
       // Update store with upload instance
       this.store.updateStatus(videoId, "uploading");
+      this.store.setInterrupted(videoId, false);
 
       // Set up event listeners
       upload.on("progress", (progress: CustomEvent<number>) => {

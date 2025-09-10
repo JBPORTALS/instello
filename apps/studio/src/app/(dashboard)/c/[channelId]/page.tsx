@@ -24,7 +24,7 @@ export default async function Page({
       <SiteHeader startElement={<ChannelBreadcrumb />} />
       <Container className="px-16">
         <div className="grid grid-cols-10 gap-8">
-          <div className="col-span-6 space-y-3.5">
+          <div className="col-span-7 space-y-3.5">
             <div className="flex w-full items-center justify-between">
               <div className="text-lg font-semibold">Chapters</div>
 
@@ -37,7 +37,7 @@ export default async function Page({
 
             <ChapterList />
           </div>
-          <div className="col-span-4 h-full">
+          <div className="col-span-3 h-full">
             <ChannelDetailsSection />
           </div>
         </div>

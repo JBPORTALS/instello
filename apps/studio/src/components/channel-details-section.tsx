@@ -13,7 +13,7 @@ export function ChannelDetailsSection() {
 
   return (
     <div className="space-y-3.5">
-      <div className="bg-accent aspect-video h-72 w-full rounded-md" />
+      <div className="bg-accent h-58 aspect-video w-full rounded-md" />
 
       <div>
         <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">

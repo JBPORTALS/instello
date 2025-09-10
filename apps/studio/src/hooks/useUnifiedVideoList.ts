@@ -1,5 +1,6 @@
 "use client";
 
+import type { UploadItem } from "@/store/upload-store";
 import type { RouterOutputs } from "@instello/api";
 import { useMemo } from "react";
 import { useUploadStore } from "@/store/upload-store";
@@ -9,31 +10,13 @@ import { useQuery } from "@tanstack/react-query";
 // Type for database video
 type DatabaseVideo = RouterOutputs["lms"]["video"]["list"][number];
 
-// Type for upload video (from Zustand store)
-interface UploadVideo {
-  videoId: string;
-  progress: number;
-  status:
-    | "pending"
-    | "uploading"
-    | "paused"
-    | "success"
-    | "error"
-    | "cancelled";
-  error?: string;
-  fileName: string;
-  fileSize: number;
-  uploadedBytes: number;
-  startTime?: number;
-  endTime?: number;
-}
-
 // Unified video type that combines both
 export type UnifiedVideo = DatabaseVideo & {
   // Upload-specific properties (only present when uploading)
   isUploading?: boolean;
+  interrupted?: boolean;
   uploadProgress?: number;
-  uploadStatus?: UploadVideo["status"];
+  uploadStatus?: UploadItem["status"];
   uploadError?: string;
   fileName?: string;
   fileSize?: number;
@@ -72,10 +55,8 @@ export function useUnifiedVideoList(chapterId: string) {
     const dbVideos = dbQuery.data ?? [];
     const uploadVideos = Object.values(uploads);
 
-    console.log("uploadVideos", uploadVideos, dbVideos);
-
     // Create a map of upload videos by videoId for quick lookup
-    const uploadMap = new Map<string, UploadVideo>();
+    const uploadMap = new Map<string, UploadItem>();
 
     uploadVideos.forEach((upload) => {
       uploadMap.set(upload.videoId, upload);
@@ -96,6 +77,7 @@ export function useUnifiedVideoList(chapterId: string) {
         return {
           ...dbVideo,
           isUploading: true,
+          interrupted: uploadData.interrupted,
           uploadProgress: uploadData.progress,
           uploadStatus: uploadData.status,
           uploadError: uploadData.error,
@@ -132,7 +114,7 @@ export function useUnifiedVideoList(chapterId: string) {
 }
 
 // Helper function to calculate upload speed (bytes per second)
-function calculateUploadSpeed(upload: UploadVideo): number {
+function calculateUploadSpeed(upload: UploadItem): number {
   if (!upload.startTime) return 0;
 
   const now = upload.endTime ?? Date.now();
@@ -142,7 +124,7 @@ function calculateUploadSpeed(upload: UploadVideo): number {
 
 // Helper function to calculate estimated time remaining (seconds)
 function calculateEstimatedTimeRemaining(
-  upload: UploadVideo,
+  upload: UploadItem,
   speed: number,
 ): number {
   if (upload.progress === 0 || upload.progress === 100 || speed === 0) return 0;

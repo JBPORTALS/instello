@@ -140,7 +140,7 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
                 {video.uploadStatus === "cancelled" && "Cancelled"}
                 {video.uploadStatus === "pending" && "Preparing..."}
               </span>
-            ) : (
+            ) : !video.isUploading && !video.interrupted ? (
               <>
                 {video.status === "waiting" && `Processing...`}
                 {video.status === "asset_created" && "Processing asset..."}
@@ -149,7 +149,7 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
                 {video.status === "ready" &&
                   (video.isPublished ? "Published" : "Private")}
               </>
-            )}
+            ) : null}
           </span>
         </div>
 

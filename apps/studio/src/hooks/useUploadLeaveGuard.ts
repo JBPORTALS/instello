@@ -17,14 +17,25 @@ export function useUploadLeaveGuard() {
 
     const beforeUnload = (e: BeforeUnloadEvent) => {
       if (!hasActive) return;
-      Object.values(uploads).forEach((u) => {
-        if (u.status === "uploading") setInterrupted(u.videoId, true);
-      });
       e.preventDefault();
       e.returnValue = "";
     };
 
+    // On actual page hide (navigation/refresh confirmed), mark as interrupted
+    const onPageHide = () => {
+      if (!hasActive) return;
+      // Only mark as interrupted if the page is actually being hidden
+      // (this will not run if the user cancels the confirmation dialog)
+      Object.values(uploads).forEach((u) => {
+        if (u.status === "uploading") setInterrupted(u.videoId, true);
+      });
+    };
+
     window.addEventListener("beforeunload", beforeUnload);
-    return () => window.removeEventListener("beforeunload", beforeUnload);
+    window.addEventListener("pagehide", onPageHide);
+    return () => {
+      window.removeEventListener("beforeunload", beforeUnload);
+      window.removeEventListener("pagehide", onPageHide);
+    };
   }, [uploads, setInterrupted]);
 }

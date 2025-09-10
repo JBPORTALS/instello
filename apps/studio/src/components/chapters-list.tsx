@@ -83,7 +83,7 @@ export function ChapterList() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="min-w-[150px]">
-                <UploadVideoDialog chapterId={item.id}>
+                <UploadVideoDialog chapterName={item.title} chapterId={item.id}>
                   <DropdownMenuItem
                     onSelect={(e) => {
                       e.preventDefault();

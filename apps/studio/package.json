@@ -32,7 +32,8 @@
     "react-dom": "19.1.0",
     "react-hook-form": "catalog:",
     "sonner": "catalog:",
-    "zod": "catalog:"
+    "zod": "catalog:",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@clerk/types": "catalog:",

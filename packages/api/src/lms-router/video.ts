@@ -32,21 +32,23 @@ export const videoRouter = {
         // test: process.env.NODE_ENV !== "production",
       });
 
-      // await ctx.db.insert(video).values({
-      //   ...input,
-      //   id,
-      //   uploadId: upload.id,
-      //   status: "waiting",
-      //   createdByClerkUserId: ctx.auth.userId,
-      // });
+      await ctx.db.insert(video).values({
+        ...input,
+        id,
+        uploadId: upload.id,
+        status: "waiting",
+        createdByClerkUserId: ctx.auth.userId,
+      });
 
       return upload;
     }),
 
   list: protectedProcedure.input(z.object({ chapterId: z.string() })).query(
     async ({ ctx, input }) =>
-      await ctx.db.query.video.findMany({
-        where: eq(video.chapterId, input.chapterId),
-      }),
+      await ctx.db.query.video
+        .findMany({
+          where: eq(video.chapterId, input.chapterId),
+        })
+        .then((v) => v.map((i) => ({ ...i, progress: 0 }))),
   ),
 };

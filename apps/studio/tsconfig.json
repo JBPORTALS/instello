@@ -23,8 +23,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src",
-    "globals.d.ts",
-    "public/workers/**/*.js"
+    "globals.d.ts"
   ],
   "exclude": ["node_modules"]
 }

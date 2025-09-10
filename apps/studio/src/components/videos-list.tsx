@@ -12,6 +12,7 @@ import {
 } from "@/hooks/useUnifiedVideoList";
 import { useUploadManager } from "@/hooks/useUploadManager";
 import { Button } from "@instello/ui/components/button";
+import { Progress } from "@instello/ui/components/progress";
 import { Skeleton } from "@instello/ui/components/skeleton";
 import { cn } from "@instello/ui/lib/utils";
 import { PenNibIcon, TrashIcon } from "@phosphor-icons/react";
@@ -107,7 +108,7 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
       </div>
 
       {/* Video Info */}
-      <div className="min-w-0 flex-1 space-y-2.5">
+      <div className="min-w-0 flex-1 space-y-1.5">
         <div className="flex justify-between">
           <div className="h-full space-y-1.5">
             <span className="truncate text-sm">{video.title}</span>
@@ -121,8 +122,15 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
             {/** Local Uploading status */}
             {video.isUploading && !video.interrupted ? (
               <span className="text-accent-foreground">
-                {video.uploadStatus === "uploading" &&
-                  `Uploading... ${video.uploadProgress}%`}
+                {video.uploadStatus === "uploading" && (
+                  <div className="flex items-center gap-1.5">
+                    <Progress
+                      className="h-1.5 min-w-32"
+                      value={video.uploadProgress}
+                    />
+                    <span className="min-w-fit">{video.uploadProgress}%</span>
+                  </div>
+                )}
                 {video.uploadStatus === "paused" && "Paused"}
                 {video.uploadStatus === "error" && "Failed"}
                 {video.uploadStatus === "cancelled" && "Cancelled"}
@@ -134,9 +142,8 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
                 {video.status === "asset_created" && "Processing asset..."}
                 {video.status === "errored" && "Failed"}
                 {video.status === "cancelled" && "Cancelled"}
-                {video.status === "ready" && video.isPublished
-                  ? "Published"
-                  : "Private"}
+                {video.status === "ready" &&
+                  (video.isPublished ? "Published" : "Private")}
               </>
             )}
           </span>
@@ -161,7 +168,7 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
               {video.uploadSpeed && video.uploadSpeed > 0 && (
                 <span>{formatUploadSpeed(video.uploadSpeed)}</span>
               )}
-
+              <span>ᐧ</span>
               {video.estimatedTimeRemaining &&
                 video.estimatedTimeRemaining > 0 && (
                   <span>

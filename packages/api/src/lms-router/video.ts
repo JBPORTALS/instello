@@ -46,11 +46,9 @@ export const videoRouter = {
 
   list: protectedProcedure.input(z.object({ chapterId: z.string() })).query(
     async ({ ctx, input }) =>
-      await ctx.db.query.video
-        .findMany({
-          where: eq(video.chapterId, input.chapterId),
-        })
-        .then((v) => v.map((i) => ({ ...i, progress: 0 }))),
+      await ctx.db.query.video.findMany({
+        where: eq(video.chapterId, input.chapterId),
+      }),
   ),
 
   delete: protectedProcedure.input(z.object({ videoId: z.string() })).mutation(

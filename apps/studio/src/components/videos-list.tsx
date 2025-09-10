@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import {
   formatFileSize,
   formatTimeRemaining,
@@ -8,12 +9,6 @@ import {
 } from "@/hooks/useUnifiedVideoList";
 import { uploadManager } from "@/store/UploadManager";
 import { Skeleton } from "@instello/ui/components/skeleton";
-import {
-  CheckCircleIcon,
-  ExclamationMarkIcon,
-  PauseCircleIcon,
-  PlayCircleIcon,
-} from "@phosphor-icons/react";
 
 export function VideosList({ chapterId }: { chapterId: string }) {
   const { data, isLoading, isError } = useUnifiedVideoList(chapterId);
@@ -24,7 +19,7 @@ export function VideosList({ chapterId }: { chapterId: string }) {
         {Array.from({ length: 2 })
           .fill(0)
           .flatMap((_, i) => (
-            <Skeleton className="h-9 w-full" key={i} />
+            <Skeleton className="h-16 w-full" key={i} />
           ))}
       </div>
     );
@@ -44,43 +39,21 @@ export function VideosList({ chapterId }: { chapterId: string }) {
     <div className="w-full space-y-2">
       {data.map((item) => (
         <div
-          className={`bg-accent/60 hover:bg-accent hover:text-accent-foreground flex w-full items-center gap-1.5 rounded-md border px-2 ${
-            item.isUploading ? "min-h-16" : "h-9"
+          className={`hover:bg-accent/50 hover:text-accent-foreground flex w-full items-center gap-1.5 rounded-md px-2 ${
+            item.isUploading ? "min-h-16" : "h-16"
           } ${item.isUploading ? "hover:cursor-default" : "hover:cursor-pointer"}`}
           key={item.id}
         >
           {/* Status Icon */}
           <div className="flex-shrink-0">
-            {item.isUploading ? (
-              item.uploadStatus === "uploading" ? (
-                <PlayCircleIcon
-                  className="size-5 text-blue-500"
-                  weight="fill"
-                />
-              ) : item.uploadStatus === "paused" ? (
-                <PauseCircleIcon
-                  className="size-5 text-yellow-500"
-                  weight="fill"
-                />
-              ) : item.uploadStatus === "error" ? (
-                <ExclamationMarkIcon
-                  className="size-5 text-red-500"
-                  weight="fill"
-                />
-              ) : item.uploadStatus === "success" ? (
-                <CheckCircleIcon
-                  className="size-5 text-green-500"
-                  weight="fill"
-                />
-              ) : (
-                <PlayCircleIcon
-                  className="size-5 text-gray-500"
-                  weight="duotone"
-                />
-              )
-            ) : (
-              <PlayCircleIcon className="size-5" weight="duotone" />
-            )}
+            <div className="bg-accent relative aspect-video h-full w-20 overflow-hidden rounded-sm">
+              <Image
+                src={`https://image.mux.com/${item.playbackId}/thumbnail.png?width=214&height=121&time=15`}
+                fill
+                alt={`${item.title}'s thumbneil`}
+                className="aspect-video h-full w-full"
+              />
+            </div>
           </div>
 
           {/* Video Info */}

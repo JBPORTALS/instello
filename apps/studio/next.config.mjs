@@ -17,6 +17,13 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        hostname: "image.mux.com",
+      },
+    ],
+  },
 };
 
 export default nextConfig;

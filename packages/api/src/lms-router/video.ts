@@ -1,6 +1,7 @@
 import { eq } from "@instello/db";
 import { CreateVideoSchema, video } from "@instello/db/lms";
 import { createId } from "@paralleldrive/cuid2";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
 import { protectedProcedure } from "../trpc";
@@ -50,5 +51,30 @@ export const videoRouter = {
           where: eq(video.chapterId, input.chapterId),
         })
         .then((v) => v.map((i) => ({ ...i, progress: 0 }))),
+  ),
+
+  delete: protectedProcedure.input(z.object({ videoId: z.string() })).mutation(
+    async ({ ctx, input }) =>
+      await ctx.db.transaction(async (tx) => {
+        const singleVideo = await tx.query.video.findFirst({
+          where: eq(video.id, input.videoId),
+        });
+
+        if (!singleVideo)
+          throw new TRPCError({
+            message: "Video not found",
+            code: "BAD_REQUEST",
+          });
+
+        if (!singleVideo.assetId)
+          throw new TRPCError({
+            message: "Can't delete the video, no asset ID found.",
+            code: "BAD_REQUEST",
+          });
+
+        await ctx.mux.video.assets.delete(singleVideo.assetId);
+
+        return singleVideo;
+      }),
   ),
 };

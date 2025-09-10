@@ -17,6 +17,8 @@ import { cn } from "@instello/ui/lib/utils";
 import { PenNibIcon, TrashIcon } from "@phosphor-icons/react";
 import { toast } from "sonner";
 
+import { DeleteVideoDialog } from "./dialogs/delete-video-dialog";
+
 export function VideosList({ chapterId }: { chapterId: string }) {
   const { data, isLoading, isError } = useUnifiedVideoList(chapterId);
 
@@ -216,14 +218,16 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
               <PenNibIcon weight="duotone" />
               Edit
             </Button>
-            <Button
-              size={"sm"}
-              variant={"secondary"}
-              className="text-destructive rounded-full"
-            >
-              <TrashIcon weight="duotone" />
-              Delete
-            </Button>
+            <DeleteVideoDialog videoId={video.id} chapterId={video.chapterId}>
+              <Button
+                size={"sm"}
+                variant={"secondary"}
+                className="text-destructive rounded-full"
+              >
+                <TrashIcon weight="duotone" />
+                Delete
+              </Button>
+            </DeleteVideoDialog>
           </div>
         )}
       </div>

@@ -11,7 +11,7 @@ import { NavMain } from "./nav-main";
 
 export function VideoSidebar() {
   return (
-    <Sidebar variant="inset">
+    <Sidebar>
       <NavHeader />
       <SidebarContent>
         <SidebarGroup>

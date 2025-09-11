@@ -1,4 +1,4 @@
-import { eq } from "@instello/db";
+import { asc, desc, eq } from "@instello/db";
 import {
   chapter,
   CreateChapterSchema,
@@ -12,9 +12,20 @@ export const chapterRouter = {
   create: protectedProcedure
     .input(CreateChapterSchema)
     .mutation(async ({ ctx, input }) => {
+      const last = await ctx.db.query.chapter.findFirst({
+        where: eq(chapter.channelId, input.channelId),
+        orderBy: desc(chapter.order),
+      });
+
+      const nextOrder = last ? last.order + 1 : 1;
+
       return await ctx.db
         .insert(chapter)
-        .values({ ...input, createdByClerkUserId: ctx.auth.userId })
+        .values({
+          ...input,
+          order: nextOrder,
+          createdByClerkUserId: ctx.auth.userId,
+        })
         .returning();
     }),
 
@@ -23,6 +34,7 @@ export const chapterRouter = {
     .query(async ({ ctx, input }) => {
       return await ctx.db.query.chapter.findMany({
         where: eq(chapter.channelId, input.channelId),
+        orderBy: asc(chapter.order),
       });
     }),
 

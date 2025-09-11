@@ -15,6 +15,7 @@ export const chapter = lmsPgTable("chapter", (d) => ({
     .text()
     .notNull()
     .references(() => channel.id),
+  order: d.integer().notNull(),
 }));
 
 export const CreateChapterSchema = createInsertSchema(chapter, {
@@ -26,6 +27,7 @@ export const CreateChapterSchema = createInsertSchema(chapter, {
   createdAt: true,
   createdByClerkUserId: true,
   updatedAt: true,
+  order: true,
 });
 
 export const UpdateChapterSchema = createUpdateSchema(chapter, {

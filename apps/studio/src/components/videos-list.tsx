@@ -114,11 +114,13 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
       {/* Video Info */}
       <div className="min-w-0 flex-1 space-y-1.5">
         <div className="flex justify-between">
-          <div className="h-full space-y-1.5">
-            <span className="truncate text-sm">{video.title}</span>
+          <div className="flex h-full flex-col gap-1.5">
+            <span className="max-w-xl truncate text-sm">{video.title}</span>
             {video.status === "ready" && (
-              <p className="text-muted-foreground text-xs">
-                {video.description ?? "Add description..."}
+              <p className="text-muted-foreground max-w-xl truncate text-xs">
+                {video.description?.length == 0
+                  ? "Add description..."
+                  : video.description}
               </p>
             )}
           </div>

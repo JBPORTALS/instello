@@ -59,7 +59,6 @@ export function ChapterList() {
   return (
     <Accordion
       type="single"
-      collapsible
       value={openChapter}
       onValueChange={(val) => setOpenChapter(val)}
       className="space-y-3.5"
@@ -71,6 +70,9 @@ export function ChapterList() {
           value={item.id}
         >
           <AccordionHeader className="group inline-flex w-full flex-1 items-center justify-between space-x-3.5 px-6">
+            <div className="bg-accent flex size-6 items-center justify-center rounded-sm border font-mono text-xs font-bold">
+              {item.order}
+            </div>
             <AccordionTrigger>{item.title}</AccordionTrigger>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

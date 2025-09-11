@@ -35,9 +35,9 @@ export function VideoForm() {
   const form = useForm({
     resolver: zodResolver(UpdateVideoSchema),
     defaultValues: {
-      title: data?.title ?? "",
-      description: data?.description ?? "",
-      isPublished: data?.isPublished ?? false,
+      title: data.title,
+      description: data.description ?? "",
+      isPublished: data.isPublished ?? false,
     },
   });
 
@@ -136,7 +136,7 @@ export function VideoForm() {
             />
           </div>
           <div className="col-span-3">
-            {data?.playbackId && (
+            {data.playbackId && (
               <MuxPlayer
                 playbackId={data.playbackId}
                 accentColor="#ffb203"

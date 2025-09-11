@@ -62,15 +62,21 @@ export const videoRouter = {
         .then((r) => r.at(0));
     }),
 
-  getById: protectedProcedure.input(z.object({ videoId: z.string() })).query(
-    async ({ ctx, input }) =>
-      await ctx.db.query.video.findFirst({
+  getById: protectedProcedure
+    .input(z.object({ videoId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const singleVideo = await ctx.db.query.video.findFirst({
         where: eq(video.id, input.videoId),
         with: {
           chapter: true,
         },
-      }),
-  ),
+      });
+
+      if (!singleVideo)
+        throw new TRPCError({ message: "No video found", code: "NOT_FOUND" });
+
+      return singleVideo;
+    }),
 
   delete: protectedProcedure.input(z.object({ videoId: z.string() })).mutation(
     async ({ ctx, input }) =>

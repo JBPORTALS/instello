@@ -97,6 +97,8 @@ export const videoRouter = {
             code: "BAD_REQUEST",
           });
 
+        await tx.delete(video).where(eq(video.id, input.videoId));
+
         await ctx.mux.video.assets.delete(singleVideo.assetId);
 
         return singleVideo;

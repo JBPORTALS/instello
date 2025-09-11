@@ -26,6 +26,7 @@ import {
 } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { EditChapterDialog } from "./dialogs/edit-chapter-dialog";
 import { UploadVideoDialog } from "./dialogs/upload-video-dialog";
 import { VideosList } from "./videos-list";
 
@@ -94,10 +95,16 @@ export function ChapterList() {
                     <PlusSquareIcon weight="duotone" /> Add video...
                   </DropdownMenuItem>
                 </UploadVideoDialog>
-                <DropdownMenuItem>
-                  <PenNibIcon weight="duotone" />
-                  Rename
-                </DropdownMenuItem>
+                <EditChapterDialog chapterId={item.id}>
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                    }}
+                  >
+                    <PenNibIcon weight="duotone" />
+                    Rename
+                  </DropdownMenuItem>
+                </EditChapterDialog>
                 <DropdownMenuItem variant="destructive">
                   <TrashSimpleIcon weight="duotone" />
                   Delete

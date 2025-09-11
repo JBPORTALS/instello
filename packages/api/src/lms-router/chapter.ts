@@ -38,13 +38,23 @@ export const chapterRouter = {
       });
     }),
 
+  getById: protectedProcedure
+    .input(z.object({ chapterId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return await ctx.db.query.chapter.findFirst({
+        where: eq(chapter.id, input.chapterId),
+      });
+    }),
+
   update: protectedProcedure
     .input(UpdateChapterSchema)
     .mutation(async ({ ctx, input }) => {
       return await ctx.db
         .update(chapter)
         .set({ ...input })
-        .where(eq(chapter.id, input.id));
+        .where(eq(chapter.id, input.id))
+        .returning()
+        .then((r) => r[0]);
     }),
 
   delete: protectedProcedure

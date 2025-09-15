@@ -82,6 +82,7 @@ export function VideoForm() {
               className="rounded-full"
               onClick={() => form.reset()}
               type="button"
+              size={"lg"}
             >
               Discard changes
             </Button>
@@ -90,6 +91,7 @@ export function VideoForm() {
               loading={form.formState.isSubmitting}
               disabled={!form.formState.isDirty}
               className="rounded-full"
+              size={"lg"}
             >
               Save
             </Button>

@@ -2,7 +2,7 @@ import { DrizzleQueryError } from "drizzle-orm/errors";
 
 export { DrizzleQueryError } from "drizzle-orm/errors";
 export * from "drizzle-orm/sql";
-export { alias } from "drizzle-orm/pg-core";
+export { alias, PgTransaction } from "drizzle-orm/pg-core";
 
 export function isDrizzleQueryError(
   error: unknown,

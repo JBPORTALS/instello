@@ -26,6 +26,7 @@ import {
 } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { DeleteChapterDialog } from "./dialogs/delete-chapter-dialog";
 import { EditChapterDialog } from "./dialogs/edit-chapter-dialog";
 import { UploadVideoDialog } from "./dialogs/upload-video-dialog";
 import { VideosList } from "./videos-list";
@@ -105,10 +106,17 @@ export function ChapterList() {
                     Rename
                   </DropdownMenuItem>
                 </EditChapterDialog>
-                <DropdownMenuItem variant="destructive">
-                  <TrashSimpleIcon weight="duotone" />
-                  Delete
-                </DropdownMenuItem>
+                <DeleteChapterDialog chapterId={item.id}>
+                  <DropdownMenuItem
+                    onSelect={(e) => {
+                      e.preventDefault();
+                    }}
+                    variant="destructive"
+                  >
+                    <TrashSimpleIcon weight="duotone" />
+                    Delete chapter
+                  </DropdownMenuItem>
+                </DeleteChapterDialog>
               </DropdownMenuContent>
             </DropdownMenu>
           </AccordionHeader>

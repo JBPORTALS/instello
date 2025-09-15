@@ -4,6 +4,8 @@ import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
+import type { withTx } from "../router.helpers";
+import type { Context } from "../trpc";
 import { protectedProcedure } from "../trpc";
 
 export const videoRouter = {
@@ -78,30 +80,36 @@ export const videoRouter = {
       return singleVideo;
     }),
 
-  delete: protectedProcedure.input(z.object({ videoId: z.string() })).mutation(
-    async ({ ctx, input }) =>
-      await ctx.db.transaction(async (tx) => {
-        const singleVideo = await tx.query.video.findFirst({
-          where: eq(video.id, input.videoId),
-        });
-
-        if (!singleVideo)
-          throw new TRPCError({
-            message: "Video not found",
-            code: "BAD_REQUEST",
-          });
-
-        if (!singleVideo.assetId)
-          throw new TRPCError({
-            message: "Can't delete the video, no asset ID found.",
-            code: "BAD_REQUEST",
-          });
-
-        await tx.delete(video).where(eq(video.id, input.videoId));
-
-        await ctx.mux.video.assets.delete(singleVideo.assetId);
-
-        return singleVideo;
-      }),
-  ),
+  delete: protectedProcedure
+    .input(z.object({ videoId: z.string() }))
+    .mutation(async ({ ctx, input }) => await deleteVideo(input, ctx)),
 };
+
+export function deleteVideo(
+  input: { videoId: string },
+  ctx: Context | ReturnType<typeof withTx>,
+) {
+  return ctx.db.transaction(async (tx) => {
+    const singleVideo = await tx.query.video.findFirst({
+      where: eq(video.id, input.videoId),
+    });
+
+    if (!singleVideo)
+      throw new TRPCError({
+        message: "Video not found",
+        code: "BAD_REQUEST",
+      });
+
+    if (!singleVideo.assetId)
+      throw new TRPCError({
+        message: "Can't delete the video, no asset ID found.",
+        code: "BAD_REQUEST",
+      });
+
+    await tx.delete(video).where(eq(video.id, input.videoId));
+
+    await ctx.mux.video.assets.delete(singleVideo.assetId);
+
+    return singleVideo;
+  });
+}

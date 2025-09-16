@@ -7,7 +7,7 @@ import { lmsPgTable } from "../table.helpers";
 export const channel = lmsPgTable("channel", (d) => ({
   ...initialColumns,
   createdByClerkUserId: d.text().notNull(),
-  title: d.text().notNull(),
+  title: d.varchar({ length: 100 }).notNull(),
   description: d.varchar({ length: 256 }),
   isPublished: d.boolean().default(false),
   thumbneilId: d.varchar({ length: 100 }),

@@ -4,11 +4,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTRPC } from "@/trpc/react";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@instello/ui/components/dropdown-menu";
+import {
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@instello/ui/components/sidebar";
-import { CircleIcon } from "@phosphor-icons/react";
+import {
+  BackspaceIcon,
+  DotsThreeIcon,
+  FolderIcon,
+  FolderOpenIcon,
+  GearFineIcon,
+} from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
+
+import { ChannelSettingsDialog } from "../dialogs/channel-settings-dialog";
 
 export function NavChannels() {
   const trpc = useTRPC();
@@ -31,14 +48,41 @@ export function NavChannels() {
   return (
     <>
       {channels.map((item) => (
-        <SidebarMenuItem key={item.id}>
-          <SidebarMenuButton isActive={pathname === `/c/${item.id}`} asChild>
-            <Link href={`/c/${item.id}`}>
-              <CircleIcon weight="duotone" />
-              {item.title}
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
+        <DropdownMenu key={item.id}>
+          <SidebarMenuItem>
+            <SidebarMenuButton isActive={pathname === `/c/${item.id}`} asChild>
+              <Link href={`/c/${item.id}`}>
+                {pathname === `/c/${item.id}` ? (
+                  <FolderOpenIcon weight="duotone" />
+                ) : (
+                  <FolderIcon weight={"duotone"} />
+                )}
+
+                {item.title}
+              </Link>
+            </SidebarMenuButton>
+            <DropdownMenuTrigger asChild>
+              <SidebarMenuAction className="data-[state=open]:bg-sidebar-accent opacity-0 group-hover/menu-item:opacity-100 data-[state=open]:opacity-100">
+                <DotsThreeIcon weight="duotone" />
+              </SidebarMenuAction>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" side="bottom">
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="text-muted-foreground text-xs">
+                  Actions
+                </DropdownMenuLabel>
+                <ChannelSettingsDialog channelId={item.id}>
+                  <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                    <GearFineIcon weight="duotone" /> Settings...
+                  </DropdownMenuItem>
+                </ChannelSettingsDialog>
+                <DropdownMenuItem variant="destructive">
+                  <BackspaceIcon weight="duotone" /> Delete forever...
+                </DropdownMenuItem>
+              </DropdownMenuGroup>
+            </DropdownMenuContent>
+          </SidebarMenuItem>
+        </DropdownMenu>
       ))}
     </>
   );

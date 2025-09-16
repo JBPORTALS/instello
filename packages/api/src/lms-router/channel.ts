@@ -19,10 +19,10 @@ export const channelRouter = {
     }),
 
   list: protectedProcedure.query(async ({ ctx }) => {
-    return await ctx.db
-      .select()
-      .from(channel)
-      .where(eq(channel.createdByClerkUserId, ctx.auth.userId));
+    return await ctx.db.query.channel.findMany({
+      where: eq(channel.createdByClerkUserId, ctx.auth.userId),
+      orderBy: (col, { desc }) => desc(col.createdAt),
+    });
   }),
 
   getById: protectedProcedure
@@ -42,7 +42,9 @@ export const channelRouter = {
       return await ctx.db
         .update(channel)
         .set({ ...input })
-        .where(eq(channel.id, input.id));
+        .where(eq(channel.id, input.id))
+        .returning()
+        .then((r) => r[0]);
     }),
 
   delete: protectedProcedure

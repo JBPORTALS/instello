@@ -127,20 +127,19 @@ function GeneralSettings({ channelId }: { channelId: string }) {
         isPublished: data?.isPublished ?? false,
       };
     },
+    reValidateMode: "onChange",
     mode: "onChange",
-    resetOptions: {
-      keepDefaultValues: true,
-      keepDirty: false,
-      keepIsSubmitSuccessful: true,
-      keepDirtyValues: true,
-    },
   });
 
   const { mutateAsync: updateChannel } = useMutation(
     trpc.lms.channel.update.mutationOptions({
       async onSuccess(_, variables) {
         toast.info(`Channel info updated`);
-        form.reset(variables);
+        form.reset(variables, {
+          keepDirty: false,
+          keepDirtyValues: true,
+          keepSubmitCount: true,
+        });
         await queryClient.invalidateQueries(trpc.lms.channel.pathFilter());
       },
       onError(error) {
@@ -155,7 +154,7 @@ function GeneralSettings({ channelId }: { channelId: string }) {
   }
 
   return (
-    <Form {...form}>
+    <Form key={channelId} {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
         <DialogHeader className="flex-row items-center justify-between">
           <DialogTitle>General Settings</DialogTitle>

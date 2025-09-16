@@ -4,7 +4,7 @@ import { eq } from "@instello/db";
 import { db } from "@instello/db/client";
 import { channel } from "@instello/db/lms";
 import { createUploadthing } from "uploadthing/next";
-import { UploadThingError, UTApi } from "uploadthing/server";
+import { UploadThingError, UTApi, UTFiles } from "uploadthing/server";
 import { z } from "zod/v4";
 
 const f = createUploadthing();
@@ -70,7 +70,7 @@ export const studioFileRouter = {
   })
     .input(z.object({ channelId: z.string().min(1, "Channel Id is required") }))
     // Set permissions and file types for this FileRoute
-    .middleware(async ({ req, input }) => {
+    .middleware(async ({ req, input, files }) => {
       // This code runs on your server before upload
       const { userId } = getAuth(req);
 
@@ -91,8 +91,13 @@ export const studioFileRouter = {
           code: "INTERNAL_SERVER_ERROR",
         }) as Error;
 
+      const fileOverrides = files.map((file) => {
+        const newName = `channel-${singleChannel.id}}`;
+        return { ...file, name: newName };
+      });
+
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
-      return { userId, channel: singleChannel };
+      return { userId, channel: singleChannel, [UTFiles]: fileOverrides };
     })
     .onUploadComplete(async ({ metadata, file }) => {
       // 1. If already there is uploaded file delete that

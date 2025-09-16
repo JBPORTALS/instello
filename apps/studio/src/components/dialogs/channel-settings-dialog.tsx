@@ -276,6 +276,9 @@ function GeneralSettings({ channelId }: { channelId: string }) {
                                 );
                                 toast.info(`Channel thumbneil image changed.`);
                               }}
+                              onUploadError={(e) => {
+                                toast.error(e.message);
+                              }}
                             />
                           </div>
                         </div>

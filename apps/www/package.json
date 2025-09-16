@@ -1,5 +1,5 @@
 {
-  "name": "@instello/studio",
+  "name": "@instello/www",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,28 +15,10 @@
   },
   "dependencies": {
     "@clerk/nextjs": "catalog:",
-    "@hookform/resolvers": "catalog:",
-    "@instello/api": "workspace:^",
-    "@instello/db": "workspace:*",
     "@instello/ui": "workspace:*",
-    "@mux/mux-node": "^12.7.0",
-    "@mux/mux-player-react": "^3.6.0",
-    "@mux/mux-uploader-react": "^1.2.0",
-    "@mux/upchunk": "^3.5.0",
-    "@phosphor-icons/react": "catalog:",
-    "@tanstack/react-query": "catalog:",
-    "@tanstack/react-table": "catalog:",
-    "@trpc/client": "catalog:",
-    "@trpc/tanstack-react-query": "catalog:",
-    "@uploadthing/react": "^7.3.3",
-    "next": "15.5.0",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
-    "react-hook-form": "catalog:",
-    "sonner": "catalog:",
-    "uploadthing": "^7.7.4",
-    "zod": "catalog:",
-    "zustand": "^5.0.8"
+    "next": "15.5.3"
   },
   "devDependencies": {
     "@clerk/types": "catalog:",

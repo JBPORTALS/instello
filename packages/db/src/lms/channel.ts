@@ -18,7 +18,6 @@ export const CreateChannelSchema = createInsertSchema(channel, {
     .string()
     .min(3, "Title of the channel must be atleast 3 characters long"),
   description: z.string().optional(),
-  thumbneilId: z.string().min(1, "Thumbneil required"),
 }).omit({
   id: true,
   createdAt: true,

@@ -23,7 +23,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@instello/ui/components/form";
-import { Input } from "@instello/ui/components/input";
 import { Textarea } from "@instello/ui/components/textarea";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -40,7 +39,6 @@ export function CreateChannelDialog({
     defaultValues: {
       title: "",
       description: "",
-      thumbneilId: "https://i.ytimg.com",
     },
   });
 
@@ -69,53 +67,49 @@ export function CreateChannelDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="@container/dialog-content sm:max-w-5xl">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>New Channel</DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3.5">
-            <DialogBody className="flex gap-5">
-              <div>
-                <div className="bg-accent/60 aspect-video h-auto rounded-md @sm:w-lg"></div>
-              </div>
-              <div className="w-full space-y-3.5">
-                <FormField
-                  control={form.control}
-                  name="title"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Title</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          className="h-11 text-2xl font-semibold"
-                          placeholder="eg. Artificial Intelligence"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{"Description (Optional)"}</FormLabel>
-                      <FormControl className="h-full">
-                        <Textarea
-                          {...field}
-                          maxLength={256}
-                          className="h-28 resize-none"
-                          placeholder="Add description..."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogBody className="space-y-3.5">
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Title</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        maxLength={100}
+                        className="h-11 resize-none text-2xl font-semibold"
+                        placeholder="Title of your channel / course"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{"Description (Optional)"}</FormLabel>
+                    <FormControl className="h-full">
+                      <Textarea
+                        {...field}
+                        maxLength={256}
+                        className="h-28 resize-none"
+                        placeholder="Add description..."
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </DialogBody>
             <DialogFooter>
               <Button loading={form.formState.isSubmitting}>Create</Button>

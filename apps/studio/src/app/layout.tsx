@@ -7,6 +7,10 @@ import { Providers } from "@/components/providers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { buttonVariants } from "@instello/ui/components/button";
 import { cn } from "@instello/ui/lib/utils";
+import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
+import { extractRouterConfig } from "uploadthing/server";
+
+import { studioFileRouter } from "./api/uploadthing/core";
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -62,6 +66,15 @@ export default function RootLayout({
         <body
           className={`${montserrat.variable} ${geistMono.variable} antialiased`}
         >
+          <NextSSRPlugin
+            /**
+             * The `extractRouterConfig` will extract **only** the route configs
+             * from the router to prevent additional information from being
+             * leaked to the client. The data passed to the client is the same
+             * as if you were to fetch `/api/uploadthing` directly.
+             */
+            routerConfig={extractRouterConfig(studioFileRouter)}
+          />
           <Providers>{children}</Providers>
         </body>
       </html>

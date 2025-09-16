@@ -2,10 +2,12 @@
 
 import type { z } from "zod/v4";
 import React, { useState } from "react";
+import Image from "next/image";
 import { useTRPC } from "@/trpc/react";
+import { UploadButton, UploadDropzone } from "@/utils/uploadthing";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UpdateChannelSchema } from "@instello/db/lms";
-import { Button } from "@instello/ui/components/button";
+import { Button, buttonVariants } from "@instello/ui/components/button";
 import {
   Dialog,
   DialogBody,
@@ -36,6 +38,7 @@ import {
 } from "@instello/ui/components/sidebar";
 import { Spinner } from "@instello/ui/components/spinner";
 import { Textarea } from "@instello/ui/components/textarea";
+import { cn } from "@instello/ui/lib/utils";
 import { GearIcon } from "@phosphor-icons/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -223,6 +226,84 @@ function GeneralSettings({ channelId }: { channelId: string }) {
                       It will help us to improve the reach of your channel to
                       the right viewers.
                     </FormDescription>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="thumbneilId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{`Thumbneil`}</FormLabel>
+                    <FormDescription>
+                      Upload unique thumbneil to your channel to deliver the
+                      course effectively to the audience. This will help them to
+                      grab their attention.
+                    </FormDescription>
+                    <div className="aspect-video h-[230px] w-[400] overflow-hidden rounded-md">
+                      {field.value ? (
+                        <div className="relative h-full w-full">
+                          <Image
+                            fill
+                            alt={`Channel Thumbneil`}
+                            src={`https://mnn9dy1ypr.ufs.sh/f/${field.value}`}
+                          />
+                          <div className="bg-background/40 absolute flex h-full w-full items-center justify-center transition-all duration-200">
+                            <UploadButton
+                              config={{ cn }}
+                              appearance={{
+                                button: buttonVariants({
+                                  className: "rounded-full",
+                                  size: "lg",
+                                }),
+                              }}
+                              input={{ channelId }}
+                              endpoint={"channelThumbneilUploader"}
+                              onClientUploadComplete={async (res) => {
+                                form.reset(
+                                  {
+                                    thumbneilId:
+                                      res.at(0)?.serverData.newThumbneilId ??
+                                      "",
+                                  },
+                                  { keepDirty: false },
+                                );
+                                await queryClient.invalidateQueries(
+                                  trpc.lms.channel.getById.queryOptions({
+                                    channelId,
+                                  }),
+                                );
+                                toast.info(`Channel thumbneil image changed.`);
+                              }}
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <UploadDropzone
+                          input={{ channelId }}
+                          className="h-full w-full"
+                          endpoint={"channelThumbneilUploader"}
+                          config={{ mode: "auto" }}
+                          onClientUploadComplete={async (res) => {
+                            form.reset(
+                              {
+                                thumbneilId:
+                                  res.at(0)?.serverData.newThumbneilId ?? "",
+                              },
+                              { keepDirty: false },
+                            );
+                            await queryClient.invalidateQueries(
+                              trpc.lms.channel.getById.queryOptions({
+                                channelId,
+                              }),
+                            );
+                            toast.info(`Added channel thumbneil image.`);
+                          }}
+                        />
+                      )}
+                    </div>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

@@ -20,6 +20,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: "https",
+        hostname: "mnn9dy1ypr.ufs.sh",
+        pathname: "/f/*",
+      },
+      {
         hostname: "image.mux.com",
       },
     ],

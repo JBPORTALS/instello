@@ -142,4 +142,22 @@
     );
     background-size: 10px 10px;
   }
+  .pattern-polka-v2 {
+    background-color: transparent;
+    background-image:
+      radial-gradient(
+        color-mix(in oklab, var(--color-muted-foreground) 50%, transparent)
+          0.5px,
+        transparent 0.5px
+      ),
+      radial-gradient(
+        color-mix(in oklab, var(--color-muted-foreground) 50%, transparent)
+          0.5px,
+        transparent 0.5px
+      );
+    background-size: 20px 20px;
+    background-position:
+      0 0,
+      10px 10px;
+  }
 }

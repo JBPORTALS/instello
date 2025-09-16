@@ -16,6 +16,7 @@
   "dependencies": {
     "@clerk/nextjs": "catalog:",
     "@instello/ui": "workspace:*",
+    "@phosphor-icons/react": "catalog:",
     "react": "catalog:react19",
     "react-dom": "catalog:react19",
     "next": "15.5.3"

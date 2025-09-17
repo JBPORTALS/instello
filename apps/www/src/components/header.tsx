@@ -8,7 +8,7 @@ export function Header() {
       <Image
         src={"/instello.svg"}
         height={28}
-        width={140}
+        width={110}
         alt="Instello Logo"
       />
 

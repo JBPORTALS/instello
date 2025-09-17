@@ -5,7 +5,7 @@ import { ArrowRightIcon, PlayCircleIcon } from "@phosphor-icons/react/dist/ssr";
 export default function Home() {
   return (
     <div className="bg-accent/30 pattern-polka-v2 rounded-4xl flex h-full flex-col items-center justify-center gap-6 border px-10 sm:gap-10">
-      <div className="bg-accent/50 shadow-accent-foreground/50 mb-8 flex size-32 items-center justify-center rounded-3xl shadow-2xl backdrop-blur-2xl dark:border">
+      <div className="bg-accent/50 shadow-accent-foreground/50 mb-8 flex size-28 items-center justify-center rounded-3xl shadow-2xl backdrop-blur-2xl sm:size-32 dark:border">
         <Image
           src={"/instello-feather.svg"}
           alt="Instello Fetaher"
@@ -19,7 +19,7 @@ export default function Home() {
       <h3 className="text-muted-foreground text-center text-base sm:text-xl">
         Learn anywhere. Teach better. Manage with ease.
       </h3>
-      <div className="space-x-3.5">
+      <div className="flex w-full flex-col gap-3.5 sm:w-fit sm:flex-row">
         <Button
           size={"xl"}
           variant={"secondary"}

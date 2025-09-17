@@ -14,7 +14,7 @@ export default function Home() {
         />
       </div>
       <h1 className="text-center text-4xl sm:text-6xl">
-        One Platform. Every Posibilities.
+        One Platform. Every Possibility.
       </h1>
       <h3 className="text-muted-foreground text-center text-base sm:text-xl">
         Learn anywhere. Teach better. Manage with ease.

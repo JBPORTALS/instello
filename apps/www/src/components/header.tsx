@@ -1,5 +1,6 @@
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@instello/ui/components/button";
 
 export function Header() {
@@ -8,13 +9,15 @@ export function Header() {
       <Image
         src={"/instello.svg"}
         height={28}
-        width={110}
+        width={140}
         alt="Instello Logo"
       />
 
       <div className="space-x-3.5">
-        <Button variant={"ghost"}>Sign in</Button>
-        <Button variant={"outline"}>Get started</Button>
+        {/* <Button variant={"ghost"}>Sign in</Button> */}
+        <Button variant={"outline"}>
+          <Link href={"/get-started"}>Get started</Link>
+        </Button>
       </div>
     </header>
   );

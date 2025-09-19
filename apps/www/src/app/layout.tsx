@@ -3,7 +3,6 @@ import { Geist_Mono, Outfit } from "next/font/google";
 
 import "@instello/ui/globals.css";
 
-import { Header } from "@/components/header";
 import { Providers } from "@/components/providers";
 import { ClerkProvider } from "@clerk/nextjs";
 import { buttonVariants } from "@instello/ui/components/button";
@@ -20,8 +19,75 @@ const fontMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Instello",
-  description: "One Platform. Every Possibility.",
+  title: {
+    default: "Instello - One Platform. Every Possibility.",
+    template: "%s | Instello",
+  },
+  description:
+    "Instello is a comprehensive educational platform that connects students, teachers, and institutions. Learn anywhere, teach better, and manage with ease on our unified platform.",
+  keywords: [
+    "education platform",
+    "learning management system",
+    "student portal",
+    "institution management",
+    "online education",
+    "educational technology",
+    "LMS",
+    "ERP for education",
+    "student management",
+    "institute management",
+  ],
+  authors: [{ name: "Instello Team" }],
+  creator: "Instello",
+  publisher: "Instello",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://instello.in"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://instello.in",
+    title: "Instello - One Platform. Every Possibility.",
+    description:
+      "Instello is a comprehensive educational platform that connects students, teachers, and institutions. Learn anywhere, teach better, and manage with ease.",
+    siteName: "Instello",
+    images: [
+      {
+        url: "/banner.png",
+        width: 1200,
+        height: 630,
+        alt: "Instello - Educational Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Instello - One Platform. Every Possibility.",
+    description:
+      "Instello is a comprehensive educational platform that connects students, teachers, and institutions. Learn anywhere, teach better, and manage with ease.",
+    images: ["/banner.png"],
+    creator: "@instello",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: "your-google-verification-code", // Replace with actual verification code
+  },
 };
 
 export default function RootLayout({
@@ -63,12 +129,7 @@ export default function RootLayout({
         <body
           className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
         >
-          <Providers>
-            <Header />
-            <main className="@container/main h-[calc(100vh-64px)] max-h-[calc(100vh-64px)] px-4 py-4 sm:px-8 md:px-10 xl:px-14">
-              {children}
-            </main>
-          </Providers>
+          <Providers>{children}</Providers>
         </body>
       </html>
     </ClerkProvider>

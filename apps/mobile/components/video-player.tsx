@@ -20,7 +20,6 @@ import { router } from "expo-router";
 import * as Orientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import {
-  VideoPlayer as ExpoVideoPlayer,
   useVideoPlayer,
   VideoContentFit,
   VideoSource,
@@ -117,16 +116,8 @@ export function VideoPlayer({
 
   const currentVideo = getCurrentVideo();
 
-  // Video player cache for preloading
-  const videoPlayerCache = useRef<Map<string, ExpoVideoPlayer>>(new Map());
-  const [preloadedVideos, setPreloadedVideos] = useState<Set<string>>(
-    new Set(),
-  );
-  const [currentPlayerSource, setCurrentPlayerSource] = useState<VideoSource>(
-    currentVideo.source,
-  );
-
-  const player = useVideoPlayer(currentPlayerSource, (player) => {
+  // Use single player with proper source switching (Android-safe approach)
+  const player = useVideoPlayer(currentVideo.source, (player) => {
     player.loop = false; // Disable loop to handle playlist navigation
     player.bufferOptions = {
       preferredForwardBufferDuration: 50,
@@ -148,74 +139,35 @@ export function VideoPlayer({
   const [showControls, setShowControls] = useState(true);
   const [resizeMode, setResizeMode] = useState<VideoContentFit>("contain");
 
-  // Preload adjacent videos by switching source temporarily
-  const preloadAdjacentVideos = useCallback(() => {
-    if (!playlist) return;
-
-    // Preload next video
-    if (currentVideoIndex < playlist.length - 1) {
-      const nextVideo = playlist[currentVideoIndex + 1];
-      if (nextVideo && !preloadedVideos.has(nextVideo.id)) {
-        // Temporarily switch to next video to preload it
-        setTimeout(() => {
-          setCurrentPlayerSource(nextVideo.source);
-          setPreloadedVideos((prev) => new Set([...prev, nextVideo.id]));
-          console.log(`Preloaded next video: ${nextVideo.id}`);
-
-          // Switch back to current video after a short delay
-          setTimeout(() => {
-            setCurrentPlayerSource(currentVideo.source);
-          }, 2000); // 2 seconds should be enough for initial buffering
-        }, 100);
-      }
-    }
-
-    // Preload previous video
-    if (currentVideoIndex > 0) {
-      const prevVideo = playlist[currentVideoIndex - 1];
-      if (prevVideo && !preloadedVideos.has(prevVideo.id)) {
-        // Temporarily switch to previous video to preload it
-        setTimeout(() => {
-          setCurrentPlayerSource(prevVideo.source);
-          setPreloadedVideos((prev) => new Set([...prev, prevVideo.id]));
-          console.log(`Preloaded previous video: ${prevVideo.id}`);
-
-          // Switch back to current video after a short delay
-          setTimeout(() => {
-            setCurrentPlayerSource(currentVideo.source);
-          }, 2000); // 2 seconds should be enough for initial buffering
-        }, 150);
-      }
-    }
-  }, [playlist, currentVideoIndex, currentVideo.source, preloadedVideos]);
-
-  // Navigation functions with preloading support
+  // Navigation functions using source switching (Android-safe)
   const goToNextVideo = useCallback(() => {
     if (playlist && currentVideoIndex < playlist.length - 1) {
       const nextIndex = currentVideoIndex + 1;
       const nextVideo = playlist[nextIndex];
       if (nextVideo) {
+        // Pause current player
+        player.pause();
+
+        // Update the current video index
         setCurrentVideoIndex(nextIndex);
-        setCurrentPlayerSource(nextVideo.source);
         onVideoChange?.(nextVideo.id, nextIndex);
 
-        // Preload next adjacent videos after navigation
-        setTimeout(() => {
-          preloadAdjacentVideos();
-        }, 1000);
+        // The player will automatically update when currentVideo.source changes
+        // due to the useVideoPlayer hook dependency on currentVideo.source
       }
     } else if (nextVideoSource) {
       // Legacy support for single next video
-      setCurrentPlayerSource(nextVideoSource);
+      player.pause();
       onVideoChange?.(videoId + "_next", currentVideoIndex + 1);
+      // Note: For legacy support, you'd need to handle source switching differently
     }
   }, [
     playlist,
     currentVideoIndex,
-    nextVideoSource,
     onVideoChange,
+    player,
+    nextVideoSource,
     videoId,
-    preloadAdjacentVideos,
   ]);
 
   const goToPreviousVideo = useCallback(() => {
@@ -223,17 +175,17 @@ export function VideoPlayer({
       const prevIndex = currentVideoIndex - 1;
       const prevVideo = playlist[prevIndex];
       if (prevVideo) {
+        // Pause current player
+        player.pause();
+
+        // Update the current video index
         setCurrentVideoIndex(prevIndex);
-        setCurrentPlayerSource(prevVideo.source);
         onVideoChange?.(prevVideo.id, prevIndex);
 
-        // Preload adjacent videos after navigation
-        setTimeout(() => {
-          preloadAdjacentVideos();
-        }, 1000);
+        // The player will automatically update when currentVideo.source changes
       }
     }
-  }, [playlist, currentVideoIndex, onVideoChange, preloadAdjacentVideos]);
+  }, [playlist, currentVideoIndex, onVideoChange, player]);
 
   const hasNextVideo = useCallback(() => {
     return (
@@ -256,20 +208,11 @@ export function VideoPlayer({
     currentOffsetFromLive: player.currentOffsetFromLive,
   });
 
-  // Update player source when current video changes
+  // Update active player when current video changes
   useEffect(() => {
-    setCurrentPlayerSource(currentVideo.source);
+    // The player will automatically update when currentVideo.source changes
+    // due to the useVideoPlayer hook dependency on currentVideo.source
   }, [currentVideo.source]);
-
-  // Initial preloading effect
-  useEffect(() => {
-    // Start preloading adjacent videos after a short delay
-    const preloadTimer = setTimeout(() => {
-      preloadAdjacentVideos();
-    }, 3000); // Wait 3 seconds after component mount to start preloading
-
-    return () => clearTimeout(preloadTimer);
-  }, [preloadAdjacentVideos]);
 
   // Set Meta data
   useEffect(() => {
@@ -381,9 +324,6 @@ export function VideoPlayer({
 
     return () => {
       backHandler.remove();
-      // Clear video player cache on unmount
-      videoPlayerCache.current.clear();
-      setPreloadedVideos(new Set());
     };
   }, [isFullScreen]);
 
@@ -509,13 +449,6 @@ export function VideoPlayer({
                         >
                           {currentVideoIndex + 1} of {playlist.length}
                         </Text>
-                        {preloadedVideos.size > 0 && (
-                          <View className="rounded-full bg-green-500/20 px-2 py-1">
-                            <Text className="text-xs text-green-400">
-                              {preloadedVideos.size} preloaded
-                            </Text>
-                          </View>
-                        )}
                       </View>
                     )}
                   </Animated.View>

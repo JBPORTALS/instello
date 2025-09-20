@@ -1,4 +1,5 @@
 import {
+  Slot,
   SplashScreen,
   Stack,
   useFocusEffect,
@@ -87,12 +88,7 @@ function InitialLayout() {
   return (
     <ThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
       <StatusBar style={"auto"} />
-      <Stack
-        screenOptions={{
-          headerShown: false,
-          animation: "none",
-        }}
-      />
+      <Stack screenOptions={{ headerShown: false, animation: "fade" }} />
     </ThemeProvider>
   );
 }

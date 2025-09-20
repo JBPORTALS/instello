@@ -1,11 +1,13 @@
 import { View } from "react-native";
 import { Image } from "expo-image";
+import { Link, Stack } from "expo-router";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 
 export default function GetStarted() {
   return (
     <View className="flex-1 items-center justify-between gap-6 px-6 py-8">
+      <Stack.Screen options={{ headerShown: false }} />
       <Image
         source={require("assets/images/instello.png")}
         style={{ height: 80, width: 140 }}
@@ -15,7 +17,7 @@ export default function GetStarted() {
         importantForAccessibility="yes"
       />
 
-      <View className="bg-accent/20 border-border size-32 items-center justify-center rounded-2xl border shadow-lg">
+      <View className="bg-accent border-border size-32 items-center justify-center rounded-2xl border shadow-lg">
         <Image
           source={require("assets/images/instello-feather.png")}
           style={{ height: 100, width: 100 }}
@@ -39,12 +41,16 @@ export default function GetStarted() {
         <Text variant={"muted"} className="text-center">
           by continuing you'll accept all our terms and conditions
         </Text>
-        <Button className="w-full" variant={"secondary"} size={"lg"}>
-          <Text>Sign in</Text>
-        </Button>
-        <Button className="w-full" size={"lg"}>
-          <Text>Get Started</Text>
-        </Button>
+        <Link asChild href={"/(auth)/sign-in"}>
+          <Button className="w-full" variant={"secondary"} size={"lg"}>
+            <Text>Sign in</Text>
+          </Button>
+        </Link>
+        <Link asChild href={"/(auth)/sign-up"}>
+          <Button className="w-full" size={"lg"}>
+            <Text>Get Started</Text>
+          </Button>
+        </Link>
       </View>
     </View>
   );

@@ -9,7 +9,8 @@ export type Course = Omit<
 export type Branch = RouterOutputs["lms"]["courseOrBranch"]["list"][number];
 
 type OnboardingState = {
-  fullName: string;
+  firstName: string;
+  lastName: string;
   dob: Date;
   course?: Course;
   branch?: Branch;
@@ -21,12 +22,14 @@ type OnboardingState = {
 };
 
 export const useOnboardingStore = create<OnboardingState>((set) => ({
-  fullName: "",
+  firstName: "",
+  lastName: "",
   dob: new Date(),
   setField: (key, value) => set({ [key]: value }),
   reset: () =>
     set({
-      fullName: "",
+      firstName: "",
+      lastName: "",
       dob: new Date(),
       course: undefined,
       branch: undefined,

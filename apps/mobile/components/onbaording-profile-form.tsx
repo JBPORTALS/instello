@@ -16,7 +16,7 @@ import { Text } from "./ui/text";
 
 export function OnboardingProfileForm() {
   const [showPicker, setShowPicker] = React.useState(false);
-  const { dob, fullName, setField } = useOnboardingStore();
+  const { dob, firstName, lastName, setField } = useOnboardingStore();
   const router = useRouter();
 
   async function onSubmit() {
@@ -39,11 +39,22 @@ export function OnboardingProfileForm() {
 
       <View className="gap-3 py-6">
         <View className="gap-1.5">
-          <Label>Full Name</Label>
+          <Label>First Name</Label>
           <Input
-            onChangeText={(text) => setField("fullName", text)}
+            value={firstName}
+            onChangeText={(text) => setField("firstName", text)}
             className="h-11 px-6 text-base font-semibold"
-            placeholder="Jhon Wick"
+            placeholder="Jhon"
+          />
+        </View>
+
+        <View className="gap-1.5">
+          <Label>Last Name</Label>
+          <Input
+            value={lastName}
+            onChangeText={(text) => setField("lastName", text)}
+            className="h-11 px-6 text-base font-semibold"
+            placeholder="Wick"
           />
         </View>
 
@@ -77,7 +88,11 @@ export function OnboardingProfileForm() {
       </View>
 
       <View>
-        <Button size={"lg"} onPress={onSubmit} disabled={!fullName || !dob}>
+        <Button
+          size={"lg"}
+          onPress={onSubmit}
+          disabled={!firstName || !lastName || !dob}
+        >
           <Text>Next</Text>
           <Icon as={ArrowCircleRightIcon} className="text-primary-foreground" />
         </Button>

@@ -4,7 +4,7 @@ import { Text } from "@/components/ui/text";
 
 export default function Home() {
   return (
-    <View>
+    <View className="flex-1 items-center justify-center">
       <Text>Home</Text>
     </View>
   );

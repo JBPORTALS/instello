@@ -1,10 +1,15 @@
 import React from "react";
-import { ActivityIndicator, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { Redirect, useRouter } from "expo-router";
 import { useOnboardingStore } from "@/lib/useOnboardingStore";
 import { cn } from "@/lib/utils";
 import { trpc } from "@/utils/api";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ArrowLeftIcon, CheckCircleIcon } from "phosphor-react-native";
 
 import { Button } from "./ui/button";
@@ -13,12 +18,24 @@ import { Text } from "./ui/text";
 
 export function BranchSelectionForm() {
   const router = useRouter();
-  const { setField, course, branch } = useOnboardingStore();
+  const { setField, course, branch, firstName, lastName, dob, reset } =
+    useOnboardingStore();
   const { data: branches, isLoading } = useQuery(
     trpc.lms.courseOrBranch.list.queryOptions(
       { byCourseId: course!.id },
       { enabled: !!course },
     ),
+  );
+
+  const { mutateAsync: updatePreference, isPending } = useMutation(
+    trpc.lms.preference.update.mutationOptions({
+      onSuccess() {
+        router.replace(`/(main)`);
+      },
+      onError(error) {
+        ToastAndroid.show(error.message, ToastAndroid.SHORT);
+      },
+    }),
   );
 
   if (!course?.id) return <Redirect href={"/(onboarding)/step-two"} />;
@@ -29,6 +46,17 @@ export function BranchSelectionForm() {
         <ActivityIndicator size={38} color={"white"} />
       </View>
     );
+
+  async function onSubmit() {
+    if (!course || !branch) return;
+    await updatePreference({
+      firstName,
+      lastName,
+      dob,
+      branchId: branch?.id,
+      courseId: course?.id,
+    });
+  }
 
   return (
     <View className="relative gap-3.5">
@@ -43,6 +71,7 @@ export function BranchSelectionForm() {
       <View className="flex-1 gap-2">
         {branches?.map((b) => (
           <TouchableOpacity
+            disabled={isPending}
             onPress={() => setField("branch", b)}
             key={b.id}
             activeOpacity={0.8}
@@ -66,13 +95,18 @@ export function BranchSelectionForm() {
           </TouchableOpacity>
         ))}
       </View>
-      <Button
-        disabled={!branch}
-        onPress={() => router.push(`/(main)`)}
-        size={"lg"}
-      >
-        <Text>Finish</Text>
-        <Icon as={CheckCircleIcon} className="text-primary-foreground size-5" />
+      <Button disabled={!branch || isPending} onPress={onSubmit} size={"lg"}>
+        {isPending ? (
+          <Text>Finishing up...</Text>
+        ) : (
+          <>
+            <Text>Finish</Text>
+            <Icon
+              as={CheckCircleIcon}
+              className="text-primary-foreground size-5"
+            />
+          </>
+        )}
       </Button>
     </View>
   );

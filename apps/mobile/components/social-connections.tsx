@@ -25,10 +25,17 @@ const SOCIAL_CONNECTION_STRATEGIES: {
   },
 ];
 
+const redirectUrl = Linking.createURL("/", {
+  scheme: "instello",
+  isTripleSlashed: true,
+});
+
 export function SocialConnections() {
   const { colorScheme } = useColorScheme();
   const { startSSOFlow } = useSSO();
   const [isLoading, setIsLoading] = React.useState(false);
+
+  console.log(`Redirect Url: `, redirectUrl);
 
   const handleOAuthSignIn = async (strategy: OAuthStrategy) => {
     try {
@@ -38,7 +45,7 @@ export function SocialConnections() {
       if (createdSessionId && setActive) {
         await setActive({
           session: createdSessionId,
-          redirectUrl: Linking.createURL("/", { scheme: "beetopic" }),
+          redirectUrl,
         });
         // Navigation will be handled by the auth state in _layout.tsx
       }

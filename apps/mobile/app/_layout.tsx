@@ -1,4 +1,5 @@
 import {
+  Slot,
   SplashScreen,
   Stack,
   useFocusEffect,
@@ -90,7 +91,18 @@ function InitialLayout() {
   return (
     <ThemeProvider value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}>
       <StatusBar style={"auto"} />
-      <Stack screenOptions={{ headerShown: false, animation: "fade" }} />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          animation: "fade",
+          contentStyle: {
+            backgroundColor: isDarkColorScheme
+              ? NAV_THEME.dark.colors.background
+              : NAV_THEME.light.colors.background,
+          },
+        }}
+        initialRouteName="(main)"
+      />
     </ThemeProvider>
   );
 }

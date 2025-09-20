@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { Image } from "expo-image";
+import { Link } from "expo-router";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
@@ -53,31 +54,34 @@ function ChannelCard({
   className?: string;
 }) {
   return (
-    <Card
-      key={channel.id}
-      className={cn("w-40 gap-3 border-0 p-2.5", className)}
-    >
-      <Image
-        source={{ uri: channel.thumbneilUrl }}
-        style={{
-          width: "auto",
-          height: 80,
-          borderRadius: 4,
-        }}
-        contentFit="cover"
-      />
-      <CardContent className="w-full flex-1 gap-1.5 px-0">
-        <CardTitle numberOfLines={1} className="text-sm">
-          {channel.title}
-        </CardTitle>
-        <Text variant="muted" className="text-xs">
-          {channel.numberOfChapters} Chapters
-        </Text>
-        <Text className="text-muted-foreground text-xs">
-          by {channel.createdByUser.firstName} {channel.createdByUser.lastName}
-        </Text>
-      </CardContent>
-    </Card>
+    <Link href={"/(stacks)/2"}>
+      <Card
+        key={channel.id}
+        className={cn("w-40 gap-3 border-0 p-2.5", className)}
+      >
+        <Image
+          source={{ uri: channel.thumbneilUrl }}
+          style={{
+            width: "auto",
+            height: 80,
+            borderRadius: 4,
+          }}
+          contentFit="cover"
+        />
+        <CardContent className="w-full flex-1 gap-1.5 px-0">
+          <CardTitle numberOfLines={1} className="text-sm">
+            {channel.title}
+          </CardTitle>
+          <Text variant="muted" className="text-xs">
+            {channel.numberOfChapters} Chapters
+          </Text>
+          <Text className="text-muted-foreground text-xs">
+            by {channel.createdByUser.firstName}{" "}
+            {channel.createdByUser.lastName}
+          </Text>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
 
@@ -100,7 +104,7 @@ export default function Home() {
       />
 
       {/* Section 2: Continue Watching */}
-      <Text variant={"lead"} className="mb-3 mt-6 text-base font-semibold">
+      <Text variant={"lead"} className="mt-6 mb-3 text-base font-semibold">
         Continue Watching
       </Text>
       <FlashList
@@ -111,7 +115,7 @@ export default function Home() {
       />
 
       {/* Section 3: Recommended (Vertical Grid/List) */}
-      <Text variant={"lead"} className="mb-3 mt-6 text-base font-semibold">
+      <Text variant={"lead"} className="mt-6 mb-3 text-base font-semibold">
         Recommended For You
       </Text>
       <FlashList

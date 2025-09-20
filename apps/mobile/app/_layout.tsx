@@ -72,7 +72,7 @@ function InitialLayout() {
           isAuthSegment &&
           user.publicMetadata.onBoardingCompleted
         ) {
-          router.replace("/(main)");
+          router.replace("/(main)/(tabs)");
         } else if (
           isSignedIn &&
           (isMainSegment || isAuthSegment) &&
@@ -101,7 +101,7 @@ function InitialLayout() {
               : NAV_THEME.light.colors.background,
           },
         }}
-        initialRouteName="(main)"
+        initialRouteName="(main)/(tabs)"
       />
     </ThemeProvider>
   );

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   BackHandler,
@@ -21,6 +21,7 @@ import { router } from "expo-router";
 import * as Orientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
 import {
+  VideoPlayer as ExpoVideoPlayer,
   useVideoPlayer,
   VideoContentFit,
   VideoSource,
@@ -30,10 +31,10 @@ import {
 import Slider from "@react-native-community/slider";
 import {
   ArrowLeftIcon,
-  CaretLeftIcon,
-  CaretRightIcon,
   PauseIcon,
   PlayIcon,
+  SkipBackIcon,
+  SkipForwardIcon,
 } from "phosphor-react-native";
 
 import { Button } from "./ui/button";
@@ -117,7 +118,16 @@ export function VideoPlayer({
 
   const currentVideo = getCurrentVideo();
 
-  const player = useVideoPlayer(currentVideo.source, (player) => {
+  // Video player cache for preloading
+  const videoPlayerCache = useRef<Map<string, ExpoVideoPlayer>>(new Map());
+  const [preloadedVideos, setPreloadedVideos] = useState<Set<string>>(
+    new Set(),
+  );
+  const [currentPlayerSource, setCurrentPlayerSource] = useState<VideoSource>(
+    currentVideo.source,
+  );
+
+  const player = useVideoPlayer(currentPlayerSource, (player) => {
     player.loop = false; // Disable loop to handle playlist navigation
     player.bufferOptions = {
       preferredForwardBufferDuration: 50,
@@ -139,31 +149,92 @@ export function VideoPlayer({
   const [showControls, setShowControls] = useState(true);
   const [resizeMode, setResizeMode] = useState<VideoContentFit>("contain");
 
-  // Navigation functions
+  // Preload adjacent videos by switching source temporarily
+  const preloadAdjacentVideos = useCallback(() => {
+    if (!playlist) return;
+
+    // Preload next video
+    if (currentVideoIndex < playlist.length - 1) {
+      const nextVideo = playlist[currentVideoIndex + 1];
+      if (nextVideo && !preloadedVideos.has(nextVideo.id)) {
+        // Temporarily switch to next video to preload it
+        setTimeout(() => {
+          setCurrentPlayerSource(nextVideo.source);
+          setPreloadedVideos((prev) => new Set([...prev, nextVideo.id]));
+          console.log(`Preloaded next video: ${nextVideo.id}`);
+
+          // Switch back to current video after a short delay
+          setTimeout(() => {
+            setCurrentPlayerSource(currentVideo.source);
+          }, 2000); // 2 seconds should be enough for initial buffering
+        }, 100);
+      }
+    }
+
+    // Preload previous video
+    if (currentVideoIndex > 0) {
+      const prevVideo = playlist[currentVideoIndex - 1];
+      if (prevVideo && !preloadedVideos.has(prevVideo.id)) {
+        // Temporarily switch to previous video to preload it
+        setTimeout(() => {
+          setCurrentPlayerSource(prevVideo.source);
+          setPreloadedVideos((prev) => new Set([...prev, prevVideo.id]));
+          console.log(`Preloaded previous video: ${prevVideo.id}`);
+
+          // Switch back to current video after a short delay
+          setTimeout(() => {
+            setCurrentPlayerSource(currentVideo.source);
+          }, 2000); // 2 seconds should be enough for initial buffering
+        }, 150);
+      }
+    }
+  }, [playlist, currentVideoIndex, currentVideo.source, preloadedVideos]);
+
+  // Navigation functions with preloading support
   const goToNextVideo = useCallback(() => {
     if (playlist && currentVideoIndex < playlist.length - 1) {
       const nextIndex = currentVideoIndex + 1;
-      setCurrentVideoIndex(nextIndex);
       const nextVideo = playlist[nextIndex];
       if (nextVideo) {
+        setCurrentVideoIndex(nextIndex);
+        setCurrentPlayerSource(nextVideo.source);
         onVideoChange?.(nextVideo.id, nextIndex);
+
+        // Preload next adjacent videos after navigation
+        setTimeout(() => {
+          preloadAdjacentVideos();
+        }, 1000);
       }
     } else if (nextVideoSource) {
       // Legacy support for single next video
+      setCurrentPlayerSource(nextVideoSource);
       onVideoChange?.(videoId + "_next", currentVideoIndex + 1);
     }
-  }, [playlist, currentVideoIndex, nextVideoSource, onVideoChange, videoId]);
+  }, [
+    playlist,
+    currentVideoIndex,
+    nextVideoSource,
+    onVideoChange,
+    videoId,
+    preloadAdjacentVideos,
+  ]);
 
   const goToPreviousVideo = useCallback(() => {
     if (playlist && currentVideoIndex > 0) {
       const prevIndex = currentVideoIndex - 1;
-      setCurrentVideoIndex(prevIndex);
       const prevVideo = playlist[prevIndex];
       if (prevVideo) {
+        setCurrentVideoIndex(prevIndex);
+        setCurrentPlayerSource(prevVideo.source);
         onVideoChange?.(prevVideo.id, prevIndex);
+
+        // Preload adjacent videos after navigation
+        setTimeout(() => {
+          preloadAdjacentVideos();
+        }, 1000);
       }
     }
-  }, [playlist, currentVideoIndex, onVideoChange]);
+  }, [playlist, currentVideoIndex, onVideoChange, preloadAdjacentVideos]);
 
   const hasNextVideo = useCallback(() => {
     return (
@@ -185,6 +256,21 @@ export function VideoPlayer({
     currentLiveTimestamp: player.currentLiveTimestamp,
     currentOffsetFromLive: player.currentOffsetFromLive,
   });
+
+  // Update player source when current video changes
+  useEffect(() => {
+    setCurrentPlayerSource(currentVideo.source);
+  }, [currentVideo.source]);
+
+  // Initial preloading effect
+  useEffect(() => {
+    // Start preloading adjacent videos after a short delay
+    const preloadTimer = setTimeout(() => {
+      preloadAdjacentVideos();
+    }, 3000); // Wait 3 seconds after component mount to start preloading
+
+    return () => clearTimeout(preloadTimer);
+  }, [preloadAdjacentVideos]);
 
   // Set Meta data
   useEffect(() => {
@@ -296,7 +382,9 @@ export function VideoPlayer({
 
     return () => {
       backHandler.remove();
-      // if (controlsTimeout) clearTimeout(controlsTimeout); // Clear timeout on unmount
+      // Clear video player cache on unmount
+      videoPlayerCache.current.clear();
+      setPreloadedVideos(new Set());
     };
   }, [isFullScreen]);
 
@@ -412,15 +500,29 @@ export function VideoPlayer({
                       {md?.description}
                     </Text>
                     {playlist && (
-                      <Text
-                        variant={"muted"}
-                        className="text-foreground/40 text-center text-xs"
-                      >
-                        {currentVideoIndex + 1} of {playlist.length}
-                      </Text>
+                      <View className="flex-row items-center justify-center gap-2">
+                        <Text
+                          variant={"muted"}
+                          className="text-foreground/40 text-center text-xs"
+                        >
+                          {currentVideoIndex + 1} of {playlist.length}
+                        </Text>
+                        {preloadedVideos.size > 0 && (
+                          <View className="rounded-full bg-green-500/20 px-2 py-1">
+                            <Text className="text-xs text-green-400">
+                              {preloadedVideos.size} preloaded
+                            </Text>
+                          </View>
+                        )}
+                      </View>
                     )}
                   </Animated.View>
-                  <Animated.View className={"flex-row gap-2"}>
+                  <View className="size-10" />
+                </Animated.View>
+                {player.status === "loading" ? (
+                  <ActivityIndicator size={40} color={"white"} />
+                ) : (
+                  <View className="flex-row items-center gap-14">
                     <Button
                       size={"icon"}
                       variant={"ghost"}
@@ -429,11 +531,35 @@ export function VideoPlayer({
                       onPress={goToPreviousVideo}
                     >
                       <Icon
-                        as={CaretLeftIcon}
-                        size={20}
+                        as={SkipBackIcon}
+                        size={40}
                         weight="fill"
                         className="text-foreground"
                       />
+                    </Button>
+
+                    <Button
+                      size={"icon"}
+                      className="size-32 rounded-full active:bg-transparent"
+                      variant={"ghost"}
+                      onPress={(e) => {
+                        if (isPlaying) {
+                          player.pause();
+                          if (controlsTimeout.current)
+                            clearTimeout(controlsTimeout.current); //prevent closing controls when video is paused
+                        } else {
+                          if (controlsTimeout.current)
+                            clearTimeout(controlsTimeout.current);
+                          player.play();
+                          startTimeToHideControls();
+                        }
+                      }}
+                    >
+                      {isPlaying ? (
+                        <AnimatedPauseCircle entering={FadeIn} />
+                      ) : (
+                        <AnimatedPlayCircle entering={FadeIn} />
+                      )}
                     </Button>
                     <Button
                       size={"icon"}
@@ -443,40 +569,13 @@ export function VideoPlayer({
                       onPress={goToNextVideo}
                     >
                       <Icon
-                        as={CaretRightIcon}
-                        size={20}
+                        as={SkipForwardIcon}
+                        size={40}
                         weight="fill"
                         className="text-foreground"
                       />
                     </Button>
-                  </Animated.View>
-                </Animated.View>
-                {player.status === "loading" ? (
-                  <ActivityIndicator size={52} color={"white"} />
-                ) : (
-                  <Button
-                    size={"icon"}
-                    className="size-32 rounded-full active:bg-transparent"
-                    variant={"ghost"}
-                    onPress={(e) => {
-                      if (isPlaying) {
-                        player.pause();
-                        if (controlsTimeout.current)
-                          clearTimeout(controlsTimeout.current); //prevent closing controls when video is paused
-                      } else {
-                        if (controlsTimeout.current)
-                          clearTimeout(controlsTimeout.current);
-                        player.play();
-                        startTimeToHideControls();
-                      }
-                    }}
-                  >
-                    {isPlaying ? (
-                      <AnimatedPauseCircle entering={FadeIn} />
-                    ) : (
-                      <AnimatedPlayCircle entering={FadeIn} />
-                    )}
-                  </Button>
+                  </View>
                 )}
                 <Animated.View
                   pointerEvents={"auto"}

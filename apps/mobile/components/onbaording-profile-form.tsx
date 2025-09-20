@@ -29,10 +29,10 @@ export function OnboardingProfileForm() {
         source={require("assets/images/instello.png")}
         style={{ width: 130, height: 28, marginBottom: 16 }}
       />
-      <Text variant={"h1"} className="text-left">
-        We want to know more about you
+      <Text variant={"h2"} className="text-left">
+        We would like to know your profile details
       </Text>
-      <Text variant={"lead"}>
+      <Text variant={"muted"}>
         Enter your full name, date of birth so we can know you to show better
         recommendations.
       </Text>

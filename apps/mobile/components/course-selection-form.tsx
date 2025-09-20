@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useOnboardingStore } from "@/lib/useOnboardingStore";
 import { cn } from "@/lib/utils";
@@ -18,24 +18,23 @@ import { Text } from "./ui/text";
 export function CourseSelectionForm() {
   const router = useRouter();
   const { setField, course } = useOnboardingStore();
-  const { data: courses } = useQuery(
+  const { data: courses, isLoading } = useQuery(
     trpc.lms.courseOrBranch.list.queryOptions(),
   );
 
+  if (isLoading)
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size={38} color={"white"} />
+      </View>
+    );
+
   return (
     <View className="relative gap-3.5">
-      <Button
-        onPress={() => router.back()}
-        size={"icon"}
-        variant={"outline"}
-        className="mb-4 rounded-full"
-      >
-        <Icon as={ArrowLeftIcon} />
-      </Button>
-      <Text variant={"h1"} className="text-left">
+      <Text variant={"h2"} className="text-left">
         Tell us which is your course
       </Text>
-      <Text variant={"lead"}>
+      <Text variant={"muted"}>
         Select course which you prefer it's yours, and will show more content
         related to that
       </Text>
@@ -43,7 +42,9 @@ export function CourseSelectionForm() {
       <View className="flex-1 gap-2">
         {courses?.map((c) => (
           <TouchableOpacity
-            onPress={() => setField("course", c)}
+            onPress={() => {
+              (setField("course", c), setField("branch", undefined));
+            }}
             key={c.id}
             activeOpacity={0.8}
           >

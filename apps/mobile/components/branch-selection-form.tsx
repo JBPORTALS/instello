@@ -1,5 +1,5 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, TouchableOpacity, View } from "react-native";
 import { Redirect, useRouter } from "expo-router";
 import { useOnboardingStore } from "@/lib/useOnboardingStore";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,7 @@ import { Text } from "./ui/text";
 export function BranchSelectionForm() {
   const router = useRouter();
   const { setField, course, branch } = useOnboardingStore();
-  const { data: branches } = useQuery(
+  const { data: branches, isLoading } = useQuery(
     trpc.lms.courseOrBranch.list.queryOptions(
       { byCourseId: course!.id },
       { enabled: !!course },
@@ -23,20 +23,19 @@ export function BranchSelectionForm() {
 
   if (!course?.id) return <Redirect href={"/(onboarding)/step-two"} />;
 
+  if (isLoading)
+    return (
+      <View className="flex-1 items-center justify-center">
+        <ActivityIndicator size={38} color={"white"} />
+      </View>
+    );
+
   return (
     <View className="relative gap-3.5">
-      <Button
-        onPress={() => router.back()}
-        size={"icon"}
-        variant={"outline"}
-        className="mb-4 rounded-full"
-      >
-        <Icon as={ArrowLeftIcon} />
-      </Button>
-      <Text variant={"h1"} className="text-left">
+      <Text variant={"h2"} className="text-left">
         In which branch your studying currenlty
       </Text>
-      <Text variant={"lead"}>
+      <Text variant={"muted"}>
         Select branch which you prefer it's yours, and will show more content
         related to that
       </Text>

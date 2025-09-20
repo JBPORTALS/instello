@@ -7,10 +7,15 @@ export default function OnboardingStepThree() {
   return (
     <ScrollView
       keyboardShouldPersistTaps="handled"
-      contentContainerClassName="sm:flex-1 items-center p-4 py-8 sm:py-4 sm:p-6 mt-safe"
+      contentContainerClassName="sm:flex-1 items-center p-4"
       keyboardDismissMode="interactive"
     >
-      <Stack.Screen options={{ headerShown: false }} />
+      <Stack.Screen
+        options={{
+          headerShown: true,
+          headerTitle: "",
+        }}
+      />
       <BranchSelectionForm />
     </ScrollView>
   );

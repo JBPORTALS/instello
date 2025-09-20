@@ -1,6 +1,7 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
+import { useOnboardingStore } from "@/lib/useOnboardingStore";
 import { cn } from "@/lib/utils";
 import { ArrowLeftIcon, CheckCircleIcon } from "phosphor-react-native";
 
@@ -17,9 +18,7 @@ const branches = [
 
 export function BranchSelectionForm() {
   const router = useRouter();
-  const [selectedBranch, setSelectedBranch] = React.useState<
-    undefined | (typeof branches)[number]
-  >(undefined);
+  const { setField, branch } = useOnboardingStore();
 
   return (
     <View className="relative gap-3.5">
@@ -40,26 +39,25 @@ export function BranchSelectionForm() {
       </Text>
 
       <View className="flex-1 gap-2">
-        {branches.map((branch) => (
+        {branches.map((b) => (
           <TouchableOpacity
-            onPress={() => setSelectedBranch(branch)}
-            key={branch.id}
+            onPress={() => setField("branch", b)}
+            key={b.id}
             activeOpacity={0.8}
           >
             <View
               className={cn(
                 "border-border w-full flex-row justify-between rounded-lg border p-6",
-                branch.id === selectedBranch?.id &&
-                  "bg-primary/10 border-primary",
+                b.id === branch?.id && "bg-primary/10 border-primary",
               )}
             >
-              <Text variant={"large"}>{branch.title}</Text>
+              <Text variant={"large"}>{b.title}</Text>
 
               <Icon
                 as={CheckCircleIcon}
                 className={cn(
                   "text-primary size-6 opacity-0",
-                  branch.id === selectedBranch?.id && "opacity-100",
+                  b.id === branch?.id && "opacity-100",
                 )}
               />
             </View>
@@ -67,8 +65,8 @@ export function BranchSelectionForm() {
         ))}
       </View>
       <Button
-        disabled={!selectedBranch}
-        onPress={() => router.push(`/(onboarding)/step-three`)}
+        disabled={!branch}
+        onPress={() => router.push(`/(main)`)}
         size={"lg"}
       >
         <Text>Finish</Text>

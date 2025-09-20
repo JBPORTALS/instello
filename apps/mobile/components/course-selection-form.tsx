@@ -1,6 +1,7 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
+import { useOnboardingStore } from "@/lib/useOnboardingStore";
 import { cn } from "@/lib/utils";
 import {
   ArrowCircleRightIcon,
@@ -20,9 +21,7 @@ const courses = [
 
 export function CourseSelectionForm() {
   const router = useRouter();
-  const [selectedCouse, setSelectedCourse] = React.useState<
-    undefined | (typeof courses)[number]
-  >(undefined);
+  const { setField, course } = useOnboardingStore();
 
   return (
     <View className="relative gap-3.5">
@@ -43,26 +42,25 @@ export function CourseSelectionForm() {
       </Text>
 
       <View className="flex-1 gap-2">
-        {courses.map((course) => (
+        {courses.map((c) => (
           <TouchableOpacity
-            onPress={() => setSelectedCourse(course)}
-            key={course.id}
+            onPress={() => setField("course", c)}
+            key={c.id}
             activeOpacity={0.8}
           >
             <View
               className={cn(
                 "border-border w-full flex-row justify-between rounded-lg border p-6",
-                course.id === selectedCouse?.id &&
-                  "bg-primary/10 border-primary",
+                c.id === course?.id && "bg-primary/10 border-primary",
               )}
             >
-              <Text variant={"large"}>{course.title}</Text>
+              <Text variant={"large"}>{c.title}</Text>
 
               <Icon
                 as={CheckCircleIcon}
                 className={cn(
                   "text-primary size-6 opacity-0",
-                  course.id === selectedCouse?.id && "opacity-100",
+                  c.id === course?.id && "opacity-100",
                 )}
               />
             </View>
@@ -70,7 +68,7 @@ export function CourseSelectionForm() {
         ))}
       </View>
       <Button
-        disabled={!selectedCouse}
+        disabled={!course}
         onPress={() => router.push(`/(onboarding)/step-three`)}
         size={"lg"}
       >

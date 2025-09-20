@@ -2,6 +2,7 @@ import React from "react";
 import { View } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
+import { useOnboardingStore } from "@/lib/useOnboardingStore";
 import { cn } from "@/lib/utils";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { format } from "date-fns";
@@ -15,8 +16,7 @@ import { Text } from "./ui/text";
 
 export function OnboardingProfileForm() {
   const [showPicker, setShowPicker] = React.useState(false);
-  const [date, setDate] = React.useState(new Date());
-  const [fullName, setFullName] = React.useState("");
+  const { dob, fullName, setField } = useOnboardingStore();
   const router = useRouter();
 
   async function onSubmit() {
@@ -41,7 +41,7 @@ export function OnboardingProfileForm() {
         <View className="gap-1.5">
           <Label>Full Name</Label>
           <Input
-            onChangeText={(text) => setFullName(text)}
+            onChangeText={(text) => setField("fullName", text)}
             className="h-11 px-6 text-base font-semibold"
             placeholder="Jhon Wick"
           />
@@ -55,8 +55,8 @@ export function OnboardingProfileForm() {
             className="justify-start"
             onPress={() => setShowPicker(true)}
           >
-            <Text className={cn(!date && "text-muted-foreground")}>
-              {date ? format(date, "dd MMM, yyyy") : "Select date..."}
+            <Text className={cn(!dob && "text-muted-foreground")}>
+              {dob ? format(dob, "dd MMM, yyyy") : "Select date..."}
             </Text>
           </Button>
 
@@ -66,10 +66,10 @@ export function OnboardingProfileForm() {
               positiveButton={{ textColor: "white", label: "Select" }}
               negativeButton={{ textColor: "white", label: "Cancel" }}
               mode="date"
-              value={date}
+              value={dob}
               onChange={(_e, date) => {
                 setShowPicker(false);
-                date && setDate(date);
+                date && setField("dob", date);
               }}
             />
           )}
@@ -77,7 +77,7 @@ export function OnboardingProfileForm() {
       </View>
 
       <View>
-        <Button size={"lg"} onPress={onSubmit} disabled={!fullName || !date}>
+        <Button size={"lg"} onPress={onSubmit} disabled={!fullName || !dob}>
           <Text>Next</Text>
           <Icon as={ArrowCircleRightIcon} className="text-primary-foreground" />
         </Button>

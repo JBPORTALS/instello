@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   BackHandler,
@@ -30,9 +30,9 @@ import {
 import Slider from "@react-native-community/slider";
 import {
   ArrowLeftIcon,
-  PauseCircleIcon,
+  CaretLeftIcon,
+  CaretRightIcon,
   PauseIcon,
-  PlayCircleIcon,
   PlayIcon,
 } from "phosphor-react-native";
 
@@ -54,18 +54,31 @@ const AnimatedPauseCircle = Animated.createAnimatedComponent(
 const AnimatedLinearGradientView =
   Animated.createAnimatedComponent(LinearGradient);
 
-const { height, width } = Dimensions.get("screen");
+const { height } = Dimensions.get("screen");
 
-type VideoPlayerMetaData = {
+export type VideoPlayerMetaData = {
   title: string;
   description?: string;
+};
+
+export type VideoPlaylistItem = {
+  id: string;
+  source: VideoSource;
+  metadata: VideoPlayerMetaData;
 };
 
 type VideoPlayerProps = Omit<VideoViewProps, "player"> & {
   videoSource: VideoSource;
   onProgress?: (currentTime: number) => void;
   onStatusChange?: ({ isPlaying }: { isPlaying: boolean }) => void;
-  nextVideoSource?: string;
+  /** Single next video source (legacy support) */
+  nextVideoSource?: VideoSource;
+  /** Full playlist for navigation */
+  playlist?: VideoPlaylistItem[];
+  /** Current video index in playlist */
+  currentIndex?: number;
+  /** Callback when video changes */
+  onVideoChange?: (videoId: string, index: number) => void;
   /** Identify your video with unique ID */
   videoId: string;
   metadata?:
@@ -79,14 +92,33 @@ export function VideoPlayer({
   onProgress,
   onStatusChange,
   nextVideoSource,
+  playlist,
+  currentIndex = 0,
+  onVideoChange,
   videoId,
   FooterComponent,
   metadata,
   ...videoViewProps
 }: VideoPlayerProps) {
-  const [isFullScreen, setIsFullScreen] = React.useState(true);
-  const player = useVideoPlayer(videoSource, (player) => {
-    player.loop = true;
+  const [isFullScreen, setIsFullScreen] = useState(true);
+  const [currentVideoIndex, setCurrentVideoIndex] = useState(currentIndex);
+
+  // Get current video from playlist or use provided videoSource
+  const getCurrentVideo = useCallback(() => {
+    if (playlist && playlist[currentVideoIndex]) {
+      return playlist[currentVideoIndex];
+    }
+    return {
+      source: videoSource,
+      id: videoId,
+      metadata: typeof metadata === "object" ? metadata : undefined,
+    };
+  }, [playlist, currentVideoIndex, videoSource, videoId, metadata]);
+
+  const currentVideo = getCurrentVideo();
+
+  const player = useVideoPlayer(currentVideo.source, (player) => {
+    player.loop = false; // Disable loop to handle playlist navigation
     player.bufferOptions = {
       preferredForwardBufferDuration: 50,
       waitsToMinimizeStalling: true,
@@ -98,13 +130,50 @@ export function VideoPlayer({
     player.timeUpdateEventInterval = 1;
     player.play();
   });
-  const [md, setMetadata] = React.useState<undefined | VideoPlayerMetaData>(
-    typeof metadata === "object" ? metadata : undefined,
+
+  const [md, setMetadata] = useState<undefined | VideoPlayerMetaData>(
+    currentVideo.metadata ||
+      (typeof metadata === "object" ? metadata : undefined),
   );
 
-  const [showControls, setShowControls] = React.useState(true);
-  const [resizeMode, setResizeMode] =
-    React.useState<VideoContentFit>("contain");
+  const [showControls, setShowControls] = useState(true);
+  const [resizeMode, setResizeMode] = useState<VideoContentFit>("contain");
+
+  // Navigation functions
+  const goToNextVideo = useCallback(() => {
+    if (playlist && currentVideoIndex < playlist.length - 1) {
+      const nextIndex = currentVideoIndex + 1;
+      setCurrentVideoIndex(nextIndex);
+      const nextVideo = playlist[nextIndex];
+      if (nextVideo) {
+        onVideoChange?.(nextVideo.id, nextIndex);
+      }
+    } else if (nextVideoSource) {
+      // Legacy support for single next video
+      onVideoChange?.(videoId + "_next", currentVideoIndex + 1);
+    }
+  }, [playlist, currentVideoIndex, nextVideoSource, onVideoChange, videoId]);
+
+  const goToPreviousVideo = useCallback(() => {
+    if (playlist && currentVideoIndex > 0) {
+      const prevIndex = currentVideoIndex - 1;
+      setCurrentVideoIndex(prevIndex);
+      const prevVideo = playlist[prevIndex];
+      if (prevVideo) {
+        onVideoChange?.(prevVideo.id, prevIndex);
+      }
+    }
+  }, [playlist, currentVideoIndex, onVideoChange]);
+
+  const hasNextVideo = useCallback(() => {
+    return (
+      (playlist && currentVideoIndex < playlist.length - 1) || !!nextVideoSource
+    );
+  }, [playlist, currentVideoIndex, nextVideoSource]);
+
+  const hasPreviousVideo = useCallback(() => {
+    return playlist && currentVideoIndex > 0;
+  }, [playlist, currentVideoIndex]);
 
   const { isPlaying } = useEvent(player, "playingChange", {
     isPlaying: player.playing,
@@ -117,15 +186,17 @@ export function VideoPlayer({
     currentOffsetFromLive: player.currentOffsetFromLive,
   });
 
-  //Set Meta data
+  // Set Meta data
   useEffect(() => {
     (async () => {
-      if (typeof metadata === "function") {
-        const md = await metadata?.(videoId);
+      if (currentVideo.metadata) {
+        setMetadata(currentVideo.metadata);
+      } else if (typeof metadata === "function") {
+        const md = await metadata?.(currentVideo.id);
         setMetadata(md);
       }
     })();
-  }, [videoId]);
+  }, [currentVideo.id, currentVideo.metadata, metadata]);
 
   //pass the playing status
   useEffect(() => {
@@ -140,6 +211,27 @@ export function VideoPlayer({
     console.log("Player error", payload.error);
     console.log("player status", payload.status);
   });
+
+  // Handle video completion and auto-advance
+  useEffect(() => {
+    const handleTimeUpdate = () => {
+      if (
+        player.duration > 0 &&
+        currentTime >= player.duration - 0.5 &&
+        isPlaying
+      ) {
+        // Video is near completion, auto-advance to next video
+        if (hasNextVideo()) {
+          setTimeout(() => {
+            goToNextVideo();
+          }, 1000); // Small delay to ensure smooth transition
+        }
+      }
+    };
+
+    const interval = setInterval(handleTimeUpdate, 1000);
+    return () => clearInterval(interval);
+  }, [currentTime, player.duration, isPlaying, hasNextVideo, goToNextVideo]);
 
   const controlsTimeout = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -304,15 +396,60 @@ export function VideoPlayer({
                       className="text-foreground"
                     />
                   </Button>
-                  <Animated.View className={"gap-1"}>
-                    <Text variant={"small"} className="text-center">
+                  <Animated.View className={"mx-4 flex-1 gap-1"}>
+                    <Text
+                      variant={"small"}
+                      className="text-center"
+                      numberOfLines={1}
+                    >
                       {md?.title}
                     </Text>
-                    <Text variant={"muted"} className="text-foreground/60">
+                    <Text
+                      variant={"muted"}
+                      className="text-foreground/60 text-center"
+                      numberOfLines={1}
+                    >
                       {md?.description}
                     </Text>
+                    {playlist && (
+                      <Text
+                        variant={"muted"}
+                        className="text-foreground/40 text-center text-xs"
+                      >
+                        {currentVideoIndex + 1} of {playlist.length}
+                      </Text>
+                    )}
                   </Animated.View>
-                  <Animated.View className={"w-10"}></Animated.View>
+                  <Animated.View className={"flex-row gap-2"}>
+                    <Button
+                      size={"icon"}
+                      variant={"ghost"}
+                      className="size-10 rounded-full active:bg-transparent"
+                      disabled={!hasPreviousVideo()}
+                      onPress={goToPreviousVideo}
+                    >
+                      <Icon
+                        as={CaretLeftIcon}
+                        size={20}
+                        weight="fill"
+                        className="text-foreground"
+                      />
+                    </Button>
+                    <Button
+                      size={"icon"}
+                      variant={"ghost"}
+                      className="size-10 rounded-full active:bg-transparent"
+                      disabled={!hasNextVideo()}
+                      onPress={goToNextVideo}
+                    >
+                      <Icon
+                        as={CaretRightIcon}
+                        size={20}
+                        weight="fill"
+                        className="text-foreground"
+                      />
+                    </Button>
+                  </Animated.View>
                 </Animated.View>
                 {player.status === "loading" ? (
                   <ActivityIndicator size={52} color={"white"} />

@@ -8,10 +8,9 @@ import {
   View,
 } from "react-native";
 import {
-  GestureEvent,
+  Gesture,
+  GestureDetector,
   GestureHandlerRootView,
-  PinchGestureHandler,
-  PinchGestureHandlerEventPayload,
 } from "react-native-gesture-handler";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { useEvent, useEventListener } from "expo";
@@ -388,23 +387,26 @@ export function VideoPlayer({
     };
   }, [isFullScreen]);
 
-  const onPinchGestureEvent = (
-    event: GestureEvent<PinchGestureHandlerEventPayload>,
-  ) => {
-    const scale = event.nativeEvent.scale;
+  // Create pinch gesture using the new Gesture API
+  const pinchGesture = Gesture.Pinch()
+    .onUpdate((event) => {
+      const scale = event.scale;
 
-    if (scale > 1) {
-      // Pinch-out detected
-      setResizeMode("cover");
-    } else if (scale < 1) {
-      // Pinch-in detected
-      setResizeMode("contain");
-    }
-  };
+      if (scale > 1) {
+        // Pinch-out detected
+        setResizeMode("cover");
+      } else if (scale < 1) {
+        // Pinch-in detected
+        setResizeMode("contain");
+      }
+    })
+    .onEnd(() => {
+      // Optional: Add any cleanup or final state logic here
+    });
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <PinchGestureHandler onGestureEvent={onPinchGestureEvent}>
+      <GestureDetector gesture={pinchGesture}>
         <View
           style={{
             flex: 1,
@@ -628,7 +630,7 @@ export function VideoPlayer({
             </AnimatedLinearGradientView>
           )}
         </View>
-      </PinchGestureHandler>
+      </GestureDetector>
     </GestureHandlerRootView>
   );
 }

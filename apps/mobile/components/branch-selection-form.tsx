@@ -1,24 +1,27 @@
 import React from "react";
 import { TouchableOpacity, View } from "react-native";
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { useOnboardingStore } from "@/lib/useOnboardingStore";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/utils/api";
+import { useQuery } from "@tanstack/react-query";
 import { ArrowLeftIcon, CheckCircleIcon } from "phosphor-react-native";
 
 import { Button } from "./ui/button";
 import { Icon } from "./ui/icon";
 import { Text } from "./ui/text";
 
-const branches = [
-  { id: "2", title: "Computer Science" },
-  { id: "5", title: "Artificial Intelligence" },
-  { id: "3", title: "AutoMobile Engineering" },
-  { id: "4", title: "Mechanical Engineering" },
-];
-
 export function BranchSelectionForm() {
   const router = useRouter();
-  const { setField, branch } = useOnboardingStore();
+  const { setField, course, branch } = useOnboardingStore();
+  const { data: branches } = useQuery(
+    trpc.lms.courseOrBranch.list.queryOptions(
+      { byCourseId: course!.id },
+      { enabled: !!course },
+    ),
+  );
+
+  if (!course?.id) return <Redirect href={"/(onboarding)/step-two"} />;
 
   return (
     <View className="relative gap-3.5">
@@ -39,7 +42,7 @@ export function BranchSelectionForm() {
       </Text>
 
       <View className="flex-1 gap-2">
-        {branches.map((b) => (
+        {branches?.map((b) => (
           <TouchableOpacity
             onPress={() => setField("branch", b)}
             key={b.id}
@@ -51,7 +54,7 @@ export function BranchSelectionForm() {
                 b.id === branch?.id && "bg-primary/10 border-primary",
               )}
             >
-              <Text variant={"large"}>{b.title}</Text>
+              <Text variant={"large"}>{b.name}</Text>
 
               <Icon
                 as={CheckCircleIcon}

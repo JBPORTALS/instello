@@ -3,6 +3,8 @@ import { TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useOnboardingStore } from "@/lib/useOnboardingStore";
 import { cn } from "@/lib/utils";
+import { trpc } from "@/utils/api";
+import { useQuery } from "@tanstack/react-query";
 import {
   ArrowCircleRightIcon,
   ArrowLeftIcon,
@@ -13,15 +15,12 @@ import { Button } from "./ui/button";
 import { Icon } from "./ui/icon";
 import { Text } from "./ui/text";
 
-const courses = [
-  { id: "2", title: "Diploma" },
-  { id: "3", title: "PUC" },
-  { id: "4", title: "Engineering" },
-];
-
 export function CourseSelectionForm() {
   const router = useRouter();
   const { setField, course } = useOnboardingStore();
+  const { data: courses } = useQuery(
+    trpc.lms.courseOrBranch.list.queryOptions(),
+  );
 
   return (
     <View className="relative gap-3.5">
@@ -42,7 +41,7 @@ export function CourseSelectionForm() {
       </Text>
 
       <View className="flex-1 gap-2">
-        {courses.map((c) => (
+        {courses?.map((c) => (
           <TouchableOpacity
             onPress={() => setField("course", c)}
             key={c.id}
@@ -54,7 +53,7 @@ export function CourseSelectionForm() {
                 c.id === course?.id && "bg-primary/10 border-primary",
               )}
             >
-              <Text variant={"large"}>{c.title}</Text>
+              <Text variant={"large"}>{c.name}</Text>
 
               <Icon
                 as={CheckCircleIcon}

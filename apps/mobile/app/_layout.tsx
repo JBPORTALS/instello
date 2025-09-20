@@ -1,13 +1,12 @@
 import {
-  Slot,
   SplashScreen,
   Stack,
   useFocusEffect,
   useRouter,
   useSegments,
 } from "expo-router";
-import * as SecureStore from "expo-secure-store";
 import { StatusBar } from "expo-status-bar";
+import { resourceCache } from "@clerk/clerk-expo/resource-cache";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ThemeProvider } from "@react-navigation/native";
 
@@ -16,8 +15,10 @@ import "../global.css";
 import React, { useCallback, useEffect } from "react";
 import { NAV_THEME } from "@/lib/theme";
 import { useColorScheme } from "@/lib/useColorScheme";
+import { queryClient } from "@/utils/api";
 import { ClerkLoaded, ClerkProvider, useUser } from "@clerk/clerk-expo";
 import { PortalHost } from "@rn-primitives/portal";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { IconContext } from "phosphor-react-native";
 
 export {
@@ -98,7 +99,7 @@ export default function RootLayout() {
   const tokenCache = {
     async getToken(key: string) {
       try {
-        const item = await SecureStore.getItemAsync(key);
+        const item = await resourceCache().get(key);
         if (item) {
           console.log(`${key} was used 🔐 \n`);
         } else {
@@ -107,13 +108,13 @@ export default function RootLayout() {
         return item;
       } catch (error) {
         console.error("SecureStore get item error: ", error);
-        await SecureStore.deleteItemAsync(key);
+        await resourceCache().set(key, "");
         return null;
       }
     },
     async saveToken(key: string, value: string) {
       try {
-        return SecureStore.setItemAsync(key, value);
+        return resourceCache().set(key, value);
       } catch (err) {
         return;
       }
@@ -131,15 +132,17 @@ export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ClerkLoaded>
-        <IconContext.Provider
-          value={{
-            weight: "duotone",
-            size: 16,
-          }}
-        >
-          <InitialLayout />
-          <PortalHost />
-        </IconContext.Provider>
+        <QueryClientProvider client={queryClient}>
+          <IconContext.Provider
+            value={{
+              weight: "duotone",
+              size: 16,
+            }}
+          >
+            <InitialLayout />
+            <PortalHost />
+          </IconContext.Provider>
+        </QueryClientProvider>
       </ClerkLoaded>
     </ClerkProvider>
   );

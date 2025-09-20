@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { foreignKey } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod/v4";
@@ -22,6 +23,17 @@ export const courseOrBranch = lmsPgTable(
       foreignColumns: [self.id],
     }),
   ],
+);
+
+export const courseOrBranchRelations = relations(
+  courseOrBranch,
+  ({ many, one }) => ({
+    branches: many(courseOrBranch),
+    course: one(courseOrBranch, {
+      fields: [courseOrBranch.courseId],
+      references: [courseOrBranch.id],
+    }),
+  }),
 );
 
 export const CreateCourseOrBranchSchema = createInsertSchema(courseOrBranch, {

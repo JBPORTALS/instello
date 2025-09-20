@@ -242,6 +242,9 @@ importers:
       '@react-native-async-storage/async-storage':
         specifier: 2.2.0
         version: 2.2.0(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))
+      '@react-native-community/datetimepicker':
+        specifier: ^8.4.4
+        version: 8.4.4(expo@54.0.9)(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
       '@react-navigation/native':
         specifier: ^7.0.0
         version: 7.1.17(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
@@ -263,6 +266,9 @@ importers:
       clsx:
         specifier: ^2.1.0
         version: 2.1.1
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
       expo:
         specifier: ^54.0.9
         version: 54.0.9(@babel/core@7.28.3)(@expo/metro-runtime@5.0.4(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0)))(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
@@ -293,6 +299,9 @@ importers:
       nativewind:
         specifier: ^4.1.23
         version: 4.1.23(react-native-reanimated@4.1.0(@babel/core@7.28.3)(react-native-worklets@0.5.1(@babel/core@7.28.3)(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native-safe-area-context@5.6.1(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native-svg@15.12.1(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.18.1)(typescript@5.9.2)))
+      phosphor-react-native:
+        specifier: ^3.0.0
+        version: 3.0.0(react-native-svg@15.12.1(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
       react:
         specifier: catalog:react19
         version: 19.1.0
@@ -329,6 +338,9 @@ importers:
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.18.1)(typescript@5.9.2)))
+      zustand:
+        specifier: ^5.0.8
+        version: 5.0.8(@types/react@19.1.13)(react@19.1.0)(use-sync-external-store@1.5.0(react@19.1.0))
     devDependencies:
       '@babel/core':
         specifier: ^7.26.0
@@ -3435,6 +3447,19 @@ packages:
     resolution: {integrity: sha512-gvRvjR5JAaUZF8tv2Kcq/Gbt3JHwbKFYfmb445rhOj6NUMx3qPLixmDx5pZAyb9at1bYvJ4/eTUipU5aki45xw==}
     peerDependencies:
       react-native: ^0.0.0-0 || >=0.65 <1.0
+
+  '@react-native-community/datetimepicker@8.4.4':
+    resolution: {integrity: sha512-bc4ZixEHxZC9/qf5gbdYvIJiLZ5CLmEsC3j+Yhe1D1KC/3QhaIfGDVdUcid0PdlSoGOSEq4VlB93AWyetEyBSQ==}
+    peerDependencies:
+      expo: '>=52.0.0'
+      react: '*'
+      react-native: '*'
+      react-native-windows: '*'
+    peerDependenciesMeta:
+      expo:
+        optional: true
+      react-native-windows:
+        optional: true
 
   '@react-native/assets-registry@0.81.4':
     resolution: {integrity: sha512-AMcDadefBIjD10BRqkWw+W/VdvXEomR6aEZ0fhQRAv7igrBzb4PTn4vHKYg+sUK0e3wa74kcMy2DLc/HtnGcMA==}
@@ -8123,6 +8148,13 @@ packages:
   pg-types@2.2.0:
     resolution: {integrity: sha512-qTAAlrEsl8s4OiEQY69wDvcMIdQN6wdz5ojQiOy6YRMuynxenON0O5oCpJI6lshc6scgAY8qvJ2On/p+CXY0GA==}
     engines: {node: '>=4'}
+
+  phosphor-react-native@3.0.0:
+    resolution: {integrity: sha512-n1cmY7w7nYNvgnksTpZYb+QbXmJUY2iqLO7FstnGHkJtI1gxqDywvUEvD5ZpZq2XaHQdYsxJbMdNUnw8XXZF8w==}
+    peerDependencies:
+      react: '*'
+      react-native: '*'
+      react-native-svg: '*'
 
   picocolors@1.0.1:
     resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
@@ -13074,6 +13106,14 @@ snapshots:
     dependencies:
       merge-options: 3.0.4
       react-native: 0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0)
+
+  '@react-native-community/datetimepicker@8.4.4(expo@54.0.9)(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      invariant: 2.2.4
+      react: 19.1.0
+      react-native: 0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0)
+    optionalDependencies:
+      expo: 54.0.9(@babel/core@7.28.3)(@expo/metro-runtime@5.0.4(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0)))(expo-router@6.0.7)(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
 
   '@react-native/assets-registry@0.81.4': {}
 
@@ -18787,6 +18827,12 @@ snapshots:
       postgres-bytea: 1.0.0
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
+
+  phosphor-react-native@3.0.0(react-native-svg@15.12.1(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0))(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0):
+    dependencies:
+      react: 19.1.0
+      react-native: 0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0)
+      react-native-svg: 15.12.1(react-native@0.81.4(@babel/core@7.28.3)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
 
   picocolors@1.0.1: {}
 

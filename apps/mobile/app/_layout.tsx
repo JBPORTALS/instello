@@ -18,6 +18,7 @@ import { NAV_THEME } from "@/lib/theme";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { ClerkLoaded, ClerkProvider, useUser } from "@clerk/clerk-expo";
 import { PortalHost } from "@rn-primitives/portal";
+import { IconContext } from "phosphor-react-native";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -130,8 +131,15 @@ export default function RootLayout() {
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <ClerkLoaded>
-        <InitialLayout />
-        <PortalHost />
+        <IconContext.Provider
+          value={{
+            weight: "duotone",
+            size: 16,
+          }}
+        >
+          <InitialLayout />
+          <PortalHost />
+        </IconContext.Provider>
       </ClerkLoaded>
     </ClerkProvider>
   );

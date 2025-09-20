@@ -1,9 +1,9 @@
 import React from "react";
 import { ScrollView } from "react-native";
 import { Stack } from "expo-router";
-import { OnboardingProfileForm } from "@/components/onbaording-profile-form";
+import { BranchSelectionForm } from "@/components/branch-selection-form";
 
-export default function Onboarding() {
+export default function OnboardingStepThree() {
   return (
     <ScrollView
       keyboardShouldPersistTaps="handled"
@@ -11,7 +11,7 @@ export default function Onboarding() {
       keyboardDismissMode="interactive"
     >
       <Stack.Screen options={{ headerShown: false }} />
-      <OnboardingProfileForm />
+      <BranchSelectionForm />
     </ScrollView>
   );
 }

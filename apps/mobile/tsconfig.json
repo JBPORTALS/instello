@@ -17,7 +17,8 @@
     "expo-env.d.ts",
     "nativewind-env.d.ts",
     "metro.config.js",
-    "babel.config.js"
+    "babel.config.js",
+    "global.d.ts"
   ],
   "exclude": ["node_modules"]
 }

@@ -54,7 +54,7 @@ function ChannelCard({
   className?: string;
 }) {
   return (
-    <Link href={"/(stacks)/2"}>
+    <Link href={"/(stacks)/v/2"}>
       <Card
         key={channel.id}
         className={cn("w-40 gap-3 border-0 p-2.5", className)}
@@ -91,12 +91,14 @@ export default function Home() {
       keyboardShouldPersistTaps="handled"
       contentContainerClassName=" p-4"
       keyboardDismissMode="interactive"
+      showsVerticalScrollIndicator={false}
     >
       {/* Section 1: Subscribed Channels */}
       <Text variant={"lead"} className=". mb-3 text-base font-semibold">
         My Subscribed Channels
       </Text>
       <FlashList
+        showsHorizontalScrollIndicator={false}
         horizontal
         data={channels}
         keyExtractor={(item) => item.id}
@@ -104,10 +106,11 @@ export default function Home() {
       />
 
       {/* Section 2: Continue Watching */}
-      <Text variant={"lead"} className="mt-6 mb-3 text-base font-semibold">
+      <Text variant={"lead"} className="mb-3 mt-6 text-base font-semibold">
         Continue Watching
       </Text>
       <FlashList
+        showsHorizontalScrollIndicator={false}
         horizontal
         data={channels}
         keyExtractor={(item) => item.id + "_continue"}
@@ -115,7 +118,7 @@ export default function Home() {
       />
 
       {/* Section 3: Recommended (Vertical Grid/List) */}
-      <Text variant={"lead"} className="mt-6 mb-3 text-base font-semibold">
+      <Text variant={"lead"} className="mb-3 mt-6 text-base font-semibold">
         Recommended For You
       </Text>
       <FlashList

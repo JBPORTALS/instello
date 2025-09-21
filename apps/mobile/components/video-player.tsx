@@ -40,10 +40,10 @@ import { Icon } from "./ui/icon";
 import { Text } from "./ui/text";
 
 const PlayCircleIconNative = () => (
-  <Icon size={64} weight="fill" as={PlayIcon} />
+  <Icon size={64} weight="fill" className="text-white" as={PlayIcon} />
 );
 const PauseCircleIconNative = () => (
-  <Icon size={52} weight="fill" as={PauseIcon} />
+  <Icon size={52} weight="fill" className="text-white" as={PauseIcon} />
 );
 const AnimatedPlayCircle =
   Animated.createAnimatedComponent(PlayCircleIconNative);
@@ -423,20 +423,20 @@ export function VideoPlayer({
                       as={ArrowLeftIcon}
                       size={28}
                       weight="fill"
-                      className="text-foreground"
+                      className="text-white"
                     />
                   </Button>
                   <Animated.View className={"mx-4 flex-1 gap-1"}>
                     <Text
                       variant={"small"}
-                      className="text-center"
+                      className="text-center text-white"
                       numberOfLines={1}
                     >
                       {md?.title}
                     </Text>
                     <Text
                       variant={"muted"}
-                      className="text-foreground/60 text-center"
+                      className="text-center text-white/60"
                       numberOfLines={1}
                     >
                       {md?.description}
@@ -445,7 +445,7 @@ export function VideoPlayer({
                       <View className="flex-row items-center justify-center gap-2">
                         <Text
                           variant={"muted"}
-                          className="text-foreground/40 text-center text-xs"
+                          className="text-center text-xs text-white/40"
                         >
                           {currentVideoIndex + 1} of {playlist.length}
                         </Text>
@@ -469,7 +469,7 @@ export function VideoPlayer({
                         as={SkipBackIcon}
                         size={40}
                         weight="fill"
-                        className="text-foreground"
+                        className="text-white"
                       />
                     </Button>
 
@@ -507,7 +507,7 @@ export function VideoPlayer({
                         as={SkipForwardIcon}
                         size={40}
                         weight="fill"
-                        className="text-foreground"
+                        className="text-white"
                       />
                     </Button>
                   </View>

@@ -19,7 +19,9 @@ import {
 } from "@instello/ui/components/dropdown-menu";
 import {
   DotsThreeOutlineIcon,
+  GlobeHemisphereEastIcon,
   HashIcon,
+  LockLaminatedIcon,
   PenNibIcon,
   PlusSquareIcon,
   TrashSimpleIcon,
@@ -75,6 +77,11 @@ export function ChapterList() {
             <div className="bg-accent flex size-6 items-center justify-center rounded-sm border font-mono text-xs font-bold">
               {item.order}
             </div>
+            {item.isPublished ? (
+              <GlobeHemisphereEastIcon className="size-3.5" weight="duotone" />
+            ) : (
+              <LockLaminatedIcon className="size-3.5" weight="duotone" />
+            )}
             <AccordionTrigger>{item.title}</AccordionTrigger>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

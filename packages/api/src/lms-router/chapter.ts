@@ -45,9 +45,20 @@ export const chapterRouter = {
   getById: protectedProcedure
     .input(z.object({ chapterId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.query.chapter.findFirst({
-        where: eq(chapter.id, input.chapterId),
-      });
+      return await ctx.db.query.chapter
+        .findFirst({
+          where: eq(chapter.id, input.chapterId),
+          with: {
+            videos: {
+              where: eq(video.isPublished, true),
+              extras({ id }, { sql }) {
+                return { total: sql`COUNT(${id})`.mapWith(Number).as("total") };
+              },
+              columns: {},
+            },
+          },
+        })
+        .then((r) => ({ ...r, canPublishable: r?.videos[0]?.total !== 0 }));
     }),
 
   update: protectedProcedure

@@ -71,11 +71,12 @@ export function ChannelSettingsDialog({
   channelId: string;
 }) {
   const [activeTab, setActiveTab] = useState<NavigationItem>("general");
+  const [open, setOpen] = useState(false);
 
   const renderContent = () => {
     switch (activeTab) {
       case "general":
-        return <GeneralSettings channelId={channelId} />;
+        return <GeneralSettings open={open} channelId={channelId} />;
 
       default:
         return null;
@@ -83,7 +84,7 @@ export function ChannelSettingsDialog({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         onInteractOutside={(e) => e.preventDefault()}
@@ -122,11 +123,20 @@ export function ChannelSettingsDialog({
   );
 }
 
-function GeneralSettings({ channelId }: { channelId: string }) {
+function GeneralSettings({
+  channelId,
+  open,
+}: {
+  channelId: string;
+  open: boolean;
+}) {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
   const { data, isLoading } = useQuery(
-    trpc.lms.channel.getById.queryOptions({ channelId }, { gcTime: 0 }),
+    trpc.lms.channel.getById.queryOptions(
+      { channelId },
+      { gcTime: 0, enabled: open },
+    ),
   );
 
   const form = useForm({

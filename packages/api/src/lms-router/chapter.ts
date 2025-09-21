@@ -52,7 +52,7 @@ export const chapterRouter = {
         });
 
         // 2. Get total published videos in the channel
-        const aggrChapter = await tx
+        const aggrVideo = await tx
           .select({ total: countDistinct(video.id).mapWith(Number) })
           .from(video)
           .where(
@@ -64,7 +64,7 @@ export const chapterRouter = {
 
         return {
           ...singleChapter,
-          canPublishable: aggrChapter[0]?.total !== 0,
+          canPublishable: aggrVideo[0]?.total !== 0,
         };
       });
     }),

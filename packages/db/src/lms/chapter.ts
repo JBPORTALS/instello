@@ -36,7 +36,9 @@ export const UpdateChapterSchema = createUpdateSchema(chapter, {
   id: z.string().min(1, "Chapter ID is required for updation"),
   title: z
     .string()
-    .min(3, "Title of the chapter must be atlease 2 characters long"),
+    .min(3, "Title of the chapter must be atlease 2 characters long")
+    .optional(),
+  isPublished: z.boolean().optional(),
 }).omit({
   createdAt: true,
   channelId: true,

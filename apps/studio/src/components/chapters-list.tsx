@@ -19,15 +19,14 @@ import {
 } from "@instello/ui/components/dropdown-menu";
 import {
   DotsThreeOutlineIcon,
-  GlobeHemisphereEastIcon,
   HashIcon,
-  LockLaminatedIcon,
   PenNibIcon,
   PlusSquareIcon,
   TrashSimpleIcon,
 } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { ChangeVisibilityChapter } from "./change-visibility-chapter-dropdown";
 import { DeleteChapterDialog } from "./dialogs/delete-chapter-dialog";
 import { EditChapterDialog } from "./dialogs/edit-chapter-dialog";
 import { UploadVideoDialog } from "./dialogs/upload-video-dialog";
@@ -77,11 +76,7 @@ export function ChapterList() {
             <div className="bg-accent flex size-6 items-center justify-center rounded-sm border font-mono text-xs font-bold">
               {item.order}
             </div>
-            {item.isPublished ? (
-              <GlobeHemisphereEastIcon className="size-3.5" weight="duotone" />
-            ) : (
-              <LockLaminatedIcon className="size-3.5" weight="duotone" />
-            )}
+            <ChangeVisibilityChapter chapterId={item.id} />
             <AccordionTrigger>{item.title}</AccordionTrigger>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

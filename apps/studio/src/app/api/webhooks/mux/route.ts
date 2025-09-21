@@ -38,6 +38,15 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: "Asset created" });
       }
 
+      case "video.asset.created": {
+        const asset = wbEvent.data;
+        await db
+          .update(video)
+          .set({ status: "asset_created" })
+          .where(eq(video.assetId, asset.id));
+        return NextResponse.json({ message: "Asset created" });
+      }
+
       case "video.asset.ready": {
         const asset = wbEvent.data;
         const playbackId = asset.playback_ids?.[0]?.id;
@@ -73,13 +82,17 @@ export async function POST(req: Request) {
       }
 
       default:
+        console.log("Unhandled event:", wbEvent);
         return NextResponse.json(
           { message: `Unhandled event: ${wbEvent.type}` },
-          { status: 400 },
+          { status: 400, statusText: "Unhandled event" },
         );
     }
   } catch (err) {
     console.error("Webhook error:", err);
-    return NextResponse.json({ message: "failed" }, { status: 500 });
+    return NextResponse.json(
+      { message: "failed", description: err },
+      { status: 500 },
+    );
   }
 }

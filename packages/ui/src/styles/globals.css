@@ -78,6 +78,8 @@
 }
 
 @theme inline {
+  --default-font-family: var(--font-sans);
+  --default-mono-font-family: var(--font-mono);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -120,9 +122,11 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
+
   .pattern-diagnol-v3 {
     background-size: 8px 8px;
     background-image: repeating-linear-gradient(

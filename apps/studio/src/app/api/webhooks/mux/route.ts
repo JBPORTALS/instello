@@ -38,15 +38,6 @@ export async function POST(req: Request) {
         return NextResponse.json({ message: "Asset created" });
       }
 
-      case "video.asset.created": {
-        const asset = wbEvent.data;
-        await db
-          .update(video)
-          .set({ status: "asset_created" })
-          .where(eq(video.assetId, asset.id));
-        return NextResponse.json({ message: "Asset created" });
-      }
-
       case "video.asset.ready": {
         const asset = wbEvent.data;
         const playbackId = asset.playback_ids?.[0]?.id;

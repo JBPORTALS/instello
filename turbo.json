@@ -56,7 +56,8 @@
     "PORT",
     "MUX_TOKEN_ID",
     "MUX_TOKEN_SECRET",
-    "MUX_WEBHOOK_SECRET"
+    "MUX_WEBHOOK_SECRET",
+    "UPLOADTHING_TOKEN"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

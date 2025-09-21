@@ -1,11 +1,11 @@
 import type { Config } from "drizzle-kit";
 
-if (!process.env.POSTGRES_URL) {
-  throw new Error("Missing POSTGRES_URL");
+if (!process.env.DATABASE_URL) {
+  throw new Error("Missing DATABASE_URL");
 }
 
 // Neon database pooling url
-const nonPoolingUrl = process.env.POSTGRES_URL;
+const nonPoolingUrl = process.env.DATABASE_URL;
 
 export default {
   schema: "./src/erp",

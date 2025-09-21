@@ -5,9 +5,12 @@ import {
   CreateChannelSchema,
   UpdateChannelSchema,
 } from "@instello/db/lms";
+import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
+import { withTx } from "../router.helpers";
 import { protectedProcedure } from "../trpc";
+import { deleteChapter } from "./chapter";
 
 export const channelRouter = {
   create: protectedProcedure
@@ -69,8 +72,45 @@ export const channelRouter = {
     }),
 
   delete: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(z.object({ channelId: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      return await ctx.db.delete(channel).where(eq(channel.id, input.id));
+      return await ctx.db.transaction(async (tx) => {
+        try {
+          // 1. Find all the chapters in the channel
+          const allVideos = await tx.query.chapter.findMany({
+            where: eq(chapter.channelId, input.channelId),
+          });
+
+          // 2. Delete all video assets in the chapter
+          await Promise.all(
+            allVideos.map(
+              async (chapter) =>
+                await deleteChapter({ chapterId: chapter.id }, withTx(ctx, tx)),
+            ),
+          );
+
+          // 3. Delete the channel
+          const deletedChannel = await tx
+            .delete(channel)
+            .where(eq(channel.id, input.channelId))
+            .returning()
+            .then((r) => r[0]);
+
+          if (!deletedChannel) {
+            throw new TRPCError({
+              message: "Unable to delete the channel",
+              code: "INTERNAL_SERVER_ERROR",
+            });
+          }
+
+          return deletedChannel;
+        } catch (e) {
+          console.error("delete:chapter:error: ", e);
+          throw new TRPCError({
+            message: "Unable to delete the chapter",
+            code: "INTERNAL_SERVER_ERROR",
+          });
+        }
+      });
     }),
 };

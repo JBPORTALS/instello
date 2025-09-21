@@ -8,8 +8,8 @@ import {
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
+import type { withTx } from "../router.helpers";
 import type { Context } from "../trpc";
-import { withTx } from "../router.helpers";
 import { protectedProcedure } from "../trpc";
 import { deleteVideo } from "./video";
 

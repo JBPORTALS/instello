@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Outfit } from "next/font/google";
+import { Geist_Mono, Montserrat } from "next/font/google";
 
 import "@instello/ui/globals.css";
 
@@ -8,14 +8,14 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { buttonVariants } from "@instello/ui/components/button";
 import { cn } from "@instello/ui/lib/utils";
 
-const fontSans = Outfit({
+const geistMono = Geist_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
-  variable: "--font-sans",
 });
 
-const fontMono = Geist_Mono({
+const montserrat = Montserrat({
+  variable: "--font-sans",
   subsets: ["latin"],
-  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -124,7 +124,7 @@ export default function RootLayout({
     >
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${fontSans.variable} ${fontMono.variable} font-sans antialiased`}
+          className={`${montserrat.variable} ${geistMono.variable} antialiased`}
         >
           <Providers>{children}</Providers>
         </body>

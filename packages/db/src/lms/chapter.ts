@@ -16,6 +16,7 @@ export const chapter = lmsPgTable("chapter", (d) => ({
     .notNull()
     .references(() => channel.id),
   order: d.integer().notNull(),
+  isPublished: d.boolean().default(false),
 }));
 
 export const CreateChapterSchema = createInsertSchema(chapter, {
@@ -25,6 +26,7 @@ export const CreateChapterSchema = createInsertSchema(chapter, {
 }).omit({
   id: true,
   createdAt: true,
+  isPublished: true,
   createdByClerkUserId: true,
   updatedAt: true,
   order: true,
@@ -34,7 +36,9 @@ export const UpdateChapterSchema = createUpdateSchema(chapter, {
   id: z.string().min(1, "Chapter ID is required for updation"),
   title: z
     .string()
-    .min(3, "Title of the chapter must be atlease 2 characters long"),
+    .min(3, "Title of the chapter must be atlease 2 characters long")
+    .optional(),
+  isPublished: z.boolean().optional(),
 }).omit({
   createdAt: true,
   channelId: true,
@@ -42,6 +46,10 @@ export const UpdateChapterSchema = createUpdateSchema(chapter, {
   updatedAt: true,
 });
 
-export const chapterRealations = relations(chapter, ({ many }) => ({
+export const chapterRealations = relations(chapter, ({ many, one }) => ({
   videos: many(video),
+  channel: one(channel, {
+    fields: [chapter.channelId],
+    references: [channel.id],
+  }),
 }));

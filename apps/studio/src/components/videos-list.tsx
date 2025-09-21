@@ -41,7 +41,7 @@ export function VideosList({ chapterId }: { chapterId: string }) {
   if (data.length === 0)
     return (
       <div className="text-muted-foreground px-2.5 text-sm">
-        No videos, this chapter won't be available to students until it contains
+        No videos, this chapter won't be able to publish until it contains
         videos.
       </div>
     );

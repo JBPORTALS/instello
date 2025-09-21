@@ -73,13 +73,17 @@ export async function POST(req: Request) {
       }
 
       default:
+        console.log("Unhandled event:", wbEvent);
         return NextResponse.json(
           { message: `Unhandled event: ${wbEvent.type}` },
-          { status: 400 },
+          { status: 400, statusText: "Unhandled event" },
         );
     }
   } catch (err) {
     console.error("Webhook error:", err);
-    return NextResponse.json({ message: "failed" }, { status: 500 });
+    return NextResponse.json(
+      { message: "failed", description: err },
+      { status: 500 },
+    );
   }
 }

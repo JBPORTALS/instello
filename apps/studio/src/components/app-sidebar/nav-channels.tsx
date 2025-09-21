@@ -20,12 +20,14 @@ import {
   BackspaceIcon,
   DotsThreeIcon,
   FolderIcon,
+  FolderLockIcon,
   FolderOpenIcon,
   GearFineIcon,
 } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { ChannelSettingsDialog } from "../dialogs/channel-settings-dialog";
+import { DeleteChannelDialog } from "../dialogs/delete-channel-dialog";
 
 export function NavChannels() {
   const trpc = useTRPC();
@@ -55,7 +57,13 @@ export function NavChannels() {
                 {pathname === `/c/${item.id}` ? (
                   <FolderOpenIcon weight="duotone" />
                 ) : (
-                  <FolderIcon weight={"duotone"} />
+                  <>
+                    {item.isPublished ? (
+                      <FolderIcon weight={"duotone"} />
+                    ) : (
+                      <FolderLockIcon weight="duotone" />
+                    )}
+                  </>
                 )}
 
                 {item.title}
@@ -76,9 +84,14 @@ export function NavChannels() {
                     <GearFineIcon weight="duotone" /> Settings...
                   </DropdownMenuItem>
                 </ChannelSettingsDialog>
-                <DropdownMenuItem variant="destructive">
-                  <BackspaceIcon weight="duotone" /> Delete forever...
-                </DropdownMenuItem>
+                <DeleteChannelDialog channelId={item.id}>
+                  <DropdownMenuItem
+                    onSelect={(e) => e.preventDefault()}
+                    variant="destructive"
+                  >
+                    <BackspaceIcon weight="duotone" /> Delete forever...
+                  </DropdownMenuItem>
+                </DeleteChannelDialog>
               </DropdownMenuGroup>
             </DropdownMenuContent>
           </SidebarMenuItem>

@@ -26,6 +26,7 @@ import {
 } from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
+import { ChangeVisibilityChapter } from "./change-visibility-chapter-dropdown";
 import { DeleteChapterDialog } from "./dialogs/delete-chapter-dialog";
 import { EditChapterDialog } from "./dialogs/edit-chapter-dialog";
 import { UploadVideoDialog } from "./dialogs/upload-video-dialog";
@@ -75,6 +76,7 @@ export function ChapterList() {
             <div className="bg-accent flex size-6 items-center justify-center rounded-sm border font-mono text-xs font-bold">
               {item.order}
             </div>
+            <ChangeVisibilityChapter chapterId={item.id} />
             <AccordionTrigger>{item.title}</AccordionTrigger>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

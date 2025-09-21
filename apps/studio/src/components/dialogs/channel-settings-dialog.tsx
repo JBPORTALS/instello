@@ -26,6 +26,13 @@ import {
   FormMessage,
 } from "@instello/ui/components/form";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@instello/ui/components/select";
+import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
@@ -39,8 +46,12 @@ import {
 import { Spinner } from "@instello/ui/components/spinner";
 import { Textarea } from "@instello/ui/components/textarea";
 import { cn } from "@instello/ui/lib/utils";
-import { GearIcon } from "@phosphor-icons/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  GearIcon,
+  GlobeHemisphereEastIcon,
+  LockLaminatedIcon,
+} from "@phosphor-icons/react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -60,11 +71,12 @@ export function ChannelSettingsDialog({
   channelId: string;
 }) {
   const [activeTab, setActiveTab] = useState<NavigationItem>("general");
+  const [open, setOpen] = useState(false);
 
   const renderContent = () => {
     switch (activeTab) {
       case "general":
-        return <GeneralSettings channelId={channelId} />;
+        return <GeneralSettings open={open} channelId={channelId} />;
 
       default:
         return null;
@@ -72,7 +84,7 @@ export function ChannelSettingsDialog({
   };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent
         onInteractOutside={(e) => e.preventDefault()}
@@ -111,24 +123,30 @@ export function ChannelSettingsDialog({
   );
 }
 
-function GeneralSettings({ channelId }: { channelId: string }) {
+function GeneralSettings({
+  channelId,
+  open,
+}: {
+  channelId: string;
+  open: boolean;
+}) {
   const queryClient = useQueryClient();
   const trpc = useTRPC();
+  const { data, isLoading } = useQuery(
+    trpc.lms.channel.getById.queryOptions(
+      { channelId },
+      { gcTime: 0, enabled: open },
+    ),
+  );
 
   const form = useForm({
     resolver: zodResolver(UpdateChannelSchema),
-    async defaultValues() {
-      const data = await queryClient.fetchQuery(
-        trpc.lms.channel.getById.queryOptions({ channelId }, { gcTime: 0 }),
-      );
-
-      return {
-        thumbneilId: data?.thumbneilId ?? "",
-        title: data?.title ?? "",
-        id: channelId,
-        description: data?.description ?? "",
-        isPublished: data?.isPublished ?? false,
-      };
+    defaultValues: {
+      thumbneilId: data?.thumbneilId ?? "",
+      title: data?.title ?? "",
+      id: channelId,
+      description: data?.description ?? "",
+      isPublished: data?.isPublished ?? false,
     },
     reValidateMode: "onChange",
     mode: "onChange",
@@ -182,7 +200,7 @@ function GeneralSettings({ channelId }: { channelId: string }) {
           </div>
         </DialogHeader>
         <DialogBody className="container/settings-main max-h-[calc(100vh-200px)] min-h-[calc(100vh-200px)] space-y-6 py-6">
-          {form.formState.isLoading ? (
+          {isLoading ? (
             <div className="flex min-h-[500] w-full items-center justify-center">
               <Spinner className="size-8" />
             </div>
@@ -241,7 +259,7 @@ function GeneralSettings({ channelId }: { channelId: string }) {
                       course effectively to the audience. This will help them to
                       grab their attention.
                     </FormDescription>
-                    <div className="aspect-video h-[230px] w-[400] overflow-hidden rounded-md">
+                    <div className="aspect-video h-[150px] w-[280] overflow-hidden rounded-md">
                       {field.value ? (
                         <div className="relative h-full w-full">
                           <Image
@@ -306,6 +324,48 @@ function GeneralSettings({ channelId }: { channelId: string }) {
                         />
                       )}
                     </div>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="isPublished"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{`Visibility`}</FormLabel>
+                    <FormDescription>
+                      You can make the channel public only if it has thumbneil
+                      and at-least one chapter with one video. If these
+                      conditions not met then channel will be automatically
+                      become private. You need to come later and turn again to
+                      public after you fulfilled those conditions
+                    </FormDescription>
+                    <FormControl>
+                      <Select
+                        {...field}
+                        onValueChange={(value) =>
+                          field.onChange(value == "public")
+                        }
+                        value={field.value ? "public" : "private"}
+                      >
+                        <SelectTrigger className="min-w-sm">
+                          <SelectValue placeholder={"Select..."} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="private">
+                            <LockLaminatedIcon weight="duotone" /> Private
+                          </SelectItem>
+                          <SelectItem
+                            disabled={!data?.canPublishable}
+                            value="public"
+                          >
+                            <GlobeHemisphereEastIcon weight="duotone" /> Public
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}

@@ -1,8 +1,10 @@
+import { relations } from "drizzle-orm";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 import { initialColumns } from "../columns.helpers";
 import { lmsPgTable } from "../table.helpers";
+import { chapter } from "./chapter";
 
 export const channel = lmsPgTable("channel", (d) => ({
   ...initialColumns,
@@ -11,6 +13,10 @@ export const channel = lmsPgTable("channel", (d) => ({
   description: d.varchar({ length: 256 }),
   isPublished: d.boolean().default(false),
   thumbneilId: d.varchar({ length: 100 }),
+}));
+
+export const channelRelations = relations(channel, ({ many }) => ({
+  chapters: many(chapter),
 }));
 
 export const CreateChannelSchema = createInsertSchema(channel, {

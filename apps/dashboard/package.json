@@ -39,7 +39,7 @@
     "react-dom": "catalog:react19",
     "react-hook-form": "catalog:",
     "sonner": "catalog:",
-    "superjson": "^2.2.2",
+    "superjson": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {

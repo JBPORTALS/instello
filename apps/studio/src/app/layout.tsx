@@ -13,12 +13,12 @@ import { extractRouterConfig } from "uploadthing/server";
 import { studioFileRouter } from "./api/uploadthing/core";
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-mono",
   subsets: ["latin"],
 });
 
 const montserrat = Montserrat({
-  variable: "--font-montserrat-sans",
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 

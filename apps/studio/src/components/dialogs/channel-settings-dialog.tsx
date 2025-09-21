@@ -49,7 +49,7 @@ import { cn } from "@instello/ui/lib/utils";
 import {
   GearIcon,
   GlobeHemisphereEastIcon,
-  LockIcon,
+  LockLaminatedIcon,
 } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -335,6 +335,9 @@ function GeneralSettings({ channelId }: { channelId: string }) {
                     <FormControl>
                       <Select
                         {...field}
+                        onValueChange={(value) =>
+                          field.onChange(value == "public")
+                        }
                         value={field.value ? "public" : "private"}
                       >
                         <SelectTrigger className="min-w-sm">
@@ -342,7 +345,7 @@ function GeneralSettings({ channelId }: { channelId: string }) {
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="private">
-                            <LockIcon weight="duotone" /> Private
+                            <LockLaminatedIcon weight="duotone" /> Private
                           </SelectItem>
                           <SelectItem
                             disabled={!data?.canPublishable}

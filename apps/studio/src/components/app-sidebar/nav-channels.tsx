@@ -20,6 +20,7 @@ import {
   BackspaceIcon,
   DotsThreeIcon,
   FolderIcon,
+  FolderLockIcon,
   FolderOpenIcon,
   GearFineIcon,
 } from "@phosphor-icons/react";
@@ -55,7 +56,13 @@ export function NavChannels() {
                 {pathname === `/c/${item.id}` ? (
                   <FolderOpenIcon weight="duotone" />
                 ) : (
-                  <FolderIcon weight={"duotone"} />
+                  <>
+                    {item.isPublished ? (
+                      <FolderIcon weight={"duotone"} />
+                    ) : (
+                      <FolderLockIcon weight="duotone" />
+                    )}
+                  </>
                 )}
 
                 {item.title}

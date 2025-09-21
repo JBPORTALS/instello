@@ -8,7 +8,15 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from "@instello/ui/components/breadcrumb";
-import { CircleIcon } from "@phosphor-icons/react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@instello/ui/components/tooltip";
+import {
+  GlobeHemisphereEastIcon,
+  LockLaminatedIcon,
+} from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
 export function ChannelPageBreadcrumb() {
@@ -22,8 +30,17 @@ export function ChannelPageBreadcrumb() {
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbPage className="flex items-center gap-1.5">
-            <CircleIcon weight="duotone" />
-            {data?.title}
+            {data.isPublished ? (
+              <GlobeHemisphereEastIcon weight="duotone" />
+            ) : (
+              <Tooltip>
+                <TooltipTrigger>
+                  <LockLaminatedIcon />
+                </TooltipTrigger>
+                <TooltipContent>Private</TooltipContent>
+              </Tooltip>
+            )}
+            {data.title}
           </BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>

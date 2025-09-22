@@ -3,19 +3,18 @@ import { ActivityIndicator, ScrollView, View } from "react-native";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { ChannelLessonsList } from "@/components/channel-lessons-list";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
+import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { trpc } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
-  ArrowArcLeftIcon,
   ArrowLeftIcon,
-  BooksIcon,
   CardsThreeIcon,
-  ClockClockwiseIcon,
   ClockIcon,
 } from "phosphor-react-native";
 
@@ -146,6 +145,10 @@ export default function ChannelDetailsScreen() {
           </Text>
         </View>
       </View>
+
+      <Separator />
+
+      <ChannelLessonsList channelId={channelId} />
     </ScrollView>
   );
 }

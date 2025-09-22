@@ -1,5 +1,5 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
@@ -57,18 +57,19 @@ function ChannelCard({
     <Link href={"/(stacks)/v/2"}>
       <Card
         key={channel.id}
-        className={cn("w-40 gap-3 border-0 p-2.5", className)}
+        className={cn("w-40 gap-3 border-0 p-2", className)}
       >
         <Image
           source={{ uri: channel.thumbneilUrl }}
           style={{
             width: "auto",
-            height: 80,
-            borderRadius: 4,
+            height: "auto",
+            borderRadius: 8,
+            aspectRatio: 16 / 10,
           }}
           contentFit="cover"
         />
-        <CardContent className="w-full flex-1 gap-1.5 px-0">
+        <CardContent className="w-full flex-1 gap-0.5 px-0">
           <CardTitle numberOfLines={1} className="text-sm">
             {channel.title}
           </CardTitle>
@@ -89,44 +90,25 @@ export default function Home() {
   return (
     <ScrollView
       keyboardShouldPersistTaps="handled"
-      contentContainerClassName=" p-4"
+      contentContainerClassName="gap-3.5"
       keyboardDismissMode="interactive"
       showsVerticalScrollIndicator={false}
     >
-      {/* Section 1: Subscribed Channels */}
-      <Text variant={"lead"} className=". mb-3 text-base font-semibold">
-        My Subscribed Channels
-      </Text>
-      <FlashList
-        showsHorizontalScrollIndicator={false}
-        horizontal
-        data={channels}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <ChannelCard channel={item} />}
-      />
-
-      {/* Section 2: Continue Watching */}
-      <Text variant={"lead"} className="mb-3 mt-6 text-base font-semibold">
-        Continue Watching
-      </Text>
-      <FlashList
-        showsHorizontalScrollIndicator={false}
-        horizontal
-        data={channels}
-        keyExtractor={(item) => item.id + "_continue"}
-        renderItem={({ item }) => <ChannelCard channel={item} />}
-      />
-
-      {/* Section 3: Recommended (Vertical Grid/List) */}
-      <Text variant={"lead"} className="mb-3 mt-6 text-base font-semibold">
-        Recommended For You
-      </Text>
       <FlashList
         numColumns={2}
         data={channels}
+        ListHeaderComponent={
+          <Text
+            variant={"lead"}
+            className="px-2 py-1.5 text-base font-semibold"
+          >
+            All by Instello Studio
+          </Text>
+        }
         keyExtractor={(item) => item.id + "_recommended"}
+        contentContainerStyle={{ paddingHorizontal: 8 }}
         renderItem={({ item }) => (
-          <ChannelCard className="w-full" channel={item} />
+          <ChannelCard className={cn("w-full")} channel={item} />
         )}
       />
     </ScrollView>

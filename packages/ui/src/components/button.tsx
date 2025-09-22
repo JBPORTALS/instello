@@ -45,6 +45,7 @@ function Button({
   size,
   asChild = false,
   loading = false,
+  loadingText,
   disabled = loading,
   children,
   ...props
@@ -52,19 +53,21 @@ function Button({
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
     loading?: boolean;
+    loadingText?: string;
   }) {
   const Comp = asChild ? Slot : "button";
 
   return (
     <Comp
       data-slot="button"
+      data-loading={loading}
       className={cn(buttonVariants({ variant, size, className }))}
       disabled={disabled}
       children={
         loading ? (
           <>
-            {children}
             <Spinner weight="bold" className="animate-spin" />
+            {loadingText}
           </>
         ) : (
           children

@@ -9,13 +9,25 @@ import { Button } from "@instello/ui/components/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@instello/ui/components/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@instello/ui/components/select";
 import { Textarea } from "@instello/ui/components/textarea";
 import MuxPlayer from "@mux/mux-player-react/lazy";
+import {
+  GlobeHemisphereEastIcon,
+  LockLaminatedIcon,
+} from "@phosphor-icons/react";
 import {
   useMutation,
   useQueryClient,
@@ -131,6 +143,42 @@ export function VideoForm() {
                       maxLength={5000}
                       className="h-80 resize-none"
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="isPublished"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>{`Visibility`}</FormLabel>
+                  <FormDescription>
+                    If the video is public then users can able to access it from
+                    chapter.
+                  </FormDescription>
+                  <FormControl>
+                    <Select
+                      {...field}
+                      onValueChange={(value) =>
+                        field.onChange(value == "public")
+                      }
+                      value={field.value ? "public" : "private"}
+                    >
+                      <SelectTrigger className="min-w-sm">
+                        <SelectValue placeholder={"Select..."} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="private">
+                          <LockLaminatedIcon weight="duotone" /> Private
+                        </SelectItem>
+                        <SelectItem value="public">
+                          <GlobeHemisphereEastIcon weight="duotone" /> Public
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

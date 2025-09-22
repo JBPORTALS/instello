@@ -1,17 +1,14 @@
 import { View } from "react-native";
 import { Image } from "expo-image";
+import { formatDuration } from "@/lib/utils";
 import { trpc } from "@/utils/api";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
+import { ClockIcon } from "phosphor-react-native";
 
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Icon } from "./ui/icon";
 import { Text } from "./ui/text";
-
-interface Video {
-  id: string;
-  title: string;
-  description: string;
-}
 
 export function ChannelLessonsList({ channelId }: { channelId: string }) {
   const { data: videos } = useQuery(
@@ -49,13 +46,27 @@ export function ChannelLessonsList({ channelId }: { channelId: string }) {
                   }}
                 />
               </CardContent>
-              <CardHeader className="flex-1 pl-0">
+              <CardHeader className="flex-1 justify-center pl-0">
                 <CardTitle
-                  numberOfLines={1}
-                  className="w-full flex-1 text-sm font-medium"
+                  numberOfLines={2}
+                  className="w-full text-sm font-medium"
                 >
                   {item.title}
                 </CardTitle>
+                <View className="flex-row items-center gap-1">
+                  <Icon
+                    as={ClockIcon}
+                    weight="duotone"
+                    className="text-muted-foreground"
+                  />
+
+                  <Text
+                    variant={"muted"}
+                    className="text-muted-foreground text-xs"
+                  >
+                    {formatDuration(item.duration ?? 0)}
+                  </Text>
+                </View>
               </CardHeader>
             </Card>
           );

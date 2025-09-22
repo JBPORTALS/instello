@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
 import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
+import { formatDuration } from "@/lib/utils";
 import { trpc } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -103,7 +104,7 @@ export default function ChannelDetailsScreen() {
           />
 
           <Text variant={"muted"} className="text-xs">
-            {channel.numberOfChapters}h 30 min
+            {formatDuration(channel.totalDuration)}
           </Text>
           <Text variant={"muted"}>·</Text>
           <Icon

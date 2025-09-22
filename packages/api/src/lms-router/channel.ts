@@ -1,9 +1,10 @@
-import { and, countDistinct, eq } from "@instello/db";
+import { and, countDistinct, eq, sum } from "@instello/db";
 import {
   channel,
   chapter,
   CreateChannelSchema,
   UpdateChannelSchema,
+  video,
 } from "@instello/db/lms";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
@@ -90,6 +91,26 @@ export const channelRouter = {
         const chapterAggr = await tx
           .select({ total: countDistinct(chapter.id) })
           .from(chapter)
+          .leftJoin(
+            video,
+            and(eq(chapter.id, video.chapterId), eq(chapter.isPublished, true)),
+          )
+          .where(
+            and(
+              eq(chapter.channelId, singleChannel.id),
+              eq(chapter.isPublished, true),
+            ),
+          );
+
+        // 4. Get total hours of channel content
+        const hoursAggr = await tx
+          .select({ total: sum(video.duration).mapWith(Number) })
+          .from(chapter)
+
+          .leftJoin(
+            video,
+            and(eq(chapter.id, video.chapterId), eq(video.isPublished, true)),
+          )
           .where(
             and(
               eq(chapter.channelId, singleChannel.id),
@@ -101,6 +122,7 @@ export const channelRouter = {
           ...singleChannel,
           createdByClerkUser,
           numberOfChapters: chapterAggr[0]?.total ?? 0,
+          totalDuration: hoursAggr[0]?.total ?? 0,
         };
       });
     }),

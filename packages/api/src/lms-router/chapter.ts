@@ -1,4 +1,4 @@
-import { and, asc, countDistinct, desc, eq } from "@instello/db";
+import { asc, desc, eq } from "@instello/db";
 import {
   chapter,
   CreateChapterSchema,
@@ -46,27 +46,8 @@ export const chapterRouter = {
   getById: protectedProcedure
     .input(z.object({ chapterId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.transaction(async (tx) => {
-        // 1. Get the chapter details
-        const singleChapter = await tx.query.chapter.findFirst({
-          where: eq(chapter.id, input.chapterId),
-        });
-
-        // 2. Get total published videos in the channel
-        const aggrVideo = await tx
-          .select({ total: countDistinct(video.id).mapWith(Number) })
-          .from(video)
-          .where(
-            and(
-              eq(video.chapterId, input.chapterId),
-              eq(video.isPublished, true),
-            ),
-          );
-
-        return {
-          ...singleChapter,
-          canPublishable: aggrVideo[0]?.total !== 0,
-        };
+      return await ctx.db.query.chapter.findFirst({
+        where: eq(chapter.id, input.chapterId),
       });
     }),
 

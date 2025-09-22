@@ -78,10 +78,7 @@ export function ChangeVisibilityChapter({ chapterId }: { chapterId: string }) {
             <LockLaminatedIcon weight="duotone" />
             Private
           </DropdownMenuRadioItem>
-          <DropdownMenuRadioItem
-            disabled={!chapter?.canPublishable}
-            value="published"
-          >
+          <DropdownMenuRadioItem value="published">
             <GlobeHemisphereEastIcon weight="duotone" />
             Published
           </DropdownMenuRadioItem>

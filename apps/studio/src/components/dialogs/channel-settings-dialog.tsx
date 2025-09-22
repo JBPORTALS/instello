@@ -337,11 +337,8 @@ function GeneralSettings({
                   <FormItem>
                     <FormLabel>{`Visibility`}</FormLabel>
                     <FormDescription>
-                      You can make the channel public only if it has thumbneil
-                      and at-least one chapter with one video. If these
-                      conditions not met then channel will be automatically
-                      become private. You need to come later and turn again to
-                      public after you fulfilled those conditions
+                      You can make the channel public to make it accesible for
+                      students
                     </FormDescription>
                     <FormControl>
                       <Select
@@ -358,10 +355,7 @@ function GeneralSettings({
                           <SelectItem value="private">
                             <LockLaminatedIcon weight="duotone" /> Private
                           </SelectItem>
-                          <SelectItem
-                            disabled={!data?.canPublishable}
-                            value="public"
-                          >
+                          <SelectItem value="public">
                             <GlobeHemisphereEastIcon weight="duotone" /> Public
                           </SelectItem>
                         </SelectContent>

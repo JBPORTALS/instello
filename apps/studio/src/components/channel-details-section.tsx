@@ -15,12 +15,13 @@ export function ChannelDetailsSection() {
 
   return (
     <div className="space-y-3.5">
-      <div className="bg-accent h-58 relative aspect-video w-full overflow-hidden rounded-md">
+      <div className="bg-accent h-58 relative aspect-video w-full overflow-hidden rounded-md object-cover">
         {data.thumbneilId ? (
           <Image
             fill
             alt="Channel Thumbneil"
-            src={`https://${env.UPLOADTHING_PROJECT_ID}.ufs.sh/f/${data.thumbneilId}`}
+            src={`https://${env.NEXT_PUBLIC_UPLOADTHING_PROJECT_ID}.ufs.sh/f/${data.thumbneilId}`}
+            objectFit="cover"
           />
         ) : (
           <div className="flex h-full items-center justify-center">

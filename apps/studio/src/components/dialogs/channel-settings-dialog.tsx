@@ -266,7 +266,7 @@ function GeneralSettings({
                           <Image
                             fill
                             alt={`Channel Thumbneil`}
-                            src={`https://${env.UPLOADTHING_PROJECT_ID}.ufs.sh/f/${field.value}`}
+                            src={`https://${env.NEXT_PUBLIC_UPLOADTHING_PROJECT_ID}.ufs.sh/f/${field.value}`}
                           />
                           <div className="bg-background/40 absolute flex h-full w-full items-center justify-center transition-all duration-200">
                             <UploadButton

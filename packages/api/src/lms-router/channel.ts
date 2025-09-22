@@ -50,7 +50,7 @@ export const channelRouter = {
             channel.createdByClerkUserId,
           );
 
-          const thumbneilImageUrl = `https://${process.env.UPLOADTHING_PROJECT_ID}/f/${channel.thumbneilId}`;
+          const thumbneilImageUrl = `https://${process.env.NEXT_PUBLIC_UPLOADTHING_PROJECT_ID}/f/${channel.thumbneilId}`;
 
           return {
             ...channel,

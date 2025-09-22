@@ -18,6 +18,7 @@ export const video = lmsPgTable("video", (d) => ({
   uploadId: d.text().notNull(),
   assetId: d.text(),
   playbackId: d.text(),
+  duration: d.integer(),
   status: d
     .text({
       enum: [

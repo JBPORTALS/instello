@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useParams } from "next/navigation";
+import { env } from "@/env";
 import { useTRPC } from "@/trpc/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 
@@ -19,7 +20,7 @@ export function ChannelDetailsSection() {
           <Image
             fill
             alt="Channel Thumbneil"
-            src={`https://mnn9dy1ypr.ufs.sh/f/${data.thumbneilId}`}
+            src={`https://${env.UPLOADTHING_PROJECT_ID}.ufs.sh/f/${data.thumbneilId}`}
           />
         ) : (
           <div className="flex h-full items-center justify-center">

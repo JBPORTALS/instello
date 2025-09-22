@@ -19,6 +19,8 @@ export const env = createEnv({
     MUX_WEBHOOK_SECRET: z.string(),
     MUX_TOKEN_SECRET: z.string(),
     MUX_TOKEN_ID: z.string(),
+    UPLOADTHING_PROJECT_ID: z.string(),
+    UPLOADTHING_TOKEN: z.string(),
   },
 
   /**

@@ -3,6 +3,7 @@
 import type { z } from "zod/v4";
 import React, { useState } from "react";
 import Image from "next/image";
+import { env } from "@/env";
 import { useTRPC } from "@/trpc/react";
 import { UploadButton, UploadDropzone } from "@/utils/uploadthing";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -265,7 +266,7 @@ function GeneralSettings({
                           <Image
                             fill
                             alt={`Channel Thumbneil`}
-                            src={`https://mnn9dy1ypr.ufs.sh/f/${field.value}`}
+                            src={`https://${env.UPLOADTHING_PROJECT_ID}.ufs.sh/f/${field.value}`}
                           />
                           <div className="bg-background/40 absolute flex h-full w-full items-center justify-center transition-all duration-200">
                             <UploadButton

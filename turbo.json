@@ -57,7 +57,8 @@
     "MUX_TOKEN_ID",
     "MUX_TOKEN_SECRET",
     "MUX_WEBHOOK_SECRET",
-    "UPLOADTHING_TOKEN"
+    "UPLOADTHING_TOKEN",
+    "UPLOADTHING_PROJECT_ID"
   ],
   "globalPassThroughEnv": [
     "NODE_ENV",

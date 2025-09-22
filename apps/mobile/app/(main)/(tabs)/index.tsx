@@ -1,56 +1,22 @@
 import React from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, View } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
+import { Icon } from "@/components/ui/icon";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
+import { RouterOutputs, trpc } from "@/utils/api";
 import { FlashList } from "@shopify/flash-list";
-
-const channels = [
-  {
-    id: "1",
-    title: "Artificial Intelligence",
-    createdAt: new Date("2024-12-10T10:15:00Z"),
-    createdByUser: {
-      firstName: "Instello",
-      lastName: "Company",
-      imageUrl: "https://github.com/x-sss-x.png",
-    },
-    numberOfChapters: 2,
-    thumbneilUrl: "https://picsum.photos/seed/ai/400/200",
-  },
-  {
-    id: "2",
-    title: "Web Development Bootcamp",
-    createdAt: new Date("2024-11-20T08:30:00Z"),
-    createdByUser: {
-      firstName: "John",
-      lastName: "Doe",
-      imageUrl: "https://github.com/mdo.png",
-    },
-    numberOfChapters: 12,
-    thumbneilUrl: "https://picsum.photos/seed/webdev/400/200",
-  },
-  {
-    id: "3",
-    title: "Data Structures & Algorithms",
-    createdAt: new Date("2024-10-05T14:45:00Z"),
-    createdByUser: {
-      firstName: "Jane",
-      lastName: "Smith",
-      imageUrl: "https://github.com/octocat.png",
-    },
-    numberOfChapters: 8,
-    thumbneilUrl: "https://picsum.photos/seed/dsa/400/200",
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { BookOpenTextIcon } from "phosphor-react-native";
 
 function ChannelCard({
   channel,
   className,
 }: {
-  channel: (typeof channels)[0];
+  channel: RouterOutputs["lms"]["channel"]["listPublic"][number];
   className?: string;
 }) {
   return (
@@ -60,7 +26,7 @@ function ChannelCard({
         className={cn("w-40 gap-3 border-0 p-2", className)}
       >
         <Image
-          source={{ uri: channel.thumbneilUrl }}
+          source={{ uri: channel.thumbneilImageUrl }}
           style={{
             width: "auto",
             height: "auto",
@@ -77,8 +43,8 @@ function ChannelCard({
             {channel.numberOfChapters} Chapters
           </Text>
           <Text className="text-muted-foreground text-xs">
-            by {channel.createdByUser.firstName}{" "}
-            {channel.createdByUser.lastName}
+            by {channel.createdByClerkUser.firstName}{" "}
+            {channel.createdByClerkUser.lastName}
           </Text>
         </CardContent>
       </Card>
@@ -86,7 +52,33 @@ function ChannelCard({
   );
 }
 
+function ChannelCardSkeleton({ className }: { className?: string }) {
+  return (
+    <Card className={cn("w-40 gap-3 border-0 p-2", className)}>
+      <Skeleton
+        style={{
+          width: "auto",
+          height: "auto",
+          borderRadius: 8,
+          aspectRatio: 16 / 10,
+        }}
+      />
+      <CardContent className="w-full flex-1 gap-1 px-0">
+        <Skeleton className="h-2.5 max-w-full" />
+        <Skeleton className="h-1.5 w-32" />
+        <Skeleton className="h-1.5 w-20" />
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function Home() {
+  const { data, isLoading } = useQuery(
+    trpc.lms.channel.listPublic.queryOptions(),
+  );
+
+  const channelList = data ?? [];
+
   return (
     <ScrollView
       keyboardShouldPersistTaps="handled"
@@ -96,14 +88,38 @@ export default function Home() {
     >
       <FlashList
         numColumns={2}
-        data={channels}
+        data={channelList}
         ListHeaderComponent={
           <Text
             variant={"lead"}
             className="px-2 py-1.5 text-base font-semibold"
           >
-            All by Instello Studio
+            Recommended for You
           </Text>
+        }
+        ListEmptyComponent={
+          isLoading ? (
+            <View className="w-full flex-1 flex-row flex-wrap">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <ChannelCardSkeleton className="w-1/2" key={i} />
+              ))}
+            </View>
+          ) : (
+            <View className="h-52 flex-1 items-center justify-center gap-2.5">
+              <Icon
+                as={BookOpenTextIcon}
+                size={52}
+                weight="duotone"
+                className="text-muted-foreground"
+              />
+              <Text variant={"large"}>Comming Soon</Text>
+              <Text variant={"muted"} className="text-center">
+                We are excited to share some cool content based channels with
+                you soon. Please wait for some time in while we are making
+                things faster to reach out to you.
+              </Text>
+            </View>
+          )
         }
         keyExtractor={(item) => item.id + "_recommended"}
         contentContainerStyle={{ paddingHorizontal: 8 }}

@@ -29,6 +29,40 @@ export const channelRouter = {
     });
   }),
 
+  listPublic: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.transaction(async (tx) => {
+      // 1. List all published channels
+      const allPublicChannels = await tx.query.channel.findMany({
+        where: eq(channel.isPublished, true),
+        orderBy: ({ createdAt }, { desc }) => [desc(createdAt)],
+      });
+
+      // 2. Append the user details & chapters count to the each channel
+      return await Promise.all(
+        allPublicChannels.map(async (channel) => {
+          const chapterAggr = await tx
+            .select({ total: countDistinct(chapter.id) })
+            .from(chapter)
+            .where(eq(chapter.channelId, channel.id));
+
+          // Fetch channel creator's user details from the clerk api
+          const user = await ctx.clerk.users.getUser(
+            channel.createdByClerkUserId,
+          );
+
+          const thumbneilImageUrl = `https://${process.env.UPLOADTHING_PROJECT_ID}/f/${channel.thumbneilId}`;
+
+          return {
+            ...channel,
+            numberOfChapters: chapterAggr[0]?.total ?? 0,
+            createdByClerkUser: user,
+            thumbneilImageUrl,
+          };
+        }),
+      );
+    });
+  }),
+
   getById: protectedProcedure
     .input(z.object({ channelId: z.string() }))
     .query(async ({ ctx, input }) => {

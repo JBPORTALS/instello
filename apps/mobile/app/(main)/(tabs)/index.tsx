@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { RouterOutputs, trpc } from "@/utils/api";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
+import { formatDate } from "date-fns";
 import { BookOpenTextIcon } from "phosphor-react-native";
 
 function ChannelCard({
@@ -26,7 +27,9 @@ function ChannelCard({
         className={cn("w-40 gap-3 border-0 p-2", className)}
       >
         <Image
-          source={{ uri: channel.thumbneilImageUrl }}
+          source={{
+            uri: `https://${process.env.EXPO_PUBLIC_UPLOADTHING_PROJECT_ID}.ufs.sh/f/${channel.thumbneilId}`,
+          }}
           style={{
             width: "auto",
             height: "auto",
@@ -39,12 +42,16 @@ function ChannelCard({
           <CardTitle numberOfLines={1} className="text-sm">
             {channel.title}
           </CardTitle>
-          <Text variant="muted" className="text-xs">
+          <Text
+            variant="muted"
+            className="text-muted-foreground text-xs font-semibold"
+          >
             {channel.numberOfChapters} Chapters
           </Text>
           <Text className="text-muted-foreground text-xs">
             by {channel.createdByClerkUser.firstName}{" "}
-            {channel.createdByClerkUser.lastName}
+            {channel.createdByClerkUser.lastName} ·{" "}
+            {formatDate(channel.createdAt, "MMM yyyy")}
           </Text>
         </CardContent>
       </Card>

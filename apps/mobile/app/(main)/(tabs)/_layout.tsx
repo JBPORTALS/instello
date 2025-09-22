@@ -44,6 +44,7 @@ export default function _layout() {
           ),
         }}
       />
+      <Tabs.Screen name="(stacks)/c/[channelId]" options={{}} />
     </Tabs>
   );
 }

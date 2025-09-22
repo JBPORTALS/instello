@@ -94,14 +94,13 @@ function InitialLayout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          animation: "fade",
           contentStyle: {
             backgroundColor: isDarkColorScheme
               ? NAV_THEME.dark.colors.background
               : NAV_THEME.light.colors.background,
           },
         }}
-        initialRouteName="(main)/(tabs)"
+        initialRouteName="(main)"
       />
     </ThemeProvider>
   );

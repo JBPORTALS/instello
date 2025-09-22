@@ -8,7 +8,7 @@ import {
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
-import { withTx } from "../router.helpers";
+import { getClerkUserById, withTx } from "../router.helpers";
 import { protectedProcedure } from "../trpc";
 import { deleteChapter } from "./chapter";
 
@@ -43,7 +43,12 @@ export const channelRouter = {
           const chapterAggr = await tx
             .select({ total: countDistinct(chapter.id) })
             .from(chapter)
-            .where(eq(chapter.channelId, channel.id));
+            .where(
+              and(
+                eq(chapter.channelId, channel.id),
+                eq(chapter.isPublished, true),
+              ),
+            );
 
           // Fetch channel creator's user details from the clerk api
           const user = await ctx.clerk.users.getUser(
@@ -63,11 +68,40 @@ export const channelRouter = {
   getById: protectedProcedure
     .input(z.object({ channelId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return await ctx.db.query.channel.findFirst({
-        where: and(
-          eq(channel.createdByClerkUserId, ctx.auth.userId),
-          eq(channel.id, input.channelId),
-        ),
+      return await ctx.db.transaction(async (tx) => {
+        // 1. Find channel
+        const singleChannel = await tx.query.channel.findFirst({
+          where: eq(channel.id, input.channelId),
+        });
+
+        if (!singleChannel)
+          throw new TRPCError({
+            message: "Channel not found",
+            code: "NOT_FOUND",
+          });
+
+        // 2. Get channel creator details
+        const createdByClerkUser = await getClerkUserById(
+          singleChannel.createdByClerkUserId,
+          ctx,
+        );
+
+        // 3. Get total chapters of the channel
+        const chapterAggr = await tx
+          .select({ total: countDistinct(chapter.id) })
+          .from(chapter)
+          .where(
+            and(
+              eq(chapter.channelId, singleChannel.id),
+              eq(chapter.isPublished, true),
+            ),
+          );
+
+        return {
+          ...singleChannel,
+          createdByClerkUser,
+          numberOfChapters: chapterAggr[0]?.total ?? 0,
+        };
       });
     }),
 

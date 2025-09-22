@@ -208,12 +208,6 @@ export function VideoPlayer({
     currentOffsetFromLive: player.currentOffsetFromLive,
   });
 
-  // Update active player when current video changes
-  useEffect(() => {
-    // The player will automatically update when currentVideo.source changes
-    // due to the useVideoPlayer hook dependency on currentVideo.source
-  }, [currentVideo.source]);
-
   // Set Meta data
   useEffect(() => {
     (async () => {

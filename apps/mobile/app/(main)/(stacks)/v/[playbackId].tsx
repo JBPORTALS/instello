@@ -61,7 +61,6 @@ export default function VideoPlayerScreen() {
         options={{
           headerShown: false,
           animationMatchesGesture: true,
-          orientation: "landscape",
         }}
       />
       <VideoPlayer

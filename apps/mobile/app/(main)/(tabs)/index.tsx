@@ -21,7 +21,7 @@ function ChannelCard({
   className?: string;
 }) {
   return (
-    <Link href={`/(stacks)/c/${channel.id}`}>
+    <Link href={`/(main)/(stacks)/c/${channel.id}`}>
       <Card
         key={channel.id}
         className={cn("w-40 gap-3 border-0 p-2", className)}

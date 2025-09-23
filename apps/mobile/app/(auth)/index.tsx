@@ -41,14 +41,14 @@ export default function GetStarted() {
         <Text variant={"muted"} className="text-center">
           by continuing you'll accept all our terms and conditions
         </Text>
-        <Link asChild href={"/(auth)/sign-in"}>
-          <Button className="w-full" variant={"secondary"} size={"lg"}>
-            <Text>Sign in</Text>
-          </Button>
-        </Link>
         <Link asChild href={"/(auth)/sign-up"}>
           <Button className="w-full" size={"lg"}>
             <Text>Get Started</Text>
+          </Button>
+        </Link>
+        <Link asChild href={"/(auth)/sign-in"}>
+          <Button className="w-full" variant={"secondary"} size={"lg"}>
+            <Text>Sign in</Text>
           </Button>
         </Link>
       </View>

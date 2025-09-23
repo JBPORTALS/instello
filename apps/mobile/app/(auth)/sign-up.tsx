@@ -6,8 +6,9 @@ export default function SignUpScreen() {
   return (
     <ScrollView
       keyboardShouldPersistTaps="handled"
-      contentContainerClassName="sm:flex-1 items-center justify-center p-4 py-8 sm:py-4 sm:p-6 mt-safe"
+      contentContainerClassName="sm:flex-1 items-center justify-center p-4"
       keyboardDismissMode="interactive"
+      automaticallyAdjustKeyboardInsets
     >
       <Stack.Screen
         options={{
@@ -16,7 +17,7 @@ export default function SignUpScreen() {
           headerTitleAlign: "center",
         }}
       />
-      <View className="w-full max-w-sm">
+      <View className="w-full max-w-sm flex-1">
         <SignUpForm />
       </View>
     </ScrollView>

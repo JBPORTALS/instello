@@ -32,7 +32,7 @@ export function ChannelLessonsList({ channelId }: { channelId: string }) {
         } else {
           // Render item
           return (
-            <Link asChild href={`/(main)/(stacks)/v/${item.playbackId}`}>
+            <Link asChild href={`/(main)/v/${item.playbackId}`}>
               <TouchableOpacity>
                 <Card className="bg-accent/40 flex-row gap-2 p-2">
                   <CardContent className="p-0">

@@ -9,16 +9,60 @@ import { ClockIcon } from "phosphor-react-native";
 
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Icon } from "./ui/icon";
+import { Skeleton } from "./ui/skeleton";
 import { Text } from "./ui/text";
 
 export function ChannelLessonsList({ channelId }: { channelId: string }) {
-  const { data: videos } = useQuery(
+  const { data: videos, isLoading } = useQuery(
     trpc.lms.video.listPublicByChannelId.queryOptions({ channelId }),
   );
 
+  if (isLoading) {
+    return (
+      <View className="px-4">
+        {Array.from({ length: 6 }).map((_, index) => (
+          <View key={index} className="mb-2.5">
+            <View className="bg-accent/40 flex-row gap-2 rounded-md p-2">
+              <Skeleton
+                className="h-14 w-[120px] rounded-md"
+                style={{ height: 64, width: 120, borderRadius: 8 }}
+              />
+              <View className="flex-1 justify-center gap-2">
+                <Skeleton className="h-4 w-3/4" />
+                <Skeleton className="h-3 w-1/3" />
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
+    );
+  }
+
+  const hasLessons = Array.isArray(videos)
+    ? videos.some((item) => typeof item !== "string")
+    : false;
+
+  if (!hasLessons) {
+    return (
+      <View className="px-4 py-6">
+        <View className="bg-accent/30 items-center justify-center rounded-md p-6">
+          <Text variant="large" className="mb-1 text-base font-medium">
+            No lessons yet
+          </Text>
+          <Text
+            variant="muted"
+            className="text-muted-foreground text-center text-sm"
+          >
+            Lessons will appear here when this channel adds content.
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <FlashList
-      data={videos}
+      data={videos ?? []}
       contentContainerClassName="px-4"
       ItemSeparatorComponent={() => <View className="h-2.5 w-full" />}
       renderItem={({ item }) => {

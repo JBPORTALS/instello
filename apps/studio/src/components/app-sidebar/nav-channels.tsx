@@ -66,7 +66,7 @@ export function NavChannels() {
                   </>
                 )}
 
-                {item.title}
+                <span>{item.title}</span>
               </Link>
             </SidebarMenuButton>
             <DropdownMenuTrigger asChild>

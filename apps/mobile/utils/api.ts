@@ -1,6 +1,5 @@
 import type { AppRouter } from "@instello/api";
 import { getClerkInstance } from "@clerk/clerk-expo";
-import { resourceCache } from "@clerk/clerk-expo/resource-cache";
 import { QueryClient } from "@tanstack/react-query";
 import { createTRPCClient, httpBatchLink, loggerLink } from "@trpc/client";
 import { createTRPCOptionsProxy } from "@trpc/tanstack-react-query";
@@ -12,6 +11,7 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // ...
+      enabled: getClerkInstance().loaded,
     },
   },
 });

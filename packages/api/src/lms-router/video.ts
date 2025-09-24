@@ -1,5 +1,11 @@
-import { eq } from "@instello/db";
-import { CreateVideoSchema, UpdateVideoSchema, video } from "@instello/db/lms";
+import { and, asc, desc, eq, getTableColumns } from "@instello/db";
+import {
+  channel,
+  chapter,
+  CreateVideoSchema,
+  UpdateVideoSchema,
+  video,
+} from "@instello/db/lms";
 import { createId } from "@paralleldrive/cuid2";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
@@ -52,6 +58,41 @@ export const videoRouter = {
         where: eq(video.chapterId, input.chapterId),
       }),
   ),
+
+  listPublicByChannelId: protectedProcedure
+    .input(z.object({ channelId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const videos = await ctx.db
+        .select({
+          videoDescription: video.description,
+          chapterTitle: chapter.title,
+          ...getTableColumns(video),
+        })
+        .from(video)
+        .leftJoin(
+          chapter,
+          and(eq(video.chapterId, chapter.id), eq(chapter.isPublished, true)),
+        )
+        .leftJoin(channel, eq(chapter.channelId, channel.id))
+        .where(
+          and(eq(channel.id, input.channelId), eq(video.isPublished, true)),
+        )
+        .orderBy(() => [asc(chapter.order), desc(video.createdAt)]); // if you have ordering fields
+
+      // Group videos under chapters
+      const grouped: (string | (typeof videos)[number])[] = [];
+      let lastChapterId: string | null = null;
+
+      for (const row of videos) {
+        if (row.chapterId !== lastChapterId) {
+          grouped.push(row.chapterTitle ?? "Untitled Chapter");
+          lastChapterId = row.chapterId;
+        }
+        grouped.push(row);
+      }
+
+      return grouped;
+    }),
 
   update: protectedProcedure
     .input(UpdateVideoSchema.and(z.object({ videoId: z.string().min(1) })))

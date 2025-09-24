@@ -1,14 +1,15 @@
-import { and, countDistinct, eq } from "@instello/db";
+import { and, countDistinct, eq, sum } from "@instello/db";
 import {
   channel,
   chapter,
   CreateChannelSchema,
   UpdateChannelSchema,
+  video,
 } from "@instello/db/lms";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod/v4";
 
-import { withTx } from "../router.helpers";
+import { getClerkUserById, withTx } from "../router.helpers";
 import { protectedProcedure } from "../trpc";
 import { deleteChapter } from "./chapter";
 
@@ -29,33 +30,99 @@ export const channelRouter = {
     });
   }),
 
+  listPublic: protectedProcedure.query(async ({ ctx }) => {
+    return await ctx.db.transaction(async (tx) => {
+      // 1. List all published channels
+      const allPublicChannels = await tx.query.channel.findMany({
+        where: eq(channel.isPublished, true),
+        orderBy: ({ createdAt }, { desc }) => [desc(createdAt)],
+      });
+
+      // 2. Append the user details & chapters count to the each channel
+      return await Promise.all(
+        allPublicChannels.map(async (channel) => {
+          const chapterAggr = await tx
+            .select({ total: countDistinct(chapter.id) })
+            .from(chapter)
+            .where(
+              and(
+                eq(chapter.channelId, channel.id),
+                eq(chapter.isPublished, true),
+              ),
+            );
+
+          // Fetch channel creator's user details from the clerk api
+          const user = await ctx.clerk.users.getUser(
+            channel.createdByClerkUserId,
+          );
+
+          return {
+            ...channel,
+            numberOfChapters: chapterAggr[0]?.total ?? 0,
+            createdByClerkUser: user,
+          };
+        }),
+      );
+    });
+  }),
+
   getById: protectedProcedure
     .input(z.object({ channelId: z.string() }))
     .query(async ({ ctx, input }) => {
       return await ctx.db.transaction(async (tx) => {
-        // 1. Get the channel details
+        // 1. Find channel
         const singleChannel = await tx.query.channel.findFirst({
-          where: and(
-            eq(channel.createdByClerkUserId, ctx.auth.userId),
-            eq(channel.id, input.channelId),
-          ),
+          where: eq(channel.id, input.channelId),
         });
 
-        // 2. Get total published chapters in the channel
-        const aggrChapter = await tx
-          .select({ total: countDistinct(chapter.id).mapWith(Number) })
+        if (!singleChannel)
+          throw new TRPCError({
+            message: "Channel not found",
+            code: "NOT_FOUND",
+          });
+
+        // 2. Get channel creator details
+        const createdByClerkUser = await getClerkUserById(
+          singleChannel.createdByClerkUserId,
+          ctx,
+        );
+
+        // 3. Get total chapters of the channel
+        const chapterAggr = await tx
+          .select({ total: countDistinct(chapter.id) })
           .from(chapter)
+          .leftJoin(
+            video,
+            and(eq(chapter.id, video.chapterId), eq(chapter.isPublished, true)),
+          )
           .where(
             and(
-              eq(chapter.channelId, input.channelId),
+              eq(chapter.channelId, singleChannel.id),
+              eq(chapter.isPublished, true),
+            ),
+          );
+
+        // 4. Get total hours of channel content
+        const hoursAggr = await tx
+          .select({ total: sum(video.duration).mapWith(Number) })
+          .from(chapter)
+
+          .leftJoin(
+            video,
+            and(eq(chapter.id, video.chapterId), eq(video.isPublished, true)),
+          )
+          .where(
+            and(
+              eq(chapter.channelId, singleChannel.id),
               eq(chapter.isPublished, true),
             ),
           );
 
         return {
           ...singleChannel,
-          canPublishable:
-            aggrChapter[0]?.total !== 0 && !!singleChannel?.thumbneilId,
+          createdByClerkUser,
+          numberOfChapters: chapterAggr[0]?.total ?? 0,
+          totalDuration: hoursAggr[0]?.total ?? 0,
         };
       });
     }),

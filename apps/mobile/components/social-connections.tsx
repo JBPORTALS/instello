@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 import { Alert, Image, Platform, View } from "react-native";
-import * as Linking from "expo-linking";
+import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSSO } from "@clerk/clerk-expo";
-import { OAuthStrategy } from "@clerk/types";
+import { ClerkAPIResponseError, OAuthStrategy } from "@clerk/types";
 import { useColorScheme } from "nativewind";
 
 import { Text } from "./ui/text";
+
+export const useWarmUpBrowser = () => {
+  useEffect(() => {
+    // Preloads the browser for Android devices to reduce authentication load time
+    // See: https://docs.expo.dev/guides/authentication/#improving-user-experience
+    void WebBrowser.warmUpAsync();
+    return () => {
+      // Cleanup: closes browser when component unmounts
+      void WebBrowser.coolDownAsync();
+    };
+  }, []);
+};
+
+// Handle any pending authentication sessions
+WebBrowser.maybeCompleteAuthSession();
 
 const SOCIAL_CONNECTION_STRATEGIES: {
   type: OAuthStrategy;
@@ -25,41 +41,51 @@ const SOCIAL_CONNECTION_STRATEGIES: {
   },
 ];
 
-const redirectUrl = Linking.createURL("/", {
-  scheme: "instello",
-  isTripleSlashed: true,
-});
-
 export function SocialConnections() {
+  useWarmUpBrowser();
+
   const { colorScheme } = useColorScheme();
   const { startSSOFlow } = useSSO();
   const [isLoading, setIsLoading] = React.useState(false);
 
-  console.log(`Redirect Url: `, redirectUrl);
-
-  const handleOAuthSignIn = async (strategy: OAuthStrategy) => {
+  const handleOAuthSignIn = useCallback(async (strategy: OAuthStrategy) => {
     try {
       setIsLoading(true);
-      const { createdSessionId, setActive } = await startSSOFlow({ strategy });
+      const { createdSessionId, setActive } = await startSSOFlow({
+        strategy,
+        redirectUrl: AuthSession.makeRedirectUri(),
+      });
 
-      if (createdSessionId && setActive) {
-        await setActive({
+      // If sign in was successful, set the active session
+      if (createdSessionId) {
+        setActive!({
           session: createdSessionId,
-          redirectUrl,
+          navigate: async ({ session }) => {
+            if (session?.currentTask) {
+              // Check for tasks and navigate to custom UI to help users resolve them
+              // See https://clerk.com/docs/custom-flows/overview#session-tasks
+              console.log(session?.currentTask);
+              return;
+            }
+          },
         });
-        // Navigation will be handled by the auth state in _layout.tsx
+      } else {
+        // If there is no `createdSessionId`,
+        // there are missing requirements, such as MFA
+        // Use the `signIn` or `signUp` returned from `startSSOFlow`
+        // to handle next steps
+        console.log("Missing steps to be done");
       }
     } catch (err: any) {
-      console.error("OAuth error:", err);
-      Alert.alert(
-        "Authentication Failed",
-        err.errors?.[0]?.message ||
-          "An error occurred during authentication. Please try again.",
-      );
+      const clerkError = err as ClerkAPIResponseError;
+      // See https://clerk.com/docs/custom-flows/error-handling
+      // for more info on error handling
+      console.log(JSON.stringify(err, null, 2));
+      Alert.alert(`Something went wrong!`, clerkError.errors[0]?.message);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   return (
     <View className="gap-2 sm:flex-row sm:gap-3">

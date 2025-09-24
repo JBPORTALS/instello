@@ -18,6 +18,7 @@ export const video = lmsPgTable("video", (d) => ({
   uploadId: d.text().notNull(),
   assetId: d.text(),
   playbackId: d.text(),
+  duration: d.integer(),
   status: d
     .text({
       enum: [
@@ -51,9 +52,10 @@ export const UpdateVideoSchema = createUpdateSchema(video, {
   title: z
     .string()
     .min(2, "Title of the video should be atlease 2 letters long.")
-    .max(100, "Title is too long"),
+    .max(100, "Title is too long")
+    .optional(),
   description: z.string().max(5000, "Description is too long").optional(),
-  isPublished: z.boolean(),
+  isPublished: z.boolean().optional(),
 }).omit({
   id: true,
   chapterId: true,

@@ -3,6 +3,7 @@
 import type { z } from "zod/v4";
 import React, { useState } from "react";
 import Image from "next/image";
+import { env } from "@/env";
 import { useTRPC } from "@/trpc/react";
 import { UploadButton, UploadDropzone } from "@/utils/uploadthing";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -265,7 +266,7 @@ function GeneralSettings({
                           <Image
                             fill
                             alt={`Channel Thumbneil`}
-                            src={`https://mnn9dy1ypr.ufs.sh/f/${field.value}`}
+                            src={`https://${env.NEXT_PUBLIC_UPLOADTHING_PROJECT_ID}.ufs.sh/f/${field.value}`}
                           />
                           <div className="bg-background/40 absolute flex h-full w-full items-center justify-center transition-all duration-200">
                             <UploadButton
@@ -336,11 +337,8 @@ function GeneralSettings({
                   <FormItem>
                     <FormLabel>{`Visibility`}</FormLabel>
                     <FormDescription>
-                      You can make the channel public only if it has thumbneil
-                      and at-least one chapter with one video. If these
-                      conditions not met then channel will be automatically
-                      become private. You need to come later and turn again to
-                      public after you fulfilled those conditions
+                      You can make the channel public to make it accesible for
+                      students
                     </FormDescription>
                     <FormControl>
                       <Select
@@ -357,10 +355,7 @@ function GeneralSettings({
                           <SelectItem value="private">
                             <LockLaminatedIcon weight="duotone" /> Private
                           </SelectItem>
-                          <SelectItem
-                            disabled={!data?.canPublishable}
-                            value="public"
-                          >
+                          <SelectItem value="public">
                             <GlobeHemisphereEastIcon weight="duotone" /> Public
                           </SelectItem>
                         </SelectContent>

@@ -14,3 +14,14 @@ export type DbLike = DbTransaction;
 export function withTx(ctx: Context, tx: DbTransaction) {
   return { ...ctx, db: tx };
 }
+
+export async function getClerkUserById(userId: string, ctx: Context) {
+  return ctx.clerk.users
+    .getUser(userId)
+    .then(({ firstName, lastName, imageUrl, hasImage }) => ({
+      firstName,
+      lastName,
+      imageUrl,
+      hasImage,
+    }));
+}

@@ -16,9 +16,15 @@ import { Button } from "@instello/ui/components/button";
 import { Progress } from "@instello/ui/components/progress";
 import { Skeleton } from "@instello/ui/components/skeleton";
 import { cn } from "@instello/ui/lib/utils";
-import { PenNibIcon, TrashIcon } from "@phosphor-icons/react";
+import {
+  GlobeHemisphereEastIcon,
+  LockLaminatedIcon,
+  PenNibIcon,
+  TrashIcon,
+} from "@phosphor-icons/react";
 import { toast } from "sonner";
 
+import { ChangeVisibilityVideoDropdown } from "./change-visibility-video-dropdown";
 import { DeleteVideoDialog } from "./dialogs/delete-video-dialog";
 
 export function VideosList({ chapterId }: { chapterId: string }) {
@@ -118,13 +124,11 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
             <span className="max-w-xl truncate text-sm">{video.title}</span>
             {video.status === "ready" && (
               <p className="text-muted-foreground max-w-xl truncate text-xs">
-                {video.description?.length == 0
-                  ? "Add description..."
-                  : video.description}
+                {video.description ?? "Add description..."}
               </p>
             )}
           </div>
-          <span className="text-muted-foreground ml-2 flex-shrink-0 text-xs">
+          <span className="text-muted-foreground ml-2 inline-flex flex-shrink-0 items-center gap-0.5 text-xs">
             {/** Local Uploading status */}
             {video.isUploading && !video.interrupted ? (
               <span className="text-accent-foreground">
@@ -149,7 +153,15 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
                 {video.status === "errored" && "Failed"}
                 {video.status === "cancelled" && "Cancelled"}
                 {video.status === "ready" &&
-                  (video.isPublished ? "Published" : "Private")}
+                  (video.isPublished ? (
+                    <>
+                      <GlobeHemisphereEastIcon weight="duotone" /> Public
+                    </>
+                  ) : (
+                    <>
+                      <LockLaminatedIcon weight="duotone" /> Private
+                    </>
+                  ))}
               </>
             ) : null}
           </span>
@@ -226,7 +238,8 @@ function VideoItem({ video }: { video: UnifiedVideo }) {
         )}
 
         {video.status == "ready" && (
-          <div className="from-accent/50 to-accent/0 absolute bottom-0 right-0 top-0 flex h-16 items-center gap-1.5 bg-gradient-to-l px-2 opacity-0 group-hover:opacity-100">
+          <div className="from-accent/50 to-accent/0 absolute bottom-0 right-0 top-0 flex h-16 items-center gap-1.5 bg-gradient-to-l px-2 opacity-0 group-hover:opacity-100 has-[button[data-loading=true]]:opacity-100 has-[button[data-state=open]]:opacity-100">
+            <ChangeVisibilityVideoDropdown videoId={video.id} />
             <Button
               onClick={() => router.push(`/c/${channelId}/v/${video.id}`)}
               size={"sm"}

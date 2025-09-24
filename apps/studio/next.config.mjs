@@ -21,7 +21,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "mnn9dy1ypr.ufs.sh",
+        hostname: `${process.env.NEXT_PUBLIC_UPLOADTHING_PROJECT_ID}.ufs.sh`,
         pathname: "/f/*",
       },
       {

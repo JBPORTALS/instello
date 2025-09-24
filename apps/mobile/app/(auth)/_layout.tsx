@@ -1,8 +1,13 @@
 import React from "react";
-import { Stack } from "expo-router";
+import { Redirect, Stack } from "expo-router";
+import { useAuth } from "@clerk/clerk-expo";
 
 export default function AuthLayout() {
-  return (
-    <Stack screenOptions={{ headerShadowVisible: false, animation: "fade" }} />
-  );
+  const { isSignedIn } = useAuth();
+
+  if (isSignedIn) {
+    return <Redirect href={"/(home)/(tabs)"} withAnchor />;
+  }
+
+  return <Stack screenOptions={{ headerShadowVisible: false }} />;
 }

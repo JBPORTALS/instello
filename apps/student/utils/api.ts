@@ -11,7 +11,6 @@ export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       // ...
-      enabled: getClerkInstance().loaded,
     },
   },
 });

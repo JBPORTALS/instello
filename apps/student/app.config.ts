@@ -18,6 +18,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   assetBundlePatterns: ["**/*"],
   ios: {
     supportsTablet: true,
+    bundleIdentifier: "com.jbportals.instello",
   },
   android: {
     edgeToEdgeEnabled: true,
@@ -25,6 +26,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       foregroundImage: "./assets/images/adaptive-icon.png",
       backgroundColor: "#ffffff",
     },
+    package: "com.jbportals.instello",
   },
   web: {
     bundler: "metro",

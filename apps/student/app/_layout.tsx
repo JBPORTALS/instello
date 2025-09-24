@@ -5,10 +5,12 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
 import { NAV_THEME } from "@/lib/theme";
+import { queryClient } from "@/utils/api";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { ThemeProvider } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { useColorScheme } from "nativewind";
 
 export {
@@ -21,11 +23,13 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider tokenCache={tokenCache}>
-      <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
-        <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-        <Routes />
-        <PortalHost />
-      </ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
+          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+          <Routes />
+          <PortalHost />
+        </ThemeProvider>
+      </QueryClientProvider>
     </ClerkProvider>
   );
 }
@@ -33,7 +37,7 @@ export default function RootLayout() {
 SplashScreen.preventAutoHideAsync();
 
 function Routes() {
-  const { isSignedIn, isLoaded } = useAuth();
+  const { isSignedIn, isLoaded, sessionClaims } = useAuth();
 
   React.useEffect(() => {
     if (isLoaded) {
@@ -67,7 +71,15 @@ function Routes() {
 
       {/* Screens only shown when the user IS signed in */}
       <Stack.Protected guard={isSignedIn}>
-        <Stack.Screen name="(home)" options={{ headerShown: false }} />
+        {/** Screens only shown when the user is NOT completed the onboarding process */}
+        <Stack.Protected guard={!sessionClaims?.metadata?.onBoardingCompleted}>
+          <Stack.Screen name="(onboarding)" options={{ headerShown: false }} />
+        </Stack.Protected>
+
+        {/** Screens only shown when the user Is completed the onboarding process */}
+        <Stack.Protected guard={!!sessionClaims?.metadata?.onBoardingCompleted}>
+          <Stack.Screen name="(home)" options={{ headerShown: false }} />
+        </Stack.Protected>
       </Stack.Protected>
 
       {/* Screens outside the guards are accessible to everyone (e.g. not found) */}

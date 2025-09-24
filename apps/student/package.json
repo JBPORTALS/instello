@@ -12,6 +12,7 @@
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.14",
     "@instello/api": "workspace:^",
+    "@react-native-community/datetimepicker": "^8.4.4",
     "@react-navigation/native": "^7.0.0",
     "@rn-primitives/avatar": "^1.2.0",
     "@rn-primitives/label": "^1.2.0",
@@ -49,7 +50,6 @@
     "react-native-web": "~0.21.1",
     "react-native-worklets": "0.5.1",
     "tailwind-merge": "^2.2.1",
-    "tailwindcss": "^3.4.14",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^5.0.8"
   },
@@ -61,7 +61,8 @@
     "@instello/tsconfig": "workspace:^",
     "@types/react": "catalog:react19",
     "prettier": "catalog:",
-    "prettier-plugin-tailwindcss": "^0.6.14",
+    "prettier-plugin-tailwindcss": "^0.5.14",
+    "tailwindcss": "^3.4.17",
     "typescript": "catalog:"
   },
   "private": true

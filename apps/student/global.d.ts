@@ -10,3 +10,11 @@ declare module "phosphor-react-native" {
     className?: string;
   }
 }
+
+declare global {
+  interface CustomJwtSessionClaims {
+    metadata?: {
+      onBoardingCompleted?: boolean;
+    };
+  }
+}

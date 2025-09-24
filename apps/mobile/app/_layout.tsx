@@ -1,7 +1,7 @@
 import "../global.css";
 
 import React, { useEffect } from "react";
-import { Slot, SplashScreen } from "expo-router";
+import { SplashScreen, Stack } from "expo-router";
 import { NAV_THEME } from "@/lib/theme";
 import { useColorScheme } from "@/lib/useColorScheme";
 import { queryClient } from "@/utils/api";
@@ -21,16 +21,17 @@ export {
 // Prevent the splash screen from auto-hiding before getting the color scheme.
 SplashScreen.preventAutoHideAsync();
 
+const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
+
+if (!publishableKey) {
+  throw new Error(
+    "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env",
+  );
+}
+
 export default function RootLayout() {
   const { colorScheme, setColorScheme, isDarkColorScheme } = useColorScheme();
-  const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY!;
   const [isColorSchemeLoaded, setIsColorSchemeLoaded] = React.useState(false);
-
-  if (!publishableKey) {
-    throw new Error(
-      "Missing Publishable Key. Please set EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY in your .env",
-    );
-  }
 
   useEffect(() => {
     (async () => {
@@ -52,15 +53,11 @@ export default function RootLayout() {
       setIsColorSchemeLoaded(true);
     })();
 
-    if (isColorSchemeLoaded) SplashScreen.hide();
+    if (isColorSchemeLoaded) SplashScreen.hideAsync();
   }, [isColorSchemeLoaded]);
 
   return (
-    <ClerkProvider
-      publishableKey={publishableKey}
-      tokenCache={tokenCache}
-      touchSession
-    >
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider
           value={isDarkColorScheme ? NAV_THEME.dark : NAV_THEME.light}
@@ -71,7 +68,7 @@ export default function RootLayout() {
               size: 16,
             }}
           >
-            <Slot />
+            <Stack screenOptions={{ headerShown: false }} />
             <PortalHost />
           </IconContext.Provider>
         </ThemeProvider>

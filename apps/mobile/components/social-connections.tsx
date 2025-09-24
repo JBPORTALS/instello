@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect } from "react";
-import { Image, Platform, View } from "react-native";
+import { Alert, Image, Platform, View } from "react-native";
 import * as AuthSession from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useSSO } from "@clerk/clerk-expo";
-import { OAuthStrategy } from "@clerk/types";
+import { ClerkAPIResponseError, OAuthStrategy } from "@clerk/types";
 import { useColorScheme } from "nativewind";
 
 import { Text } from "./ui/text";
@@ -56,11 +56,8 @@ export function SocialConnections() {
         redirectUrl: AuthSession.makeRedirectUri(),
       });
 
-      console.log("created session id", createdSessionId);
-
       // If sign in was successful, set the active session
       if (createdSessionId) {
-        console.log("O-Auth successfull");
         setActive!({
           session: createdSessionId,
           navigate: async ({ session }) => {
@@ -80,9 +77,11 @@ export function SocialConnections() {
         console.log("Missing steps to be done");
       }
     } catch (err: any) {
+      const clerkError = err as ClerkAPIResponseError;
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.log(JSON.stringify(err, null, 2));
+      Alert.alert(`Something went wrong!`, clerkError.errors[0]?.message);
     } finally {
       setIsLoading(false);
     }

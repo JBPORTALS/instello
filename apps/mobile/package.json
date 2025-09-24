@@ -10,7 +10,7 @@
     "clean": "rm -rf .expo .cache node_modules"
   },
   "dependencies": {
-    "@clerk/clerk-expo": "^2.15.0",
+    "@clerk/clerk-expo": "^2.15.2",
     "@instello/api": "workspace:^",
     "@instello/db": "workspace:^",
     "@mux/mux-data-react-native-video": "^0.19.3",
@@ -30,7 +30,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "date-fns": "^4.1.0",
-    "expo": "^54.0.10",
+    "expo": "54.0.10",
     "expo-auth-session": "~7.0.8",
     "expo-image": "~3.0.8",
     "expo-linear-gradient": "~15.0.7",

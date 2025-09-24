@@ -12,7 +12,7 @@ export const video = lmsPgTable("video", (d) => ({
   chapterId: d
     .text()
     .notNull()
-    .references(() => chapter.id),
+    .references(() => chapter.id, { onDelete: "cascade" }),
   title: d.varchar({ length: 100 }).notNull(),
   description: d.varchar({ length: 5000 }),
   uploadId: d.text().notNull(),

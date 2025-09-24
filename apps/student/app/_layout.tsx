@@ -79,6 +79,7 @@ function Routes() {
         {/** Screens only shown when the user Is completed the onboarding process */}
         <Stack.Protected guard={!!sessionClaims?.metadata?.onBoardingCompleted}>
           <Stack.Screen name="(home)" options={{ headerShown: false }} />
+          <Stack.Screen name="channel" options={{ headerShown: false }} />
         </Stack.Protected>
       </Stack.Protected>
 

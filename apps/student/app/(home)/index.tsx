@@ -1,6 +1,7 @@
 import React from "react";
-import { ScrollView, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
+import { Link } from "expo-router";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -20,38 +21,43 @@ function ChannelCard({
   className?: string;
 }) {
   return (
-    // <Link href={`/channel?channelId=${channel.id}`}>
-    <Card key={channel.id} className={cn("w-40 gap-3 border-0 p-2", className)}>
-      <Image
-        source={{
-          uri: `https://${process.env.EXPO_PUBLIC_UPLOADTHING_PROJECT_ID}.ufs.sh/f/${channel.thumbneilId}`,
-        }}
-        style={{
-          width: "auto",
-          height: "auto",
-          borderRadius: 8,
-          aspectRatio: 16 / 10,
-        }}
-        contentFit="cover"
-      />
-      <CardContent className="w-full flex-1 gap-0.5 px-0">
-        <CardTitle numberOfLines={1} className="text-sm">
-          {channel.title}
-        </CardTitle>
-        <Text
-          variant="muted"
-          className="text-muted-foreground text-xs font-semibold"
+    <Link href={`/channel?channelId=${channel.id}`} asChild>
+      <TouchableOpacity>
+        <Card
+          key={channel.id}
+          className={cn("w-40 gap-3 border-0 p-2", className)}
         >
-          {channel.numberOfChapters} Chapters
-        </Text>
-        <Text className="text-muted-foreground text-xs">
-          by {channel.createdByClerkUser.firstName}{" "}
-          {channel.createdByClerkUser.lastName} ·{" "}
-          {formatDate(channel.createdAt, "MMM yyyy")}
-        </Text>
-      </CardContent>
-    </Card>
-    // </Link>
+          <Image
+            source={{
+              uri: `https://${process.env.EXPO_PUBLIC_UPLOADTHING_PROJECT_ID}.ufs.sh/f/${channel.thumbneilId}`,
+            }}
+            style={{
+              width: "auto",
+              height: "auto",
+              borderRadius: 8,
+              aspectRatio: 16 / 10,
+            }}
+            contentFit="cover"
+          />
+          <CardContent className="w-full flex-1 gap-0.5 px-0">
+            <CardTitle numberOfLines={1} className="text-sm">
+              {channel.title}
+            </CardTitle>
+            <Text
+              variant="muted"
+              className="text-muted-foreground text-xs font-semibold"
+            >
+              {channel.numberOfChapters} Chapters
+            </Text>
+            <Text className="text-muted-foreground text-xs">
+              by {channel.createdByClerkUser.firstName}{" "}
+              {channel.createdByClerkUser.lastName} ·{" "}
+              {formatDate(channel.createdAt, "MMM yyyy")}
+            </Text>
+          </CardContent>
+        </Card>
+      </TouchableOpacity>
+    </Link>
   );
 }
 

@@ -7,8 +7,8 @@ import { StatusBar } from "expo-status-bar";
 import { ChannelLessonsList } from "@/components/channel-lessons-list";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import ExapandableText from "@/components/ui/expandable-text";
 import { Icon } from "@/components/ui/icon";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { formatDuration } from "@/lib/utils";
 import { trpc } from "@/utils/api";
@@ -129,9 +129,9 @@ export default function ChannelDetailsScreen() {
           </View>
 
           {channel?.description && (
-            <Text variant={"muted"} numberOfLines={2}>
+            <ExapandableText variant={"muted"}>
               {channel.description}
-            </Text>
+            </ExapandableText>
           )}
 
           <View className="flex-row items-center gap-2.5 py-1.5">

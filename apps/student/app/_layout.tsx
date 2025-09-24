@@ -80,6 +80,14 @@ function Routes() {
         <Stack.Protected guard={!!sessionClaims?.metadata?.onBoardingCompleted}>
           <Stack.Screen name="(home)" options={{ headerShown: false }} />
           <Stack.Screen name="channel" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="video"
+            options={{
+              title: "Watching Now",
+              headerTitleAlign: "center",
+              presentation: "fullScreenModal",
+            }}
+          />
         </Stack.Protected>
       </Stack.Protected>
 

@@ -7,7 +7,7 @@
     "android": "expo start -c --android",
     "ios": "expo start -c --ios",
     "web": "expo start -c --web",
-    "clean": "rm -rf .expo node_modules"
+    "clean": "rm -rf .cache .expo node_modules"
   },
   "dependencies": {
     "@clerk/clerk-expo": "^2.14.14",

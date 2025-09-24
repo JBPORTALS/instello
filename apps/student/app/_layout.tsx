@@ -76,9 +76,11 @@ function Routes() {
 }
 
 const SIGN_IN_SCREEN_OPTIONS = {
-  headerShown: false,
-  title: "Sign in",
-};
+  presentation: "modal",
+  title: "",
+  headerTransparent: true,
+  gestureEnabled: false,
+} as const;
 
 const SIGN_UP_SCREEN_OPTIONS = {
   presentation: "modal",

@@ -1,39 +1,35 @@
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useSSO, type StartSSOFlowParams } from '@clerk/clerk-expo';
-import * as AuthSession from 'expo-auth-session';
-import { router } from 'expo-router';
-import * as WebBrowser from 'expo-web-browser';
-import { useColorScheme } from 'nativewind';
-import * as React from 'react';
-import { Image, Platform, View, type ImageSourcePropType } from 'react-native';
+import type { StartSSOFlowParams } from "@clerk/clerk-expo";
+import type { ImageSourcePropType } from "react-native";
+import * as React from "react";
+import { Image, Platform, View } from "react-native";
+import * as AuthSession from "expo-auth-session";
+import { router } from "expo-router";
+import * as WebBrowser from "expo-web-browser";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useSSO } from "@clerk/clerk-expo";
+import { useColorScheme } from "nativewind";
+
+import { Text } from "./ui/text";
 
 WebBrowser.maybeCompleteAuthSession();
 
 type SocialConnectionStrategy = Extract<
-  StartSSOFlowParams['strategy'],
-  'oauth_google' | 'oauth_github' | 'oauth_apple'
+  StartSSOFlowParams["strategy"],
+  "oauth_google" | "oauth_github" | "oauth_apple"
 >;
 
 const SOCIAL_CONNECTION_STRATEGIES: {
   type: SocialConnectionStrategy;
   source: ImageSourcePropType;
   useTint?: boolean;
+  title: string;
 }[] = [
   {
-    type: 'oauth_apple',
-    source: { uri: 'https://img.clerk.com/static/apple.png?width=160' },
-    useTint: true,
-  },
-  {
-    type: 'oauth_google',
-    source: { uri: 'https://img.clerk.com/static/google.png?width=160' },
+    type: "oauth_google",
+    source: { uri: "https://img.clerk.com/static/google.png?width=160" },
     useTint: false,
-  },
-  {
-    type: 'oauth_github',
-    source: { uri: 'https://img.clerk.com/static/github.png?width=160' },
-    useTint: true,
+    title: "Continue with Google",
   },
 ];
 
@@ -81,14 +77,23 @@ export function SocialConnections() {
             variant="outline"
             size="sm"
             className="sm:flex-1"
-            onPress={onSocialLoginPress(strategy.type)}>
+            onPress={onSocialLoginPress(strategy.type)}
+          >
             <Image
-              className={cn('size-4', strategy.useTint && Platform.select({ web: 'dark:invert' }))}
+              className={cn(
+                "size-4",
+                strategy.useTint && Platform.select({ web: "dark:invert" }),
+              )}
               tintColor={Platform.select({
-                native: strategy.useTint ? (colorScheme === 'dark' ? 'white' : 'black') : undefined,
+                native: strategy.useTint
+                  ? colorScheme === "dark"
+                    ? "white"
+                    : "black"
+                  : undefined,
               })}
               source={strategy.source}
             />
+            <Text>{strategy.title}</Text>
           </Button>
         );
       })}

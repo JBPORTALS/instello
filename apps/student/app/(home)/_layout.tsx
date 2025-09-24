@@ -1,5 +1,6 @@
+import { TouchableOpacity } from "react-native";
 import { Image } from "expo-image";
-import { Tabs } from "expo-router";
+import { Link, Tabs } from "expo-router";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
@@ -34,14 +35,18 @@ export default function HomeLayout() {
           ),
 
           headerRight: () => (
-            <Avatar alt="User Image" className="mr-4">
-              <AvatarImage source={{ uri: user?.imageUrl }} />
-              <AvatarFallback>
-                <Text className="font-semibold">
-                  {user?.firstName?.charAt(0)}
-                </Text>
-              </AvatarFallback>
-            </Avatar>
+            <Link asChild href={"/profile"}>
+              <TouchableOpacity>
+                <Avatar alt="User Image" className="mr-4">
+                  <AvatarImage source={{ uri: user?.imageUrl }} />
+                  <AvatarFallback>
+                    <Text className="font-semibold">
+                      {user?.firstName?.charAt(0)}
+                    </Text>
+                  </AvatarFallback>
+                </Avatar>
+              </TouchableOpacity>
+            </Link>
           ),
         }}
       />

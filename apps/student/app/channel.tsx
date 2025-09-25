@@ -205,17 +205,45 @@ function ChannelDetailsSection() {
 
 function SubscribeButton() {
   const { channelId } = useLocalSearchParams<{ channelId: string }>();
-
-  return (
-    <Link asChild href={`/(subscribe)?channelId=${channelId}`}>
-      <Button size={"sm"} className="rounded-full">
-        <Icon
-          as={CrownIcon}
-          weight="duotone"
-          className="text-primary-foreground"
-        />
-        <Text className="text-xs">Subscribe to Watch</Text>
-      </Button>
-    </Link>
+  const { data, isLoading } = useQuery(
+    trpc.lms.subscription.getByChannelId.queryOptions({ channelId }),
   );
+
+  if (isLoading) return <Skeleton className={"h-9 w-32 rounded-full"} />;
+
+  const renderSubscriptionButotn = () => {
+    switch (data?.status) {
+      case "expired":
+        return (
+          <Link asChild href={`/(subscribe)?channelId=${channelId}`}>
+            <Button size={"sm"} variant={"outline"} className="rounded-full">
+              <Text className="text-xs">Renew Subscription</Text>
+            </Button>
+          </Link>
+        );
+
+      case "subscribed":
+        return (
+          <Button size={"sm"} variant={"secondary"} className="rounded-full">
+            <Text className="text-xs">Subscribed</Text>
+          </Button>
+        );
+
+      default:
+        return (
+          <Link asChild href={`/(subscribe)?channelId=${channelId}`}>
+            <Button size={"sm"} className="rounded-full">
+              <Icon
+                as={CrownIcon}
+                weight="duotone"
+                className="text-primary-foreground"
+              />
+              <Text className="text-xs">Subscribe to Watch</Text>
+            </Button>
+          </Link>
+        );
+    }
+  };
+
+  return <>{renderSubscriptionButotn()}</>;
 }

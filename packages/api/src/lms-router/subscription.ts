@@ -1,6 +1,6 @@
 import { couponRedemption, subscription } from "@instello/db/lms";
 import { TRPCError } from "@trpc/server";
-import { addDays, endOfDay } from "date-fns";
+import { addDays, endOfDay, isWithinInterval } from "date-fns";
 import { z } from "zod/v4";
 
 import { protectedProcedure } from "../trpc";
@@ -90,4 +90,37 @@ export const subscriptionRouter = {
         },
       }),
     ),
+
+  getByChannelId: protectedProcedure
+    .input(z.object({ channelId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const userSubscription = await ctx.db.query.subscription.findFirst({
+        where: (t, { eq, and }) =>
+          and(
+            eq(t.clerkUserId, ctx.auth.userId),
+            eq(t.channelId, input.channelId),
+          ),
+
+        orderBy: (t, { desc }) => desc(t.createdAt),
+      });
+
+      let status: "subscribed" | "expired" | undefined;
+
+      if (
+        userSubscription &&
+        isWithinInterval(new Date(), {
+          start: userSubscription.startDate,
+          end: userSubscription.endDate,
+        })
+      ) {
+        status = "subscribed";
+      } else {
+        status = "expired";
+      }
+
+      return {
+        ...userSubscription,
+        status,
+      };
+    }),
 };

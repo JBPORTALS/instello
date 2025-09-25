@@ -52,7 +52,10 @@ export function NavChannels() {
       {channels.map((item) => (
         <DropdownMenu key={item.id}>
           <SidebarMenuItem>
-            <SidebarMenuButton isActive={pathname === `/c/${item.id}`} asChild>
+            <SidebarMenuButton
+              isActive={pathname.startsWith(`/c/${item.id}`)}
+              asChild
+            >
               <Link href={`/c/${item.id}`}>
                 {pathname === `/c/${item.id}` ? (
                   <FolderOpenIcon weight="duotone" />

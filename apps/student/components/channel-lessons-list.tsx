@@ -5,9 +5,15 @@ import { formatDuration } from "@/lib/utils";
 import { trpc } from "@/utils/api";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
-import { ClockIcon } from "phosphor-react-native";
+import { ClockIcon, LockLaminatedIcon } from "phosphor-react-native";
 
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 import { Icon } from "./ui/icon";
 import { Skeleton } from "./ui/skeleton";
 import { Text } from "./ui/text";
@@ -79,6 +85,7 @@ export function ChannelLessonsList({ channelId }: { channelId: string }) {
             <Link
               asChild
               href={`/video?playbackId=${item.playbackId}&videoId=${item.id}`}
+              disabled={!item.canWatch}
             >
               <TouchableOpacity>
                 <Card className="bg-accent/40 flex-row gap-2 p-2">
@@ -118,6 +125,15 @@ export function ChannelLessonsList({ channelId }: { channelId: string }) {
                       </Text>
                     </View>
                   </CardHeader>
+                  {!item.canWatch && (
+                    <CardFooter>
+                      <Icon
+                        weight="duotone"
+                        as={LockLaminatedIcon}
+                        className="text-muted-foreground"
+                      />
+                    </CardFooter>
+                  )}
                 </Card>
               </TouchableOpacity>
             </Link>

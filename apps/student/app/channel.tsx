@@ -2,7 +2,7 @@ import React from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
-import { useLocalSearchParams, useRouter } from "expo-router";
+import { Link, useLocalSearchParams, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { ChannelLessonsList } from "@/components/channel-lessons-list";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -19,6 +19,7 @@ import {
   ArrowLeftIcon,
   CardsThreeIcon,
   ClockIcon,
+  CrownIcon,
 } from "phosphor-react-native";
 
 export default function ChannelDetailsScreen() {
@@ -177,25 +178,44 @@ function ChannelDetailsSection() {
             </ExapandableText>
           )}
 
-          <View className="flex-row items-center gap-2.5 py-1.5">
-            <Avatar
-              alt={`${channel?.createdByClerkUser.firstName}'s Logo`}
-              className="size-6"
-            >
-              <AvatarImage
-                source={{ uri: channel?.createdByClerkUser.imageUrl }}
-              />
-              <AvatarFallback>
-                <Text>{channel?.createdByClerkUser.firstName?.charAt(0)}</Text>
-              </AvatarFallback>
-            </Avatar>
-            <Text variant={"small"}>
-              {channel?.createdByClerkUser.firstName}{" "}
-              {channel?.createdByClerkUser.lastName}
-            </Text>
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center gap-2.5 py-1.5">
+              <Avatar alt={`${channel?.createdByClerkUser.firstName}'s Logo`}>
+                <AvatarImage
+                  source={{ uri: channel?.createdByClerkUser.imageUrl }}
+                />
+                <AvatarFallback>
+                  <Text>
+                    {channel?.createdByClerkUser.firstName?.charAt(0)}
+                  </Text>
+                </AvatarFallback>
+              </Avatar>
+              <Text variant={"small"}>
+                {channel?.createdByClerkUser.firstName}{" "}
+                {channel?.createdByClerkUser.lastName}
+              </Text>
+            </View>
+            <SubscribeButton />
           </View>
         </View>
       )}
     </>
+  );
+}
+
+function SubscribeButton() {
+  const { channelId } = useLocalSearchParams<{ channelId: string }>();
+
+  return (
+    <Link asChild href={`/(subscribe)?channelId=${channelId}`}>
+      <Button size={"sm"} className="rounded-full">
+        <Icon
+          as={CrownIcon}
+          weight="duotone"
+          className="text-primary-foreground"
+        />
+        <Text className="text-xs">Subscribe to Watch</Text>
+      </Button>
+    </Link>
   );
 }

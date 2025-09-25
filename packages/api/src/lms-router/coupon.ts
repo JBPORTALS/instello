@@ -1,10 +1,13 @@
-import { eq } from "@instello/db";
+import { countDistinct, eq } from "@instello/db";
 import {
   coupon,
+  couponRedemption,
   couponTarget,
   CreateCouponSchema,
   CreateCouponTargetSchema,
 } from "@instello/db/lms";
+import { TRPCError } from "@trpc/server";
+import { endOfDay, isWithinInterval, startOfDay } from "date-fns";
 import z from "zod/v4";
 
 import { protectedProcedure } from "../trpc";
@@ -31,6 +34,96 @@ export const couponRouter = {
         orderBy: (t, { desc }) => [desc(t.createdAt), desc(t.updatedAt)],
       }),
     ),
+
+  check: protectedProcedure
+    .input(z.object({ code: z.string().trim(), channelId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.db.transaction(async (tx) => {
+        //1. Check weather coupon exists or not
+        const channelCoupon = await tx.query.coupon.findFirst({
+          where: (t, { eq, and }) =>
+            and(eq(t.channelId, input.channelId), eq(t.code, input.code)),
+        });
+
+        if (!channelCoupon)
+          throw new TRPCError({
+            message: `Enter valid coupon code`,
+            code: "BAD_REQUEST",
+          });
+
+        // 2. check weather coupon validity existis or not
+        const validFrom = startOfDay(channelCoupon.validFrom);
+        const validTo = endOfDay(channelCoupon.validTo);
+
+        if (
+          !isWithinInterval(new Date(Date.now()), {
+            start: validFrom,
+            end: validTo,
+          })
+        )
+          throw new TRPCError({
+            message: "Coupon validity expired",
+            code: "BAD_REQUEST",
+          });
+
+        // 3. Check for coupon's maximum redemption of the coupon
+        const redemptionCount = await tx
+          .select({ count: countDistinct(couponRedemption.clerkUserId) })
+          .from(couponRedemption)
+          .where(eq(couponRedemption.couponId, channelCoupon.id))
+          .then((r) => r[0]?.count ?? 0);
+
+        if (redemptionCount >= channelCoupon.maxRedemptions)
+          throw new TRPCError({
+            message: "Coupon has been reached it's maximum claims",
+            code: "BAD_REQUEST",
+          });
+
+        // 4. Check weather user has already claimed this coupon
+        const redemption = await tx.query.couponRedemption.findFirst({
+          where: (t, { eq, and }) =>
+            and(
+              eq(t.clerkUserId, ctx.auth.userId),
+              eq(t.couponId, channelCoupon.id),
+            ),
+        });
+
+        if (redemption)
+          throw new TRPCError({
+            message: "Coupon already been used",
+            code: "BAD_REQUEST",
+          });
+
+        if (channelCoupon.type == "general") return channelCoupon;
+
+        // 5. If the coupon type is TARGETED, then look for targets list to validate
+        // the usage of this coupon by the current user
+        const emailAddress = (await ctx.clerk.users.getUser(ctx.auth.userId))
+          .emailAddresses[0]?.emailAddress;
+
+        if (!emailAddress)
+          throw new TRPCError({
+            message: "Can't able to complete this request right now",
+            cause: {
+              message: `Clerk couldn't able to get the email address for the user`,
+            },
+            code: "INTERNAL_SERVER_ERROR",
+          });
+
+        const userCouponTarget = await tx.query.couponTarget.findFirst({
+          where: (t, { eq, and }) =>
+            and(eq(t.email, emailAddress), eq(t.couponId, channelCoupon.id)),
+        });
+
+        if (!userCouponTarget)
+          throw new TRPCError({
+            message: "Your not elligible to use this coupon, sorry",
+            code: "BAD_REQUEST",
+          });
+
+        return channelCoupon;
+      });
+    }),
 
   delete: protectedProcedure
     .input(z.object({ couponId: z.string() }))

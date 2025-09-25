@@ -50,7 +50,7 @@ function Routes() {
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShadowVisible: false }}>
       {/* Screens only shown when the user is NOT signed in */}
       <Stack.Protected guard={!isSignedIn}>
         <Stack.Screen
@@ -81,6 +81,27 @@ function Routes() {
           <Stack.Screen name="(home)" options={{ headerShown: false }} />
           <Stack.Screen name="profile" options={{ title: "My Profile" }} />
           <Stack.Screen name="channel" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(subscribe)/index"
+            options={{
+              presentation: "modal",
+              title: "Subscribe Now",
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="(subscribe)/apply-coupon"
+            options={{
+              headerShown: false,
+              animation: "fade",
+            }}
+          />
+          <Stack.Screen
+            name="(subscribe)/coupon-success"
+            options={{
+              animation: "fade",
+            }}
+          />
           <Stack.Screen
             name="video"
             options={{

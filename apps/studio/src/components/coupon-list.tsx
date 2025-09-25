@@ -8,10 +8,15 @@ import { Badge } from "@instello/ui/components/badge";
 import { Button } from "@instello/ui/components/button";
 import { Card, CardContent, CardHeader } from "@instello/ui/components/card";
 import { Skeleton } from "@instello/ui/components/skeleton";
-import { DotsThreeIcon } from "@phosphor-icons/react";
+import {
+  CalendarIcon,
+  CrownIcon,
+  DotsThreeIcon,
+  GiftIcon,
+  UsersIcon,
+} from "@phosphor-icons/react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarIcon, ClockIcon, GiftIcon, UsersIcon } from "lucide-react";
 
 type Coupon = RouterOutputs["lms"]["coupon"]["list"][number];
 
@@ -53,7 +58,7 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
                   {coupon.type === "general" ? "General" : "Targeted"}
                 </Badge>
               </div>
-              <div className="text-foreground text-2xl font-bold tracking-wider">
+              <div className="text-foreground font-mono text-2xl font-bold tracking-wider">
                 {coupon.code}
               </div>
             </div>
@@ -63,7 +68,7 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
         <CardContent className="pt-0">
           <div className="space-y-3">
             <div className="text-muted-foreground flex items-center gap-2 text-sm">
-              <CalendarIcon className="h-4 w-4" />
+              <CalendarIcon weight="duotone" className="h-4 w-4" />
               <span>
                 Valid: {formatDate(coupon.validFrom)} -{" "}
                 {formatDate(coupon.validTo)}
@@ -71,12 +76,12 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
             </div>
 
             <div className="text-muted-foreground flex items-center gap-2 text-sm">
-              <ClockIcon className="h-4 w-4" />
+              <CrownIcon weight="duotone" className="h-4 w-4" />
               <span>{coupon.subscriptionDurationDays} days subscription</span>
             </div>
 
             <div className="text-muted-foreground flex items-center gap-2 text-sm">
-              <UsersIcon className="h-4 w-4" />
+              <UsersIcon weight="duotone" className="h-4 w-4" />
               <span>Max {coupon.maxRedemptions} redemptions</span>
             </div>
           </div>
@@ -108,7 +113,10 @@ function EmptyState() {
   return (
     <div className="col-span-full flex flex-col items-center justify-center py-12">
       <div className="bg-muted mb-4 rounded-full p-6">
-        <GiftIcon className="text-muted-foreground h-12 w-12" />
+        <GiftIcon
+          weight="duotone"
+          className="text-muted-foreground h-12 w-12"
+        />
       </div>
       <h3 className="mb-2 text-lg font-semibold">No coupons yet</h3>
       <p className="text-muted-foreground max-w-sm text-center">

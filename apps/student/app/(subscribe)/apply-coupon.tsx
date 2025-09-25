@@ -1,13 +1,33 @@
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
+import { View } from "react-native";
 import { Image } from "expo-image";
-import { Icon } from "@/components/ui/icon";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Text } from "@/components/ui/text";
+import { trpc } from "@/utils/api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import LottieView from "lottie-react-native";
-import { useColorScheme } from "nativewind";
 
 export default function ApplyCouponScreen() {
-  const { colorScheme } = useColorScheme();
+  const { couponId } = useLocalSearchParams<{ couponId: string }>();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { mutate: createSubscription } = useMutation(
+    trpc.lms.subscription.create.mutationOptions({
+      async onSuccess(data) {
+        await queryClient.invalidateQueries(trpc.lms.channel.pathFilter());
+        await queryClient.invalidateQueries(trpc.lms.video.pathFilter());
+        router.replace(`/coupon-success?subscriptionId=${data.id}`);
+      },
+      onError(error) {
+        router.replace(`/coupon-success?errorMessage=${error.message}`);
+      },
+    }),
+  );
+
+  React.useEffect(() => {
+    createSubscription({ couponId });
+  }, []);
+
   return (
     <View className="flex-1 items-center justify-between py-20">
       <Image

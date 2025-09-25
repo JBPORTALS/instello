@@ -99,7 +99,7 @@ function Routes() {
           <Stack.Screen
             name="(subscribe)/coupon-success"
             options={{
-              animation: "fade",
+              title: "",
             }}
           />
           <Stack.Screen

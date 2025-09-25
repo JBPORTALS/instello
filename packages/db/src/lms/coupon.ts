@@ -1,4 +1,5 @@
 import { relations } from "drizzle-orm";
+import { uniqueIndex } from "drizzle-orm/pg-core";
 import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
@@ -21,14 +22,18 @@ export const coupon = lmsPgTable("coupon", (d) => ({
 }));
 
 // If coupon type will be targeted then the users will defined in here
-export const couponTarget = lmsPgTable("coupon_target", (d) => ({
-  ...initialColumns,
-  couponId: d
-    .text()
-    .notNull()
-    .references(() => coupon.id, { onDelete: "cascade" }),
-  email: d.text().notNull(),
-}));
+export const couponTarget = lmsPgTable(
+  "coupon_target",
+  (d) => ({
+    ...initialColumns,
+    couponId: d
+      .text()
+      .notNull()
+      .references(() => coupon.id, { onDelete: "cascade" }),
+    email: d.text().notNull(),
+  }),
+  (self) => [uniqueIndex().on(self.couponId, self.email)],
+);
 
 // Coupon redemption history
 export const couponRedemption = lmsPgTable("coupon_redemption", (d) => ({
@@ -43,14 +48,27 @@ export const couponRedemption = lmsPgTable("coupon_redemption", (d) => ({
 export const CreateCouponSchema = createInsertSchema(coupon, {
   channelId: z.string().min(2, "Channel ID required"),
   code: z.string().min(2, "Coupon code is required"),
+})
+  .omit({
+    id: true,
+    validFrom: true,
+    validTo: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .and(z.object({ valid: z.object({ from: z.date(), to: z.date() }) }));
+
+export const UpdateCouponSchema = createUpdateSchema(coupon, {
+  id: z.string().min(2, "Coupon ID required"),
 }).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
 });
 
-export const UpdateCouponSchema = createUpdateSchema(coupon, {
-  id: z.string().min(2, "Coupon ID required"),
+export const CreateCouponTargetSchema = createInsertSchema(couponTarget, {
+  couponId: z.string().min(2, "CouponId ID required"),
+  email: z.string().min(2, "Email of student is required"),
 }).omit({
   id: true,
   createdAt: true,

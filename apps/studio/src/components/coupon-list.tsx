@@ -8,6 +8,7 @@ import { Badge } from "@instello/ui/components/badge";
 import { Button } from "@instello/ui/components/button";
 import { Card, CardContent, CardHeader } from "@instello/ui/components/card";
 import { Skeleton } from "@instello/ui/components/skeleton";
+import { cn } from "@instello/ui/lib/utils";
 import {
   CalendarIcon,
   CrownIcon,
@@ -29,9 +30,14 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
 
   return (
     <Card
-      className={`bg-accent relative overflow-hidden border-0 transition-all hover:shadow-lg ${
-        isExpired ? "opacity-60" : isActive ? "ring-primary" : ""
-      }`}
+      className={cn(
+        `bg-accent relative overflow-hidden border-0 transition-all hover:shadow-lg`,
+        isExpired
+          ? "bg-accent/50 border border-dashed shadow-none"
+          : isActive
+            ? "ring-primary"
+            : "",
+      )}
     >
       {/* Coupon design with diagonal cut */}
       <div className="relative">
@@ -45,11 +51,7 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
               <div className="mb-2 flex items-center gap-2">
                 <Badge
                   variant={
-                    isActive
-                      ? "default"
-                      : isExpired
-                        ? "destructive"
-                        : "secondary"
+                    isActive ? "default" : isExpired ? "outline" : "secondary"
                   }
                 >
                   {isActive ? "Active" : isExpired ? "Expired" : "Upcoming"}

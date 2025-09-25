@@ -12,7 +12,12 @@ export default function HomeLayout() {
   const { user } = useUser();
 
   return (
-    <Tabs screenOptions={{ headerShadowVisible: false }}>
+    <Tabs
+      screenOptions={{
+        headerShadowVisible: false,
+        tabBarStyle: { display: "none" },
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{

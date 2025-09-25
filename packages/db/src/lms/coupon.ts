@@ -47,7 +47,10 @@ export const couponRedemption = lmsPgTable("coupon_redemption", (d) => ({
 
 export const CreateCouponSchema = createInsertSchema(coupon, {
   channelId: z.string().min(2, "Channel ID required"),
-  code: z.string().min(2, "Coupon code is required"),
+  code: z
+    .string()
+    .min(1, "Coupon code required")
+    .transform((val) => val.toUpperCase()),
 })
   .omit({
     id: true,
@@ -60,6 +63,10 @@ export const CreateCouponSchema = createInsertSchema(coupon, {
 
 export const UpdateCouponSchema = createUpdateSchema(coupon, {
   id: z.string().min(2, "Coupon ID required"),
+  code: z
+    .string()
+    .min(1, "Coupon code required")
+    .transform((val) => val.toUpperCase()),
 }).omit({
   id: true,
   createdAt: true,

@@ -184,7 +184,14 @@ export function CreateCouponDialog({
                     <FormLabel>Set max redemptions</FormLabel>
                     <FormControl>
                       <div className="relative inline-flex w-40 rounded-md">
-                        <Input {...field} className="pr-10" />
+                        <Input
+                          {...field}
+                          type="number"
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value))
+                          }
+                          className="pr-10"
+                        />
                         <div className="bg-muted text-muted-foreground absolute right-0 flex h-full items-center justify-center rounded-e-md border px-2.5 text-sm">
                           Students
                         </div>
@@ -206,7 +213,14 @@ export function CreateCouponDialog({
                     <FormLabel>Set subscription days</FormLabel>
                     <FormControl>
                       <div className="relative inline-flex w-40 rounded-md">
-                        <Input {...field} className="pr-10" />
+                        <Input
+                          type="number"
+                          {...field}
+                          onChange={(e) =>
+                            field.onChange(parseInt(e.target.value))
+                          }
+                          className="pr-10"
+                        />
                         <div className="bg-muted text-muted-foreground absolute right-0 flex h-full items-center justify-center rounded-e-md border px-2.5 text-sm">
                           Days
                         </div>

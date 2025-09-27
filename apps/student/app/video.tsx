@@ -7,6 +7,7 @@ import {
   Modal,
   Pressable,
   StyleSheet,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
 import { useEvent } from "expo";
@@ -89,6 +90,20 @@ function VideoControlsOverlay({
 }) {
   const [sliding, setSliding] = React.useState(false);
   const [slidingTime, setSlidingTime] = React.useState(player.currentTime);
+  const [showControls, setShowControls] = React.useState(true);
+  const controlsTimeout = React.useRef<NodeJS.Timeout>(null);
+
+  const startTimeToHideControls = () => {
+    // Clear any existing timeout before setting a new one
+    if (controlsTimeout.current) {
+      clearTimeout(controlsTimeout.current);
+    }
+    // Set a new timeout to hide the controls after 5 seconds
+    controlsTimeout.current = setTimeout(() => {
+      setShowControls(false);
+      controlsTimeout.current = null; // Reset the timeout reference
+    }, 5000) as unknown as NodeJS.Timeout;
+  };
 
   const enterFullscreen = async () => {
     await ScreenOrientation.lockAsync(
@@ -104,6 +119,13 @@ function VideoControlsOverlay({
     onChangeFullScreen(false);
   };
 
+  const toggleShowControls = () => {
+    setShowControls(!showControls);
+    if (controlsTimeout.current && showControls)
+      clearTimeout(controlsTimeout.current);
+    else startTimeToHideControls();
+  };
+
   React.useEffect(() => {
     const sub = BackHandler.addEventListener("hardwareBackPress", () => {
       if (fullscreen) {
@@ -111,6 +133,9 @@ function VideoControlsOverlay({
         return true;
       }
     });
+
+    setShowControls(true);
+    // startTimeToHideControls();
 
     return () => sub.remove();
   }, [fullscreen]);
@@ -124,91 +149,109 @@ function VideoControlsOverlay({
   });
 
   return (
-    <View style={styles.overlay}>
-      {/** Controls Header*/}
-      <View className="absolute left-4 right-4 top-4">
-        <Button
-          size={"icon"}
-          className={cn("rounded-full bg-black/40 p-5")}
-          variant={"ghost"}
-          onPress={() => (fullscreen ? exitFullscreen() : router.back())}
+    <TouchableWithoutFeedback onPress={() => toggleShowControls()}>
+      <View style={[styles.overlay]}>
+        {/** Container */}
+        <View
+          className="h-full w-full flex-1  items-center justify-between bg-black/20 px-2.5 py-4"
+          style={{ opacity: showControls ? 100 : 0 }}
         >
-          <Icon
-            weight="bold"
-            as={fullscreen ? ArrowLeftIcon : CaretDownIcon}
-            color="white"
-            size={18}
-          />
-        </Button>
-      </View>
+          {/** Controls Header*/}
+          <View className="w-full flex-row">
+            <Button
+              size={"icon"}
+              className={cn("rounded-full bg-black/40 p-5")}
+              variant={"ghost"}
+              onPress={() => (fullscreen ? exitFullscreen() : router.back())}
+            >
+              <Icon
+                weight="bold"
+                as={fullscreen ? ArrowLeftIcon : CaretDownIcon}
+                color="white"
+                size={18}
+              />
+            </Button>
+          </View>
 
-      {/** Play Puase & Loading state */}
-      <>
-        {player.status == "loading" ? (
-          <ActivityIndicator size={52} color={"white"} />
-        ) : (
-          <Button
-            size={"icon"}
-            className={cn("rounded-full bg-black/40 p-8")}
-            variant={"ghost"}
-            onPress={() => (player.playing ? player.pause() : player.play())}
+          {/** Play Puase & Loading state */}
+          <>
+            {player.status == "loading" ? (
+              <ActivityIndicator size={52} color={"white"} />
+            ) : (
+              <Button
+                size={"icon"}
+                className={cn("rounded-full bg-black/40 p-8")}
+                variant={"ghost"}
+                onPress={() =>
+                  player.playing ? player.pause() : player.play()
+                }
+              >
+                <Icon
+                  as={player.playing ? PauseIcon : PlayIcon}
+                  size={40}
+                  color="white"
+                  weight="fill"
+                />
+              </Button>
+            )}
+          </>
+
+          {/** Controls footer */}
+          <View
+            className={cn(
+              "w-full flex-row items-center justify-between",
+              fullscreen && "bottom-4",
+            )}
           >
-            <Icon
-              as={player.playing ? PauseIcon : PlayIcon}
-              size={40}
-              color="white"
-              weight="fill"
-            />
-          </Button>
-        )}
-      </>
-
-      {/** Sliding timespamp preview */}
-      {sliding && (
-        <View className="absolute bottom-8 rounded-full bg-black/30 px-2 py-0.5 backdrop-blur-sm">
-          <Text className="text-sm text-white">{formatTime(slidingTime)}</Text>
+            <Text className="rounded-full bg-black/20 px-1 py-0.5 text-xs text-white">
+              {formatTime(player.currentTime)} / {formatTime(player.duration)}
+            </Text>
+            <Button
+              size={"icon"}
+              className="rounded-full bg-black/40 p-5"
+              variant={"ghost"}
+              onPress={() =>
+                fullscreen ? exitFullscreen() : enterFullscreen()
+              }
+            >
+              <Icon
+                weight="bold"
+                as={fullscreen ? MinusIcon : ExpandIcon}
+                color="white"
+                size={18}
+              />
+            </Button>
+          </View>
         </View>
-      )}
 
-      {/** Controls footer */}
-      <View
-        className={cn(
-          "absolute bottom-0 w-full items-center",
-          fullscreen && "bottom-4",
+        {/** Sliding timespamp preview */}
+        {sliding && (
+          <View className="absolute bottom-16 rounded-full bg-black/30 px-2 py-0.5 backdrop-blur-sm">
+            <Text className="text-sm text-white">
+              {formatTime(slidingTime)}
+            </Text>
+          </View>
         )}
-      >
-        <View className=" w-full flex-1 flex-row items-center justify-between px-4 py-3.5">
-          <Text className="rounded-full bg-black/20 px-1 py-0.5 text-xs text-white">
-            {formatTime(player.currentTime)} / {formatTime(player.duration)}
-          </Text>
-          <Button
-            size={"icon"}
-            className="rounded-full bg-black/40 p-5"
-            variant={"ghost"}
-            onPress={() => (fullscreen ? exitFullscreen() : enterFullscreen())}
-          >
-            <Icon
-              weight="bold"
-              as={fullscreen ? MinusIcon : ExpandIcon}
-              color="white"
-              size={18}
-            />
-          </Button>
-        </View>
+
         <Slider
           style={{
-            height: 1,
+            height: "auto",
             width: "100%",
+            zIndex: 10,
+            opacity: fullscreen && !showControls ? 0 : 100,
+            position: "absolute",
+            bottom: fullscreen ? 24 : -8,
           }}
           minimumTrackTintColor="#F7941D"
           maximumTrackTintColor="white"
-          thumbTintColor="#F7941D"
+          thumbTintColor={showControls ? "#F7941D" : "transparent"}
           maximumValue={player.duration}
           value={player.currentTime}
           onSlidingStart={(time) => {
             setSliding(true);
             setSlidingTime(time);
             player.pause();
+            if (controlsTimeout.current) clearInterval(controlsTimeout.current);
           }}
           onValueChange={(time) => {
             player.currentTime = time;
@@ -218,10 +261,11 @@ function VideoControlsOverlay({
             setSliding(false);
             setSlidingTime(time);
             if (!player.playing) player.play(); //play if playback is paused
+            startTimeToHideControls();
           }}
         />
       </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 }
 

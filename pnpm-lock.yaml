@@ -547,9 +547,15 @@ importers:
       expo-linking:
         specifier: ~8.0.8
         version: 8.0.8(expo@54.0.10)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
+      expo-navigation-bar:
+        specifier: ~5.0.8
+        version: 5.0.8(expo@54.0.10)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))(react@19.1.0)
       expo-router:
         specifier: ~6.0.8
         version: 6.0.8(05fb5c9f8f98d7f1e8bd9b43ce2b0435)
+      expo-screen-orientation:
+        specifier: ~9.0.7
+        version: 9.0.7(expo@54.0.10)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.13)(react@19.1.0))
       expo-secure-store:
         specifier: ~15.0.7
         version: 15.0.7(expo@54.0.10)

@@ -1,13 +1,26 @@
-import React from "react";
-import { StyleSheet, TouchableOpacity, View } from "react-native";
+import type { VideoPlayer } from "expo-video";
+import React, { useEffect, useLayoutEffect } from "react";
+import {
+  ActivityIndicator,
+  AppState,
+  BackHandler,
+  Modal,
+  Pressable,
+  StyleSheet,
+  View,
+} from "react-native";
+import { useEvent } from "expo";
+import * as NavigationBar from "expo-navigation-bar";
 import { useLocalSearchParams } from "expo-router";
+import * as ScreenOrientation from "expo-screen-orientation";
 import { useVideoPlayer, VideoSource, VideoView } from "expo-video";
 import { Button } from "@/components/ui/button";
-import ExapandableText from "@/components/ui/expandable-text";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
-import { trpc } from "@/utils/api";
-import { useQuery } from "@tanstack/react-query";
+import { cn } from "@/lib/utils";
+import Slider from "@react-native-community/slider";
+import { ExpandIcon } from "lucide-react-native";
+import { MinusIcon, PauseIcon, PlayIcon } from "phosphor-react-native";
 
 export default function VideoScreen() {
   const { playbackId } = useLocalSearchParams<{ playbackId: string }>();
@@ -16,65 +29,175 @@ export default function VideoScreen() {
   };
 
   return (
-    <View className="flex-1">
-      <VideoPlayer videoSource={videoSource} />
-      <VideoDetails />
-    </View>
-  );
-}
-
-function VideoDetails() {
-  const { videoId } = useLocalSearchParams<{ videoId: string }>();
-  const { data: video, isLoading } = useQuery(
-    trpc.lms.video.getById.queryOptions({ videoId }),
-  );
-
-  if (isLoading)
-    return (
-      <View className="gap-1.5 p-4">
-        <View className="gap-1">
-          <Skeleton className={"h-3.5 w-full"} />
-          <Skeleton className={"h-3.5 w-1/2"} />
-        </View>
-        <View className="gap-1">
-          <Skeleton className={"h-2 w-full"} />
-          <Skeleton className={"h-2 w-full"} />
-        </View>
-      </View>
-    );
-
-  return (
-    <View className="gap-1.5 p-4">
-      <Text variant={"large"} className="font-medium">
-        {video?.title}
-      </Text>
-      <ExapandableText variant={"muted"}>
-        {!video?.description ? "No description..." : video.description}{" "}
-      </ExapandableText>
-    </View>
-  );
-}
-
-function VideoPlayer({ videoSource }: { videoSource: VideoSource }) {
-  const player = useVideoPlayer(videoSource, (player) => {
-    player.loop = true;
-    player.play();
-  });
-
-  return (
     <>
-      <VideoView
-        style={styles.video}
-        player={player}
-        allowsFullscreen
-        fullscreenOptions={{
-          enable: true,
-          orientation: "landscape",
-        }}
-      />
+      <View className="pt-safe flex-1">
+        <NativeVideoPlayer videoSource={videoSource} />
+      </View>
     </>
   );
 }
+
+function NativeVideoPlayer({ videoSource }: { videoSource: VideoSource }) {
+  const player = useVideoPlayer(videoSource, (player) => {
+    player.loop = true;
+    player.timeUpdateEventInterval = 1;
+    player.play();
+  });
+
+  const [fullscreen, setFullscreen] = React.useState(false);
+
+  return (
+    <View style={{ flex: 1, backgroundColor: "black" }}>
+      <View
+        style={[
+          fullscreen
+            ? StyleSheet.absoluteFill // fullscreen covers whole screen
+            : { aspectRatio: 16 / 9 }, // inline player
+        ]}
+      >
+        <VideoView
+          style={StyleSheet.absoluteFill}
+          player={player}
+          nativeControls={false}
+          contentFit="contain"
+        />
+
+        {/* Overlay controls */}
+        <VideoControlsOverlay
+          {...{ player, fullscreen }}
+          onChangeFullScreen={setFullscreen}
+        />
+      </View>
+    </View>
+  );
+}
+
+function VideoControlsOverlay({
+  player,
+  fullscreen,
+  onChangeFullScreen,
+}: {
+  player: VideoPlayer;
+  fullscreen: boolean;
+  onChangeFullScreen: (fullscreen: boolean) => void;
+}) {
+  const [sliding, setSliding] = React.useState(false);
+  const [slidingTime, setSlidingTime] = React.useState(player.currentTime);
+
+  const enterFullscreen = async () => {
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.LANDSCAPE,
+    );
+    onChangeFullScreen(true);
+  };
+
+  const exitFullscreen = async () => {
+    await ScreenOrientation.lockAsync(
+      ScreenOrientation.OrientationLock.PORTRAIT_UP,
+    );
+    onChangeFullScreen(false);
+  };
+
+  React.useEffect(() => {
+    const sub = BackHandler.addEventListener("hardwareBackPress", () => {
+      if (fullscreen) {
+        exitFullscreen();
+        return true;
+      }
+    });
+
+    return () => sub.remove();
+  }, [fullscreen]);
+
+  // Events
+  useEvent(player, "timeUpdate", {
+    currentTime: player.currentTime,
+    bufferedPosition: player.bufferedPosition,
+    currentLiveTimestamp: player.currentLiveTimestamp,
+    currentOffsetFromLive: player.currentOffsetFromLive,
+  });
+
+  return (
+    <View style={styles.overlay}>
+      <>
+        {player.status == "loading" ? (
+          <ActivityIndicator size={52} color={"white"} />
+        ) : (
+          <Button
+            size={"icon"}
+            className={cn("rounded-full bg-black/40 p-8")}
+            variant={"ghost"}
+            onPress={() => (player.playing ? player.pause() : player.play())}
+          >
+            <Icon
+              as={player.playing ? PauseIcon : PlayIcon}
+              size={40}
+              color="white"
+              weight="fill"
+            />
+          </Button>
+        )}
+      </>
+
+      {sliding && (
+        <View className="absolute bottom-8 rounded-full bg-black/30 px-2 py-0.5 backdrop-blur-sm">
+          <Text className="text-sm text-white">{formatTime(slidingTime)}</Text>
+        </View>
+      )}
+
+      <View
+        className={cn(
+          "absolute bottom-0 w-full items-center",
+          fullscreen && "bottom-4",
+        )}
+      >
+        <View className=" w-full flex-1 flex-row items-center justify-between px-4">
+          <Text className="rounded-full bg-black/20 px-1 py-0.5 text-xs text-white">
+            {formatTime(player.currentTime)} / {formatTime(player.duration)}
+          </Text>
+          <Button
+            size={"icon"}
+            className="rounded-full"
+            variant={"ghost"}
+            onPress={() => (fullscreen ? exitFullscreen() : enterFullscreen())}
+          >
+            <Icon as={fullscreen ? MinusIcon : ExpandIcon} color="white" />
+          </Button>
+        </View>
+        <Slider
+          style={{
+            height: 1,
+            width: "100%",
+          }}
+          minimumTrackTintColor="#F7941D"
+          maximumTrackTintColor="white"
+          thumbTintColor="#F7941D"
+          maximumValue={player.duration}
+          value={player.currentTime}
+          onSlidingStart={(time) => {
+            setSliding(true);
+            setSlidingTime(time);
+          }}
+          onValueChange={(time) => {
+            player.currentTime = time;
+            setSlidingTime(time);
+            if (!player.playing) player.play(); //play if playback is paused
+          }}
+          onSlidingComplete={(time) => {
+            setSliding(false);
+            setSlidingTime(time);
+          }}
+        />
+      </View>
+    </View>
+  );
+}
+
+const formatTime = (time: number) => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+};
 
 const styles = StyleSheet.create({
   video: {
@@ -84,5 +207,19 @@ const styles = StyleSheet.create({
   },
   controlsContainer: {
     padding: 10,
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  bottomBar: {
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });

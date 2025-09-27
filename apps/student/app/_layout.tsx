@@ -105,9 +105,9 @@ function Routes() {
           <Stack.Screen
             name="video"
             options={{
-              title: "Watching Now",
-              headerTitleAlign: "center",
-              presentation: "fullScreenModal",
+              headerShown: false,
+              animation: "flip",
+              animationMatchesGesture: true,
             }}
           />
         </Stack.Protected>

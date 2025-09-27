@@ -1,5 +1,5 @@
-import type { VideoPlayer } from "expo-video";
-import React, { useEffect, useLayoutEffect } from "react";
+import type { VideoContentFit, VideoPlayer } from "expo-video";
+import React from "react";
 import {
   ActivityIndicator,
   BackHandler,
@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useEvent } from "expo";
 import * as NavigationBar from "expo-navigation-bar";
 import { router, useLocalSearchParams } from "expo-router";
@@ -18,11 +19,11 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import Slider from "@react-native-community/slider";
-import { ExpandIcon } from "lucide-react-native";
 import {
   ArrowLeftIcon,
+  ArrowsInSimpleIcon,
+  ArrowsOutSimpleIcon,
   CaretDownIcon,
-  MinusIcon,
   PauseIcon,
   PlayIcon,
 } from "phosphor-react-native";
@@ -50,6 +51,8 @@ function NativeVideoPlayer({ videoSource }: { videoSource: VideoSource }) {
   });
 
   const [fullscreen, setFullscreen] = React.useState(false);
+  const [resizeMode, setResizeMode] =
+    React.useState<VideoContentFit>("contain");
 
   return (
     <View style={{ flex: 1, backgroundColor: "black" }}>
@@ -64,12 +67,13 @@ function NativeVideoPlayer({ videoSource }: { videoSource: VideoSource }) {
           style={StyleSheet.absoluteFill}
           player={player}
           nativeControls={false}
-          contentFit="contain"
+          contentFit={resizeMode}
         />
 
         {/* Overlay controls */}
-        <VideoControlsOverlay
-          {...{ player, fullscreen }}
+        <NativeVideoControlsOverlay
+          {...{ player, fullscreen, resizeMode }}
+          onChangeResizeMode={setResizeMode}
           onChangeFullScreen={setFullscreen}
         />
       </View>
@@ -77,14 +81,17 @@ function NativeVideoPlayer({ videoSource }: { videoSource: VideoSource }) {
   );
 }
 
-function VideoControlsOverlay({
+function NativeVideoControlsOverlay({
   player,
   fullscreen,
   onChangeFullScreen,
+  onChangeResizeMode,
 }: {
   player: VideoPlayer;
   fullscreen: boolean;
   onChangeFullScreen: (fullscreen: boolean) => void;
+  resizeMode: VideoContentFit;
+  onChangeResizeMode: (value: VideoContentFit) => void;
 }) {
   const [sliding, setSliding] = React.useState(false);
   const [slidingTime, setSlidingTime] = React.useState(player.currentTime);
@@ -150,124 +157,158 @@ function VideoControlsOverlay({
     currentOffsetFromLive: player.currentOffsetFromLive,
   });
 
-  return (
-    <TouchableWithoutFeedback onPress={() => toggleShowControls()}>
-      <View style={[styles.overlay]}>
-        {/** Container */}
-        <View
-          className="h-full w-full flex-1  items-center justify-between bg-black/20 px-2.5 py-4"
-          style={{ opacity: showControls ? 100 : 0 }}
-        >
-          {/** Controls Header*/}
-          <View className="w-full flex-row">
-            <Button
-              size={"icon"}
-              className={cn("rounded-full bg-black/40 p-5")}
-              variant={"ghost"}
-              onPress={() => (fullscreen ? exitFullscreen() : router.back())}
-            >
-              <Icon
-                weight="bold"
-                as={fullscreen ? ArrowLeftIcon : CaretDownIcon}
-                color="white"
-                size={18}
-              />
-            </Button>
-          </View>
+  const pinchGesture = Gesture.Pinch()
 
-          {/** Play Puase & Loading state */}
-          <>
-            {player.status == "loading" ? (
-              <ActivityIndicator size={52} color={"white"} />
-            ) : (
+    .onEnd((e) => {
+      try {
+        // Add safety checks for the gesture event
+        if (!e || typeof e.scale !== "number" || isNaN(e.scale)) {
+          console.warn("Pinch gesture event is invalid:", e);
+          return;
+        }
+
+        const scale = e.scale;
+        // Use more conservative thresholds to avoid accidental triggers
+        if (scale > 1.2) {
+          // Pinch-out detected - switch to cover mode
+          onChangeResizeMode("cover");
+        } else if (scale < 0.8) {
+          // Pinch-in detected - switch to contain mode
+          onChangeResizeMode("contain");
+        }
+        // If scale is between 0.8 and 1.2, don't change mode (avoid accidental changes)
+      } catch (error) {
+        console.error("Error handling pinch gesture:", error);
+      }
+    })
+    .enabled(fullscreen) // Only enable in fullscreen mode
+    .runOnJS(true); // Ensure gesture runs on JS thread
+
+  return (
+    <GestureDetector gesture={pinchGesture}>
+      <TouchableWithoutFeedback onPress={() => toggleShowControls()}>
+        <View style={[styles.overlay]}>
+          {/** Container */}
+          <View
+            className="h-full w-full flex-1  items-center justify-between bg-black/20 px-2.5 py-4"
+            style={{ opacity: showControls ? 100 : 0 }}
+          >
+            {/** Controls Header*/}
+            <View className="w-full flex-row justify-between">
               <Button
                 size={"icon"}
-                className={cn("rounded-full bg-black/40 p-8")}
+                className={cn("rounded-full bg-black/40 p-5")}
+                variant={"ghost"}
+                onPress={() => (fullscreen ? exitFullscreen() : router.back())}
+              >
+                <Icon
+                  weight="bold"
+                  as={fullscreen ? ArrowLeftIcon : CaretDownIcon}
+                  color="white"
+                  size={24}
+                />
+              </Button>
+
+              <Button
+                size={"icon"}
+                className="rounded-full bg-black/40 p-5"
                 variant={"ghost"}
                 onPress={() =>
-                  player.playing ? player.pause() : player.play()
+                  fullscreen ? exitFullscreen() : enterFullscreen()
                 }
               >
                 <Icon
-                  as={player.playing ? PauseIcon : PlayIcon}
-                  size={40}
+                  weight="bold"
+                  as={fullscreen ? ArrowsInSimpleIcon : ArrowsOutSimpleIcon}
                   color="white"
-                  weight="fill"
+                  size={24}
                 />
               </Button>
-            )}
-          </>
+            </View>
 
-          {/** Controls footer */}
-          <View
-            className={cn(
-              "w-full flex-row items-center justify-between",
-              fullscreen && "bottom-4",
-            )}
-          >
-            <Text className="rounded-full bg-black/20 px-1 py-0.5 text-xs text-white">
-              {formatTime(player.currentTime)} / {formatTime(player.duration)}
-            </Text>
-            <Button
-              size={"icon"}
-              className="rounded-full bg-black/40 p-5"
-              variant={"ghost"}
-              onPress={() =>
-                fullscreen ? exitFullscreen() : enterFullscreen()
-              }
+            {/** Play Puase & Loading state */}
+            <>
+              {player.status == "loading" ? (
+                <ActivityIndicator size={52} color={"white"} />
+              ) : (
+                <Button
+                  size={"icon"}
+                  className={cn("rounded-full bg-black/40 p-8")}
+                  variant={"ghost"}
+                  onPress={() =>
+                    player.playing ? player.pause() : player.play()
+                  }
+                >
+                  <Icon
+                    as={player.playing ? PauseIcon : PlayIcon}
+                    size={40}
+                    color="white"
+                    weight="fill"
+                  />
+                </Button>
+              )}
+            </>
+
+            {/** Controls footer */}
+            <View
+              className={cn(
+                "w-full flex-row items-center justify-between",
+                fullscreen && "bottom-9",
+              )}
             >
-              <Icon
-                weight="bold"
-                as={fullscreen ? MinusIcon : ExpandIcon}
-                color="white"
-                size={18}
-              />
-            </Button>
+              <Text className="rounded-full bg-black/20 px-2 py-0.5 text-xs text-white">
+                {formatTime(player.currentTime)}
+              </Text>
+              <Text className="rounded-full bg-black/20 px-2 py-0.5 text-xs text-white">
+                {formatTime(player.duration)}
+              </Text>
+            </View>
           </View>
+
+          {/** Sliding timespamp preview */}
+          {sliding && (
+            <View className="absolute bottom-16 rounded-full bg-black/30 px-2 py-0.5 backdrop-blur-sm">
+              <Text className="text-sm text-white">
+                {formatTime(slidingTime)}
+              </Text>
+            </View>
+          )}
+
+          <Slider
+            style={{
+              height: "auto",
+              width: "100%",
+              zIndex: 10,
+              opacity: fullscreen && !showControls ? 0 : 100,
+              position: "absolute",
+              bottom: fullscreen ? 24 : -8,
+            }}
+            minimumTrackTintColor="#F7941D"
+            maximumTrackTintColor="white"
+            thumbTintColor={showControls ? "#F7941D" : "transparent"}
+            maximumValue={player.duration}
+            value={player.currentTime}
+            onSlidingStart={(time) => {
+              setSliding(true);
+              setSlidingTime(time);
+              player.pause();
+              if (controlsTimeout.current)
+                clearInterval(controlsTimeout.current);
+            }}
+            onValueChange={(time) => {
+              player.currentTime = time;
+              setSlidingTime(time);
+            }}
+            onSlidingComplete={(time) => {
+              setSliding(false);
+              setSlidingTime(time);
+              if (!player.playing) player.play(); //play if playback is paused
+              startTimeToHideControls();
+            }}
+          />
         </View>
-
-        {/** Sliding timespamp preview */}
-        {sliding && (
-          <View className="absolute bottom-16 rounded-full bg-black/30 px-2 py-0.5 backdrop-blur-sm">
-            <Text className="text-sm text-white">
-              {formatTime(slidingTime)}
-            </Text>
-          </View>
-        )}
-
-        <Slider
-          style={{
-            height: "auto",
-            width: "100%",
-            zIndex: 10,
-            opacity: fullscreen && !showControls ? 0 : 100,
-            position: "absolute",
-            bottom: fullscreen ? 24 : -8,
-          }}
-          minimumTrackTintColor="#F7941D"
-          maximumTrackTintColor="white"
-          thumbTintColor={showControls ? "#F7941D" : "transparent"}
-          maximumValue={player.duration}
-          value={player.currentTime}
-          onSlidingStart={(time) => {
-            setSliding(true);
-            setSlidingTime(time);
-            player.pause();
-            if (controlsTimeout.current) clearInterval(controlsTimeout.current);
-          }}
-          onValueChange={(time) => {
-            player.currentTime = time;
-            setSlidingTime(time);
-          }}
-          onSlidingComplete={(time) => {
-            setSliding(false);
-            setSlidingTime(time);
-            if (!player.playing) player.play(); //play if playback is paused
-            startTimeToHideControls();
-          }}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+      </TouchableWithoutFeedback>
+    </GestureDetector>
   );
 }
 

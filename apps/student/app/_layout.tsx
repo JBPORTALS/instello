@@ -1,6 +1,7 @@
 import "@/global.css";
 
 import * as React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -22,15 +23,17 @@ export default function RootLayout() {
   const { colorScheme } = useColorScheme();
 
   return (
-    <ClerkProvider tokenCache={tokenCache}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
-          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-          <Routes />
-          <PortalHost />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </ClerkProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ClerkProvider tokenCache={tokenCache}>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+            <Routes />
+            <PortalHost />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </ClerkProvider>
+    </GestureHandlerRootView>
   );
 }
 

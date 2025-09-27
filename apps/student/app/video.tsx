@@ -2,10 +2,7 @@ import type { VideoPlayer } from "expo-video";
 import React, { useEffect, useLayoutEffect } from "react";
 import {
   ActivityIndicator,
-  AppState,
   BackHandler,
-  Modal,
-  Pressable,
   StyleSheet,
   TouchableWithoutFeedback,
   View,
@@ -14,6 +11,7 @@ import { useEvent } from "expo";
 import * as NavigationBar from "expo-navigation-bar";
 import { router, useLocalSearchParams } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { setStatusBarHidden } from "expo-status-bar";
 import { useVideoPlayer, VideoSource, VideoView } from "expo-video";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -110,6 +108,8 @@ function VideoControlsOverlay({
       ScreenOrientation.OrientationLock.LANDSCAPE,
     );
     onChangeFullScreen(true);
+    setStatusBarHidden(true, "slide");
+    await NavigationBar.setVisibilityAsync("hidden");
   };
 
   const exitFullscreen = async () => {
@@ -117,6 +117,8 @@ function VideoControlsOverlay({
       ScreenOrientation.OrientationLock.PORTRAIT_UP,
     );
     onChangeFullScreen(false);
+    setStatusBarHidden(false, "slide");
+    await NavigationBar.setVisibilityAsync("visible");
   };
 
   const toggleShowControls = () => {
@@ -135,7 +137,7 @@ function VideoControlsOverlay({
     });
 
     setShowControls(true);
-    // startTimeToHideControls();
+    startTimeToHideControls();
 
     return () => sub.remove();
   }, [fullscreen]);

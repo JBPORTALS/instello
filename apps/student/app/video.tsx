@@ -1,4 +1,4 @@
-import type { VideoContentFit, VideoPlayer } from "expo-video";
+import type { VideoContentFit, VideoMetadata, VideoPlayer } from "expo-video";
 import React from "react";
 import {
   ActivityIndicator,
@@ -32,6 +32,10 @@ export default function VideoScreen() {
   const { playbackId } = useLocalSearchParams<{ playbackId: string }>();
   const videoSource: VideoSource = {
     uri: `https://stream.mux.com/${playbackId}.m3u8`,
+    metadata: {
+      title: "What is figma?",
+      artist: "Chapter 1: Introduction",
+    },
   };
 
   return (
@@ -49,6 +53,10 @@ function NativeVideoPlayer({ videoSource }: { videoSource: VideoSource }) {
     player.timeUpdateEventInterval = 1;
     player.play();
   });
+
+  const [metadata] = React.useState(
+    typeof videoSource === "object" ? videoSource?.metadata : undefined,
+  );
 
   const [fullscreen, setFullscreen] = React.useState(false);
   const [resizeMode, setResizeMode] =
@@ -72,7 +80,7 @@ function NativeVideoPlayer({ videoSource }: { videoSource: VideoSource }) {
 
         {/* Overlay controls */}
         <NativeVideoControlsOverlay
-          {...{ player, fullscreen, resizeMode }}
+          {...{ player, fullscreen, resizeMode, metadata }}
           onChangeResizeMode={setResizeMode}
           onChangeFullScreen={setFullscreen}
         />
@@ -86,12 +94,14 @@ function NativeVideoControlsOverlay({
   fullscreen,
   onChangeFullScreen,
   onChangeResizeMode,
+  metadata,
 }: {
   player: VideoPlayer;
   fullscreen: boolean;
   onChangeFullScreen: (fullscreen: boolean) => void;
   resizeMode: VideoContentFit;
   onChangeResizeMode: (value: VideoContentFit) => void;
+  metadata?: VideoMetadata;
 }) {
   const [sliding, setSliding] = React.useState(false);
   const [slidingTime, setSlidingTime] = React.useState(player.currentTime);
@@ -208,6 +218,18 @@ function NativeVideoControlsOverlay({
                   size={24}
                 />
               </Button>
+
+              {/** Video meta info */}
+              {fullscreen && (
+                <View className="items-center">
+                  <Text className="font-bold text-white">
+                    {metadata?.title}
+                  </Text>
+                  <Text variant={"muted"} className="text-white/80">
+                    {metadata?.artist}
+                  </Text>
+                </View>
+              )}
 
               <Button
                 size={"icon"}

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { useEvent } from "expo";
 import * as NavigationBar from "expo-navigation-bar";
-import { useLocalSearchParams } from "expo-router";
+import { router, useLocalSearchParams } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { useVideoPlayer, VideoSource, VideoView } from "expo-video";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,13 @@ import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import Slider from "@react-native-community/slider";
 import { ExpandIcon } from "lucide-react-native";
-import { MinusIcon, PauseIcon, PlayIcon } from "phosphor-react-native";
+import {
+  ArrowLeftIcon,
+  CaretDownIcon,
+  MinusIcon,
+  PauseIcon,
+  PlayIcon,
+} from "phosphor-react-native";
 
 export default function VideoScreen() {
   const { playbackId } = useLocalSearchParams<{ playbackId: string }>();
@@ -119,6 +125,24 @@ function VideoControlsOverlay({
 
   return (
     <View style={styles.overlay}>
+      {/** Controls Header*/}
+      <View className="absolute left-4 right-4 top-4">
+        <Button
+          size={"icon"}
+          className={cn("rounded-full bg-black/40 p-5")}
+          variant={"ghost"}
+          onPress={() => (fullscreen ? exitFullscreen() : router.back())}
+        >
+          <Icon
+            weight="bold"
+            as={fullscreen ? ArrowLeftIcon : CaretDownIcon}
+            color="white"
+            size={18}
+          />
+        </Button>
+      </View>
+
+      {/** Play Puase & Loading state */}
       <>
         {player.status == "loading" ? (
           <ActivityIndicator size={52} color={"white"} />
@@ -139,29 +163,36 @@ function VideoControlsOverlay({
         )}
       </>
 
+      {/** Sliding timespamp preview */}
       {sliding && (
         <View className="absolute bottom-8 rounded-full bg-black/30 px-2 py-0.5 backdrop-blur-sm">
           <Text className="text-sm text-white">{formatTime(slidingTime)}</Text>
         </View>
       )}
 
+      {/** Controls footer */}
       <View
         className={cn(
           "absolute bottom-0 w-full items-center",
           fullscreen && "bottom-4",
         )}
       >
-        <View className=" w-full flex-1 flex-row items-center justify-between px-4">
+        <View className=" w-full flex-1 flex-row items-center justify-between px-4 py-3.5">
           <Text className="rounded-full bg-black/20 px-1 py-0.5 text-xs text-white">
             {formatTime(player.currentTime)} / {formatTime(player.duration)}
           </Text>
           <Button
             size={"icon"}
-            className="rounded-full"
+            className="rounded-full bg-black/40 p-5"
             variant={"ghost"}
             onPress={() => (fullscreen ? exitFullscreen() : enterFullscreen())}
           >
-            <Icon as={fullscreen ? MinusIcon : ExpandIcon} color="white" />
+            <Icon
+              weight="bold"
+              as={fullscreen ? MinusIcon : ExpandIcon}
+              color="white"
+              size={18}
+            />
           </Button>
         </View>
         <Slider
@@ -177,15 +208,16 @@ function VideoControlsOverlay({
           onSlidingStart={(time) => {
             setSliding(true);
             setSlidingTime(time);
+            player.pause();
           }}
           onValueChange={(time) => {
             player.currentTime = time;
             setSlidingTime(time);
-            if (!player.playing) player.play(); //play if playback is paused
           }}
           onSlidingComplete={(time) => {
             setSliding(false);
             setSlidingTime(time);
+            if (!player.playing) player.play(); //play if playback is paused
           }}
         />
       </View>

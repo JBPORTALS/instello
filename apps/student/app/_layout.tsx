@@ -106,8 +106,8 @@ function Routes() {
             name="video"
             options={{
               headerShown: false,
-              animation: "flip",
-              animationMatchesGesture: true,
+              animation: "slide_from_bottom",
+              gestureDirection: "vertical",
             }}
           />
         </Stack.Protected>

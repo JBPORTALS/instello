@@ -24,6 +24,8 @@ import {
   ArrowsInSimpleIcon,
   ArrowsOutSimpleIcon,
   CaretDownIcon,
+  ClockClockwiseIcon,
+  ClockCounterClockwiseIcon,
   PauseIcon,
   PlayIcon,
 } from "phosphor-react-native";
@@ -120,6 +122,13 @@ function NativeVideoControlsOverlay({
     }, 5000) as unknown as NodeJS.Timeout;
   };
 
+  const stopTimeToHideControls = () => {
+    // Clear any existing timeout before setting a new one
+    if (controlsTimeout.current) {
+      clearTimeout(controlsTimeout.current);
+    }
+  };
+
   const enterFullscreen = async () => {
     await ScreenOrientation.lockAsync(
       ScreenOrientation.OrientationLock.LANDSCAPE,
@@ -143,6 +152,16 @@ function NativeVideoControlsOverlay({
     if (controlsTimeout.current && showControls)
       clearTimeout(controlsTimeout.current);
     else startTimeToHideControls();
+  };
+
+  const togglePlaying = () => {
+    if (player.playing) {
+      player.pause();
+      stopTimeToHideControls();
+    } else {
+      player.play();
+      startTimeToHideControls();
+    }
   };
 
   React.useEffect(() => {
@@ -249,27 +268,47 @@ function NativeVideoControlsOverlay({
             </View>
 
             {/** Play Puase & Loading state */}
-            <>
-              {player.status == "loading" ? (
-                <ActivityIndicator size={52} color={"white"} />
-              ) : (
-                <Button
-                  size={"icon"}
-                  className={cn("rounded-full bg-black/40 p-8")}
-                  variant={"ghost"}
-                  onPress={() =>
-                    player.playing ? player.pause() : player.play()
-                  }
-                >
-                  <Icon
-                    as={player.playing ? PauseIcon : PlayIcon}
-                    size={40}
-                    color="white"
-                    weight="fill"
-                  />
-                </Button>
-              )}
-            </>
+            <View className="flex-row items-center gap-6 pb-4">
+              <Button
+                size={"icon"}
+                variant={"ghost"}
+                className="rounded-full bg-black/40 p-6"
+                onPress={() => {
+                  player.seekBy(-10);
+                  startTimeToHideControls();
+                }}
+              >
+                <Icon as={ClockCounterClockwiseIcon} color="white" size={32} />
+              </Button>
+
+              <Button
+                size={"icon"}
+                disabled={player.status === "loading"}
+                className={cn("rounded-full bg-black/40 p-8")}
+                variant={"ghost"}
+                onPress={() => togglePlaying()}
+                style={{ opacity: player.status !== "loading" ? 100 : 0 }}
+              >
+                <Icon
+                  as={player.playing ? PauseIcon : PlayIcon}
+                  size={40}
+                  color="white"
+                  weight="fill"
+                />
+              </Button>
+
+              <Button
+                onPress={() => {
+                  player.seekBy(10);
+                  startTimeToHideControls();
+                }}
+                size={"icon"}
+                variant={"ghost"}
+                className="rounded-full bg-black/40 p-6"
+              >
+                <Icon as={ClockClockwiseIcon} color="white" size={32} />
+              </Button>
+            </View>
 
             {/** Controls footer */}
             <View
@@ -296,6 +335,15 @@ function NativeVideoControlsOverlay({
             </View>
           )}
 
+          {/** Loading indicator */}
+          {player.status === "loading" && (
+            <ActivityIndicator
+              style={{ position: "absolute", top: "auto", bottom: "auto" }}
+              size={64}
+              color={"white"}
+            />
+          )}
+
           <Slider
             style={{
               height: "auto",
@@ -314,8 +362,7 @@ function NativeVideoControlsOverlay({
               setSliding(true);
               setSlidingTime(time);
               player.pause();
-              if (controlsTimeout.current)
-                clearInterval(controlsTimeout.current);
+              stopTimeToHideControls();
             }}
             onValueChange={(time) => {
               player.currentTime = time;

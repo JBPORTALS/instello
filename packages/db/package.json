@@ -30,6 +30,12 @@
     "lint": "eslint",
     "push-erp": "pnpm with-env drizzle-kit push --config=./drizzle.config.erp.ts",
     "push-lms": "pnpm with-env drizzle-kit push --config=./drizzle.config.lms.ts",
+    "generate-erp": "pnpm with-env drizzle-kit generate --config=./drizzle.config.erp.ts",
+    "generate-lms": "pnpm with-env drizzle-kit generate --config=./drizzle.config.lms.ts",
+    "migrate-erp": "pnpm with-env drizzle-kit migrate --config=./drizzle.config.erp.ts",
+    "migrate-lms": "pnpm with-env drizzle-kit migrate --config=./drizzle.config.lms.ts",
+    "drop-erp": "pnpm with-env drizzle-kit drop --config=./drizzle.config.erp.ts",
+    "drop-lms": "pnpm with-env drizzle-kit drop --config=./drizzle.config.lms.ts",
     "studio": "pnpm with-env drizzle-kit studio",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false",
     "with-env": "dotenv -e ../../.env --"

@@ -43,6 +43,30 @@
       "cache": false,
       "interactive": true
     },
+    "generate-erp": {
+      "cache": false,
+      "interactive": false
+    },
+    "generate-lms": {
+      "cache": false,
+      "interactive": false
+    },
+    "migrate-erp": {
+      "cache": false,
+      "interactive": false
+    },
+    "migrate-lms": {
+      "cache": false,
+      "interactive": false
+    },
+    "drop-erp": {
+      "cache": false,
+      "interactive": true
+    },
+    "drop-lms": {
+      "cache": false,
+      "interactive": true
+    },
     "studio": {
       "cache": false,
       "persistent": true

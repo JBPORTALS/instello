@@ -67,11 +67,15 @@ export const UpdateCouponSchema = createUpdateSchema(coupon, {
     .string()
     .min(1, "Coupon code required")
     .transform((val) => val.toUpperCase()),
-}).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+})
+  .omit({
+    id: true,
+    validFrom: true,
+    validTo: true,
+    createdAt: true,
+    updatedAt: true,
+  })
+  .and(z.object({ valid: z.object({ from: z.date(), to: z.date() }) }));
 
 export const CreateCouponTargetSchema = createInsertSchema(couponTarget, {
   couponId: z.string().min(2, "CouponId ID required"),

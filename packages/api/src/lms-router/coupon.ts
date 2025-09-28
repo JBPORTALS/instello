@@ -5,6 +5,7 @@ import {
   couponTarget,
   CreateCouponSchema,
   CreateCouponTargetSchema,
+  UpdateCouponSchema,
 } from "@instello/db/lms";
 import { TRPCError } from "@trpc/server";
 import { endOfDay, isWithinInterval, startOfDay } from "date-fns";
@@ -29,10 +30,17 @@ export const couponRouter = {
   list: protectedProcedure
     .input(z.object({ channelId: z.string() }))
     .query(({ ctx, input }) =>
-      ctx.db.query.coupon.findMany({
-        where: (t, { eq }) => eq(t.channelId, input.channelId),
-        orderBy: (t, { desc }) => [desc(t.createdAt), desc(t.updatedAt)],
-      }),
+      ctx.db.query.coupon
+        .findMany({
+          where: (t, { eq }) => eq(t.channelId, input.channelId),
+          orderBy: (t, { desc }) => [desc(t.createdAt), desc(t.updatedAt)],
+        })
+        .then((r) =>
+          r.map(({ validTo, validFrom, ...c }) => ({
+            ...c,
+            valid: { to: validTo, from: validFrom },
+          })),
+        ),
     ),
 
   check: protectedProcedure
@@ -125,10 +133,29 @@ export const couponRouter = {
       });
     }),
 
+  update: protectedProcedure
+    .input(UpdateCouponSchema.and(z.object({ id: z.string() })))
+    .mutation(({ ctx, input }) =>
+      ctx.db
+        .update(coupon)
+        .set({
+          ...input,
+          validFrom: input.valid.from,
+          validTo: input.valid.to,
+        })
+        .where(eq(coupon.id, input.id))
+        .returning()
+        .then((r) => r[0]),
+    ),
+
   delete: protectedProcedure
     .input(z.object({ couponId: z.string() }))
     .mutation(({ ctx, input }) =>
-      ctx.db.delete(coupon).where(eq(coupon, input.couponId)),
+      ctx.db
+        .delete(coupon)
+        .where(eq(coupon.id, input.couponId))
+        .returning()
+        .then((r) => r[0]),
     ),
 
   addTarget: protectedProcedure

@@ -15,7 +15,6 @@ import {
   TooltipTrigger,
 } from "@instello/ui/components/tooltip";
 import {
-  CrownIcon,
   GlobeHemisphereEastIcon,
   ListBulletsIcon,
   LockLaminatedIcon,
@@ -25,7 +24,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 const items = [
   { title: "Chapters", url: "", icon: ListBulletsIcon },
-  { title: "Subscriptions", url: "/subscriptions", icon: CrownIcon },
+  // { title: "Subscriptions", url: "/subscriptions", icon: CrownIcon },
   { title: "Coupons", url: "/coupons", icon: TicketIcon },
 ];
 

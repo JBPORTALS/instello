@@ -2,17 +2,16 @@
 
 import type { RouterOutputs } from "@instello/api";
 import { useParams } from "next/navigation";
+import { CouponContextMenu } from "@/components/coupon-context-menu";
 import { useTRPC } from "@/trpc/react";
 import { Alert, AlertDescription } from "@instello/ui/components/alert";
 import { Badge } from "@instello/ui/components/badge";
-import { Button } from "@instello/ui/components/button";
 import { Card, CardContent, CardHeader } from "@instello/ui/components/card";
 import { Skeleton } from "@instello/ui/components/skeleton";
 import { cn } from "@instello/ui/lib/utils";
 import {
   CalendarIcon,
   CrownIcon,
-  DotsThreeIcon,
   GiftIcon,
   UsersIcon,
 } from "@phosphor-icons/react";
@@ -22,8 +21,8 @@ import { format } from "date-fns";
 type Coupon = RouterOutputs["lms"]["coupon"]["list"][number];
 
 function CouponCard({ coupon }: { coupon: Coupon }) {
-  const isExpired = new Date(coupon.validTo) < new Date();
-  const isActive = new Date(coupon.validFrom) <= new Date() && !isExpired;
+  const isExpired = new Date(coupon.valid.to) < new Date();
+  const isActive = new Date(coupon.valid.from) <= new Date() && !isExpired;
 
   const formatDate = (date: string | Date) =>
     format(new Date(date), "MMM dd, yyyy");
@@ -72,8 +71,8 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
             <div className="text-muted-foreground flex items-center gap-2 text-sm">
               <CalendarIcon weight="duotone" className="h-4 w-4" />
               <span>
-                Valid: {formatDate(coupon.validFrom)} -{" "}
-                {formatDate(coupon.validTo)}
+                Valid: {formatDate(coupon.valid.from)} -{" "}
+                {formatDate(coupon.valid.to)}
               </span>
             </div>
 
@@ -93,16 +92,7 @@ function CouponCard({ coupon }: { coupon: Coupon }) {
               <span className="text-muted-foreground text-xs">
                 Created {formatDate(coupon.createdAt)}
               </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  // TODO: Implement delete functionality
-                  console.log("Delete coupon:", coupon.id);
-                }}
-              >
-                <DotsThreeIcon />
-              </Button>
+              <CouponContextMenu coupon={coupon} />
             </div>
           </div>
         </CardContent>

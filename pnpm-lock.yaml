@@ -6,61 +6,28 @@ settings:
 
 catalogs:
   default:
-    '@clerk/nextjs':
-      specifier: ^6.25.1
-      version: 6.33.0
     '@clerk/types':
       specifier: ^4.65.0
       version: 4.89.0
-    '@hookform/resolvers':
-      specifier: ^5.1.1
-      version: 5.2.2
-    '@phosphor-icons/react':
-      specifier: ^2.1.10
-      version: 2.1.10
     '@tanstack/react-query':
       specifier: ^5.83.0
       version: 5.90.2
-    '@tanstack/react-table':
-      specifier: ^8.21.3
-      version: 8.21.3
     '@trpc/client':
       specifier: ^11.4.3
       version: 11.6.0
     '@trpc/tanstack-react-query':
       specifier: ^11.4.3
       version: 11.6.0
-    eslint:
-      specifier: ^9.28.0
-      version: 9.36.0
     prettier:
       specifier: ^3.5.3
       version: 3.6.2
-    react-hook-form:
-      specifier: ^7.60.0
-      version: 7.63.0
-    sonner:
-      specifier: ^2.0.6
-      version: 2.0.7
-    superjson:
-      specifier: ^2.2.2
-      version: 2.2.2
     typescript:
       specifier: ~5.9.2
       version: 5.9.2
-    zod:
-      specifier: ^3.25.49
-      version: 3.25.76
   react19:
-    '@types/node':
-      specifier: ^20
-      version: 20.19.17
     '@types/react':
       specifier: ^19.1.13
       version: 19.1.14
-    '@types/react-dom':
-      specifier: ^19
-      version: 19.1.9
     react:
       specifier: ^19.1.0
       version: 19.1.0

@@ -1,4 +1,9 @@
-import type { VideoContentFit, VideoMetadata, VideoPlayer, VideoViewProps } from "expo-video";
+import type {
+  VideoContentFit,
+  VideoMetadata,
+  VideoPlayer,
+  VideoViewProps,
+} from "expo-video";
 import React from "react";
 import {
   ActivityIndicator,
@@ -57,13 +62,9 @@ NativeVideo.Content = ({ ...props }: ViewProps) => {
   return <View {...props} />;
 };
 
-const assign = mux.utils.assign;
-
-const MIN_REBUFFER_DURATION = 300;
-
 const generateShortId = () => {
   return (
-    '000000' + ((Math.random() * Math.pow(36, 6)) << 0).toString(36)
+    "000000" + ((Math.random() * Math.pow(36, 6)) << 0).toString(36)
   ).slice(-6);
 };
 
@@ -72,7 +73,7 @@ interface MuxVideoProps extends VideoViewProps {
 }
 
 const withMuxVideo = <P extends VideoViewProps>(
-  WrappedComponent: React.ComponentType<P>
+  WrappedComponent: React.ComponentType<P>,
 ) => {
   return React.forwardRef<VideoView, MuxVideoProps>((props, ref) => {
     const { muxOptions, ...videoViewProps } = props;
@@ -86,46 +87,74 @@ const withMuxVideo = <P extends VideoViewProps>(
           mux.init(muxPlayerId.current, muxOptions);
           muxInitialized.current = true;
         } catch (error) {
-          console.warn('Failed to initialize Mux analytics:', error);
+          console.warn("Failed to initialize Mux analytics:", error);
         }
       }
     }, [muxOptions]);
 
+    // Safe cleanup function that works in React Native
+    const cleanupMux = React.useCallback(() => {
+      if (muxInitialized.current) {
+        try {
+          // Try the destroy event first (React Native compatible)
+          mux.emit(muxPlayerId.current, "destroy");
+        } catch (error) {
+          console.warn("Failed to emit destroy event:", error);
+        } finally {
+          muxInitialized.current = false;
+        }
+      }
+    }, []);
+
     // Cleanup Mux monitoring on unmount
+    React.useEffect(() => {
+      return () => {
+        cleanupMux();
+      };
+    }, [cleanupMux]);
+
+    // Additional cleanup when muxOptions change
     React.useEffect(() => {
       return () => {
         if (muxInitialized.current) {
           try {
-            mux.destroyMonitor(muxPlayerId.current);
+            mux.emit(muxPlayerId.current, "destroy");
+            muxInitialized.current = false;
           } catch (error) {
-            console.warn('Failed to destroy Mux monitor:', error);
+            console.warn(
+              "Failed to cleanup Mux monitor on options change:",
+              error,
+            );
           }
         }
       };
-    }, []);
+    }, [muxOptions]);
 
     // Track video events
-    const trackEvent = React.useCallback((eventType: Parameters<typeof mux.emit>[1], data?: any) => {
-      if (muxInitialized.current) {
-        try {
-          mux.emit(
-            muxPlayerId.current,
-            eventType,
-            data
-          );
-        } catch (error) {
-          console.warn('Failed to emit Mux event:', error);
+    const trackEvent = React.useCallback(
+      (eventType: Parameters<typeof mux.emit>[1], data?: any) => {
+        if (muxInitialized.current) {
+          try {
+            mux.emit(muxPlayerId.current, eventType, data);
+            console.log("tracking...", eventType, data);
+          } catch (error) {
+            console.warn("Failed to emit Mux event:", error);
+          }
         }
-      }
-    }, []);
+      },
+      [],
+    );
 
     // Track time updates for playhead position
     React.useEffect(() => {
       if (!muxInitialized.current) return;
 
       const interval = setInterval(() => {
-        if (videoViewProps.player?.playing && videoViewProps.player?.currentTime > 0) {
-          trackEvent('timeupdate', {
+        if (
+          videoViewProps.player?.playing &&
+          videoViewProps.player?.currentTime > 0
+        ) {
+          trackEvent("timeupdate", {
             currentTime: videoViewProps.player.currentTime,
             duration: videoViewProps.player.duration,
           });
@@ -133,22 +162,29 @@ const withMuxVideo = <P extends VideoViewProps>(
       }, 1000); // Update every second
 
       return () => clearInterval(interval);
-    }, [videoViewProps.player?.playing, videoViewProps.player?.currentTime, trackEvent]);
+    }, [
+      videoViewProps.player?.playing,
+      videoViewProps.player?.currentTime,
+      trackEvent,
+    ]);
 
     // Only add event handlers if they exist on the incoming props, to avoid TS errors.
-    const eventHandlers:{prop:string;event:Parameters<typeof mux.emit>[1]}[] = [
-      { prop: 'onLoadStart', event: 'viewinit' },
-      { prop: 'onLoad', event: 'loadstart' },
-      { prop: 'onPlay', event: 'play' },
-      { prop: 'onPause', event: 'pause' },
-      { prop: 'onSeek', event: 'seeked' },
-      { prop: 'onEnd', event: 'ended' },
-      { prop: 'onError', event: 'error' },
-      { prop: 'onBuffer', event: 'waiting' },
-      { prop: 'onCanPlay', event: 'playerready' },
-      { prop: 'onCanPlayThrough', event: 'playing' },
-      { prop: 'onStalled', event: 'stalled' },
-      { prop: 'onWaiting', event: 'waiting' },
+    const eventHandlers: {
+      prop: string;
+      event: Parameters<typeof mux.emit>[1];
+    }[] = [
+      { prop: "onLoadStart", event: "viewinit" },
+      { prop: "onLoad", event: "loadstart" },
+      { prop: "onPlay", event: "play" },
+      { prop: "onPause", event: "pause" },
+      { prop: "onSeek", event: "seeked" },
+      { prop: "onEnd", event: "ended" },
+      { prop: "onError", event: "error" },
+      { prop: "onBuffer", event: "waiting" },
+      { prop: "onCanPlay", event: "playerready" },
+      { prop: "onCanPlayThrough", event: "playing" },
+      { prop: "onStalled", event: "stalled" },
+      { prop: "onWaiting", event: "waiting" },
     ] as const;
 
     // Build enhancedProps by only overriding handlers that exist on videoViewProps
@@ -157,9 +193,12 @@ const withMuxVideo = <P extends VideoViewProps>(
       ref,
     } as P & { ref: typeof ref };
 
-    for (const { prop, event  } of eventHandlers) {
+    for (const { prop, event } of eventHandlers) {
       // Only override if the prop exists on videoViewProps
-      if (prop in videoViewProps && typeof (videoViewProps as any)[prop] === 'function') {
+      if (
+        prop in videoViewProps &&
+        typeof (videoViewProps as any)[prop] === "function"
+      ) {
         (enhancedProps as any)[prop] = (...args: any[]) => {
           trackEvent(event);
           (videoViewProps as any)[prop]?.(...args);

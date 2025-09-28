@@ -7,8 +7,8 @@ import { Text } from "@/components/ui/text";
 import { RouterOutputs, trpc } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { CalendarIcon, ClockIcon } from "phosphor-react-native";
 import { Mux } from "mux-embed";
+import { CalendarIcon, ClockIcon } from "phosphor-react-native";
 
 export default function VideoScreen() {
   const { videoId, playbackId } = useLocalSearchParams<{
@@ -24,7 +24,7 @@ export default function VideoScreen() {
   } = useQuery(
     trpc.lms.video.getById.queryOptions({
       videoId: videoId!,
-    })
+    }),
   );
 
   const videoSource: VideoSource = {
@@ -36,7 +36,7 @@ export default function VideoScreen() {
   };
 
   // Custom Mux analytics options
-  const muxOptions:Parameters<Mux["init"]>[1] = {
+  const muxOptions: Parameters<Mux["init"]>[1] = {
     data: {
       env_key: process.env.EXPO_PUBLIC_MUX_ENV_KEY,
       player_name: "Instello - Mobile Player",
@@ -53,9 +53,9 @@ export default function VideoScreen() {
 
   return (
     <NativeVideo className="pt-safe flex-1">
-      <NativeVideo.Player 
-        videoId={videoId} 
-        videoSource={videoSource} 
+      <NativeVideo.Player
+        videoId={videoId}
+        videoSource={videoSource}
         muxOptions={muxOptions}
       />
       <NativeVideo.Content className="flex-1">
@@ -65,11 +65,11 @@ export default function VideoScreen() {
           keyboardDismissMode="interactive"
           showsVerticalScrollIndicator={false}
         >
-          <VideoDetails 
-            isLoading={isLoading && !video} 
+          <VideoDetails
+            isLoading={isLoading && !video}
             isFetching={isFetching}
-            error={error} 
-            video={video} 
+            error={error}
+            video={video}
           />
         </ScrollView>
       </NativeVideo.Content>
@@ -84,7 +84,12 @@ interface VideoDetailsProps {
   video?: RouterOutputs["lms"]["video"]["getById"];
 }
 
-function VideoDetails({ isLoading, isFetching, error, video }: VideoDetailsProps) {
+function VideoDetails({
+  isLoading,
+  isFetching,
+  error,
+  video,
+}: VideoDetailsProps) {
   const formatDuration = (seconds: number | null | undefined) => {
     if (!seconds) return "0:00";
     const minutes = Math.floor(seconds / 60);
@@ -135,10 +140,10 @@ function VideoDetails({ isLoading, isFetching, error, video }: VideoDetailsProps
           </Text>
         </View>
         <View className="flex-row items-center gap-2">
-          <Text className="text-foreground text-xl font-bold">{video.title}</Text>
-          {isFetching && (
-            <View className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
-          )}
+          <Text className="text-foreground text-xl font-bold">
+            {video.title}
+          </Text>
+          {isFetching && <View className="bg-accent h-2 w-2 rounded-full" />}
         </View>
       </View>
 

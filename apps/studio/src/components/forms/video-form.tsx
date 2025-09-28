@@ -195,6 +195,8 @@ export function VideoForm() {
                 metadataVideoId={data.id}
                 loading="page"
                 style={{ aspectRatio: 16 / 9 }}
+                maxResolution="720p"
+                disableTracking
               />
             )}
           </div>

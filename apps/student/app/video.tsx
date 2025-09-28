@@ -1,5 +1,5 @@
 import React from "react";
-import { ActivityIndicator, ScrollView, View } from "react-native";
+import { ScrollView, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { VideoSource } from "expo-video";
 import { NativeVideo } from "@/components/native-video";
@@ -8,32 +8,56 @@ import { RouterOutputs, trpc } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { CalendarIcon, ClockIcon } from "phosphor-react-native";
+import { Mux } from "mux-embed";
 
 export default function VideoScreen() {
-  const { videoId } = useLocalSearchParams<{ videoId: string }>();
+  const { videoId, playbackId } = useLocalSearchParams<{
+    videoId: string;
+    playbackId: string;
+  }>();
 
   const {
     data: video,
     isLoading,
     error,
+    isFetching,
   } = useQuery(
     trpc.lms.video.getById.queryOptions({
       videoId: videoId!,
-    }),
+    })
   );
 
   const videoSource: VideoSource = {
-    uri: `https://stream.mux.com/${video?.playbackId}.m3u8`,
+    uri: `https://stream.mux.com/${playbackId}.m3u8`,
     metadata: {
       title: video?.title,
       artist: video?.chapter?.title,
     },
-    useCaching: true,
+  };
+
+  // Custom Mux analytics options
+  const muxOptions:Parameters<Mux["init"]>[1] = {
+    data: {
+      env_key: process.env.EXPO_PUBLIC_MUX_ENV_KEY,
+      player_name: "Instello - Mobile Player",
+      player_version: "1.0.0",
+      video_id: videoId,
+      video_title: video?.title,
+      video_series: video?.chapter?.title,
+      video_duration: video?.duration ? video.duration * 1000 : undefined, // Convert to milliseconds
+      video_stream_type: "on-demand",
+      // Add custom metadata
+      custom_1: video?.chapter?.title, // Chapter name
+    },
   };
 
   return (
     <NativeVideo className="pt-safe flex-1">
-      <NativeVideo.Player videoSource={videoSource} />
+      <NativeVideo.Player 
+        videoId={videoId} 
+        videoSource={videoSource} 
+        muxOptions={muxOptions}
+      />
       <NativeVideo.Content className="flex-1">
         <ScrollView
           keyboardShouldPersistTaps="handled"
@@ -41,7 +65,12 @@ export default function VideoScreen() {
           keyboardDismissMode="interactive"
           showsVerticalScrollIndicator={false}
         >
-          <VideoDetails isLoading={isLoading} error={error} video={video} />
+          <VideoDetails 
+            isLoading={isLoading && !video} 
+            isFetching={isFetching}
+            error={error} 
+            video={video} 
+          />
         </ScrollView>
       </NativeVideo.Content>
     </NativeVideo>
@@ -50,11 +79,12 @@ export default function VideoScreen() {
 
 interface VideoDetailsProps {
   isLoading: boolean;
+  isFetching?: boolean;
   error: any;
   video?: RouterOutputs["lms"]["video"]["getById"];
 }
 
-function VideoDetails({ isLoading, error, video }: VideoDetailsProps) {
+function VideoDetails({ isLoading, isFetching, error, video }: VideoDetailsProps) {
   const formatDuration = (seconds: number | null | undefined) => {
     if (!seconds) return "0:00";
     const minutes = Math.floor(seconds / 60);
@@ -104,7 +134,12 @@ function VideoDetails({ isLoading, error, video }: VideoDetailsProps) {
             {video.chapter.title}
           </Text>
         </View>
-        <Text className="text-foreground text-xl font-bold">{video.title}</Text>
+        <View className="flex-row items-center gap-2">
+          <Text className="text-foreground text-xl font-bold">{video.title}</Text>
+          {isFetching && (
+            <View className="h-2 w-2 rounded-full bg-blue-500 animate-pulse" />
+          )}
+        </View>
       </View>
 
       {/* Video Stats */}

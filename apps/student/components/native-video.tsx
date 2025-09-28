@@ -1,4 +1,4 @@
-import type { VideoContentFit, VideoMetadata, VideoPlayer } from "expo-video";
+import type { VideoContentFit, VideoMetadata, VideoPlayer, VideoViewProps } from "expo-video";
 import React from "react";
 import {
   ActivityIndicator,
@@ -11,7 +11,7 @@ import {
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { useEvent } from "expo";
 import * as NavigationBar from "expo-navigation-bar";
-import { router, useLocalSearchParams } from "expo-router";
+import { router } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { setStatusBarHidden } from "expo-status-bar";
 import { useVideoPlayer, VideoSource, VideoView } from "expo-video";
@@ -20,6 +20,7 @@ import { Icon } from "@/components/ui/icon";
 import { Text } from "@/components/ui/text";
 import { cn } from "@/lib/utils";
 import Slider from "@react-native-community/slider";
+import mux from "mux-embed";
 import {
   ArrowLeftIcon,
   ArrowsInSimpleIcon,
@@ -30,6 +31,8 @@ import {
   PauseIcon,
   PlayIcon,
 } from "phosphor-react-native";
+
+// const MuxVideo = createMuxVideo(VideoView);
 
 const NativeVideoPlayerContext = React.createContext({
   fullscreen: false,
@@ -54,12 +57,138 @@ NativeVideo.Content = ({ ...props }: ViewProps) => {
   return <View {...props} />;
 };
 
-NativeVideo.Player = ({ videoSource }: { videoSource: VideoSource }) => {
+const assign = mux.utils.assign;
+
+const MIN_REBUFFER_DURATION = 300;
+
+const generateShortId = () => {
+  return (
+    '000000' + ((Math.random() * Math.pow(36, 6)) << 0).toString(36)
+  ).slice(-6);
+};
+
+interface MuxVideoProps extends VideoViewProps {
+  muxOptions: Parameters<typeof mux.init>[1];
+}
+
+const withMuxVideo = <P extends VideoViewProps>(
+  WrappedComponent: React.ComponentType<P>
+) => {
+  return React.forwardRef<VideoView, MuxVideoProps>((props, ref) => {
+    const { muxOptions, ...videoViewProps } = props;
+    const muxPlayerId = React.useRef<string>(`mux-player-${generateShortId()}`);
+    const muxInitialized = React.useRef<boolean>(false);
+
+    // Initialize Mux analytics
+    React.useEffect(() => {
+      if (muxOptions && !muxInitialized.current) {
+        try {
+          mux.init(muxPlayerId.current, muxOptions);
+          muxInitialized.current = true;
+        } catch (error) {
+          console.warn('Failed to initialize Mux analytics:', error);
+        }
+      }
+    }, [muxOptions]);
+
+    // Cleanup Mux monitoring on unmount
+    React.useEffect(() => {
+      return () => {
+        if (muxInitialized.current) {
+          try {
+            mux.destroyMonitor(muxPlayerId.current);
+          } catch (error) {
+            console.warn('Failed to destroy Mux monitor:', error);
+          }
+        }
+      };
+    }, []);
+
+    // Track video events
+    const trackEvent = React.useCallback((eventType: Parameters<typeof mux.emit>[1], data?: any) => {
+      if (muxInitialized.current) {
+        try {
+          mux.emit(
+            muxPlayerId.current,
+            eventType,
+            data
+          );
+        } catch (error) {
+          console.warn('Failed to emit Mux event:', error);
+        }
+      }
+    }, []);
+
+    // Track time updates for playhead position
+    React.useEffect(() => {
+      if (!muxInitialized.current) return;
+
+      const interval = setInterval(() => {
+        if (videoViewProps.player?.playing && videoViewProps.player?.currentTime > 0) {
+          trackEvent('timeupdate', {
+            currentTime: videoViewProps.player.currentTime,
+            duration: videoViewProps.player.duration,
+          });
+        }
+      }, 1000); // Update every second
+
+      return () => clearInterval(interval);
+    }, [videoViewProps.player?.playing, videoViewProps.player?.currentTime, trackEvent]);
+
+    // Only add event handlers if they exist on the incoming props, to avoid TS errors.
+    const eventHandlers:{prop:string;event:Parameters<typeof mux.emit>[1]}[] = [
+      { prop: 'onLoadStart', event: 'viewinit' },
+      { prop: 'onLoad', event: 'loadstart' },
+      { prop: 'onPlay', event: 'play' },
+      { prop: 'onPause', event: 'pause' },
+      { prop: 'onSeek', event: 'seeked' },
+      { prop: 'onEnd', event: 'ended' },
+      { prop: 'onError', event: 'error' },
+      { prop: 'onBuffer', event: 'waiting' },
+      { prop: 'onCanPlay', event: 'playerready' },
+      { prop: 'onCanPlayThrough', event: 'playing' },
+      { prop: 'onStalled', event: 'stalled' },
+      { prop: 'onWaiting', event: 'waiting' },
+    ] as const;
+
+    // Build enhancedProps by only overriding handlers that exist on videoViewProps
+    const enhancedProps = {
+      ...videoViewProps,
+      ref,
+    } as P & { ref: typeof ref };
+
+    for (const { prop, event  } of eventHandlers) {
+      // Only override if the prop exists on videoViewProps
+      if (prop in videoViewProps && typeof (videoViewProps as any)[prop] === 'function') {
+        (enhancedProps as any)[prop] = (...args: any[]) => {
+          trackEvent(event);
+          (videoViewProps as any)[prop]?.(...args);
+        };
+      }
+    }
+
+    return <WrappedComponent {...enhancedProps} />;
+  });
+};
+
+// Create a Mux-enabled VideoView component
+const MuxVideoView = withMuxVideo(VideoView);
+
+NativeVideo.Player = ({
+  videoSource,
+  videoId,
+  muxOptions,
+}: {
+  videoSource: VideoSource;
+  videoId: string;
+  muxOptions?: Parameters<typeof mux.init>[1];
+}) => {
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
     player.timeUpdateEventInterval = 1;
     player.play();
   });
+  const videoRef = React.useRef<VideoView>(null);
 
   const [metadata] = React.useState(
     typeof videoSource === "object" ? videoSource?.metadata : undefined,
@@ -68,8 +197,25 @@ NativeVideo.Player = ({ videoSource }: { videoSource: VideoSource }) => {
   const { fullscreen, setFullscreen } = React.useContext(
     NativeVideoPlayerContext,
   );
+
   const [resizeMode, setResizeMode] =
     React.useState<VideoContentFit>("contain");
+
+  // Default Mux options if not provided
+  const defaultMuxOptions: Parameters<typeof mux.init>[1] = {
+    data: {
+      env_key: process.env.EXPO_PUBLIC_MUX_ENV_KEY,
+      player_name: "Instello - Mobile Player",
+      player_version: "1.0.0",
+      video_id: videoId,
+      video_title: metadata?.title,
+      video_series: metadata?.artist,
+      video_duration: player.duration,
+      video_stream_type: "on-demand",
+    },
+  };
+
+  const finalMuxOptions = muxOptions || defaultMuxOptions;
 
   return (
     <View style={{ backgroundColor: "black", flex: fullscreen ? 1 : 0 }}>
@@ -80,11 +226,13 @@ NativeVideo.Player = ({ videoSource }: { videoSource: VideoSource }) => {
             : { aspectRatio: 16 / 9 }, // inline player
         ]}
       >
-        <VideoView
+        <MuxVideoView
+          ref={videoRef}
           style={StyleSheet.absoluteFill}
           player={player}
           nativeControls={false}
           contentFit={resizeMode}
+          muxOptions={finalMuxOptions}
         />
 
         {/* Overlay controls */}
@@ -192,6 +340,17 @@ function NativeVideoControlsOverlay({
     currentLiveTimestamp: player.currentLiveTimestamp,
     currentOffsetFromLive: player.currentOffsetFromLive,
   });
+
+  // Track time updates for Mux analytics
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      if (player.playing && player.currentTime > 0) {
+        // This will be handled by the MuxVideoView component
+      }
+    }, 1000); // Update every second
+
+    return () => clearInterval(interval);
+  }, [player.playing, player.currentTime]);
 
   const pinchGesture = Gesture.Pinch()
 

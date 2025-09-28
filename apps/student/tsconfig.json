@@ -18,7 +18,8 @@
     "nativewind-env.d.ts",
     "metro.config.js",
     "babel.config.js",
-    "global.d.ts"
+    "global.d.ts",
+    "../../node_modules/mux-embed/dist/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "global.css"]
 }

@@ -1,3 +1,4 @@
+import React from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Image } from "expo-image";
 import { Link } from "expo-router";
@@ -6,6 +7,7 @@ import { trpc } from "@/utils/api";
 import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import { ClockIcon, LockLaminatedIcon } from "phosphor-react-native";
+import { useVideoPrefetch } from "@/hooks/useVideoPrefetch";
 
 import {
   Card,
@@ -22,6 +24,22 @@ export function ChannelLessonsList({ channelId }: { channelId: string }) {
   const { data: videos, isLoading } = useQuery(
     trpc.lms.video.listPublicByChannelId.queryOptions({ channelId }),
   );
+  const { prefetchVideo, prefetchVideos } = useVideoPrefetch();
+
+  // Prefetch all video details when the channel videos are loaded
+  React.useEffect(() => {
+    if (videos && Array.isArray(videos)) {
+      const videoIds = videos
+        .filter((item): item is NonNullable<typeof item> & { id: string } => 
+          typeof item === "object" && "canWatch" in item && "id" in item && item.canWatch
+        )
+        .map((item) => item.id);
+      
+      if (videoIds.length > 0) {
+        prefetchVideos(videoIds);
+      }
+    }
+  }, [videos, prefetchVideos]);
 
   if (isLoading) {
     return (
@@ -87,7 +105,13 @@ export function ChannelLessonsList({ channelId }: { channelId: string }) {
               href={`/video?playbackId=${item.playbackId}&videoId=${item.id}`}
               disabled={!item.canWatch}
             >
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  if (item.canWatch) {
+                    prefetchVideo(item.id);
+                  }
+                }}
+              >
                 <Card className="bg-accent/40 flex-row gap-2 p-2">
                   <CardContent className="p-0">
                     <Image

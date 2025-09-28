@@ -43,7 +43,7 @@ export default function CouponSuccessScreen() {
     <View className="flex-1 items-center">
       <View className="w-full flex-1 items-center gap-3.5 px-6">
         <LottieView
-          source={require("assets/animations/crown.json")}
+          source={require("assets/animations/shine-crown.json")}
           style={{ height: 200, width: 200 }}
           autoPlay
         />

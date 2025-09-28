@@ -6,28 +6,61 @@ settings:
 
 catalogs:
   default:
+    '@clerk/nextjs':
+      specifier: ^6.25.1
+      version: 6.33.0
     '@clerk/types':
       specifier: ^4.65.0
       version: 4.89.0
+    '@hookform/resolvers':
+      specifier: ^5.1.1
+      version: 5.2.2
+    '@phosphor-icons/react':
+      specifier: ^2.1.10
+      version: 2.1.10
     '@tanstack/react-query':
       specifier: ^5.83.0
       version: 5.90.2
+    '@tanstack/react-table':
+      specifier: ^8.21.3
+      version: 8.21.3
     '@trpc/client':
       specifier: ^11.4.3
       version: 11.6.0
     '@trpc/tanstack-react-query':
       specifier: ^11.4.3
       version: 11.6.0
+    eslint:
+      specifier: ^9.28.0
+      version: 9.36.0
     prettier:
       specifier: ^3.5.3
       version: 3.6.2
+    react-hook-form:
+      specifier: ^7.60.0
+      version: 7.63.0
+    sonner:
+      specifier: ^2.0.6
+      version: 2.0.7
+    superjson:
+      specifier: ^2.2.2
+      version: 2.2.2
     typescript:
       specifier: ~5.9.2
       version: 5.9.2
+    zod:
+      specifier: ^3.25.49
+      version: 3.25.76
   react19:
+    '@types/node':
+      specifier: ^20
+      version: 20.19.17
     '@types/react':
       specifier: ^19.1.13
       version: 19.1.14
+    '@types/react-dom':
+      specifier: ^19
+      version: 19.1.9
     react:
       specifier: ^19.1.0
       version: 19.1.0
@@ -272,7 +305,7 @@ importers:
         version: link:../../packages/api
       '@react-native-community/datetimepicker':
         specifier: ^8.4.4
-        version: 8.4.5(expo@54.0.10)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.14)(react@19.1.0))(react@19.1.0)
+        version: 8.4.4(expo@54.0.10)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.14)(react@19.1.0))(react@19.1.0)
       '@react-native-community/slider':
         specifier: 5.0.1
         version: 5.0.1
@@ -3509,8 +3542,8 @@ packages:
   '@radix-ui/rect@1.1.1':
     resolution: {integrity: sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw==}
 
-  '@react-native-community/datetimepicker@8.4.5':
-    resolution: {integrity: sha512-vvVOJAHjU8TFBzTUjQzANCL6C3pZSE2zjfutCATk790uz7ASEc2tOBD+EIG4BTelWtP2G9jqvXp2L7XGdhEBRg==}
+  '@react-native-community/datetimepicker@8.4.4':
+    resolution: {integrity: sha512-bc4ZixEHxZC9/qf5gbdYvIJiLZ5CLmEsC3j+Yhe1D1KC/3QhaIfGDVdUcid0PdlSoGOSEq4VlB93AWyetEyBSQ==}
     peerDependencies:
       expo: '>=52.0.0'
       react: '*'
@@ -13564,7 +13597,7 @@ snapshots:
 
   '@radix-ui/rect@1.1.1': {}
 
-  '@react-native-community/datetimepicker@8.4.5(expo@54.0.10)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.14)(react@19.1.0))(react@19.1.0)':
+  '@react-native-community/datetimepicker@8.4.4(expo@54.0.10)(react-native@0.81.4(@babel/core@7.28.4)(@types/react@19.1.14)(react@19.1.0))(react@19.1.0)':
     dependencies:
       invariant: 2.2.4
       react: 19.1.0

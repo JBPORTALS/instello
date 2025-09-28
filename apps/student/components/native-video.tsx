@@ -136,7 +136,6 @@ const withMuxVideo = <P extends VideoViewProps>(
         if (muxInitialized.current) {
           try {
             mux.emit(muxPlayerId.current, eventType, data);
-            console.log("tracking...", eventType, data);
           } catch (error) {
             console.warn("Failed to emit Mux event:", error);
           }
@@ -438,7 +437,7 @@ function NativeVideoControlsOverlay({
                 <Icon
                   weight="bold"
                   as={fullscreen ? ArrowLeftIcon : CaretDownIcon}
-                  color="white"
+                  className="text-white"
                   size={24}
                 />
               </Button>
@@ -466,7 +465,7 @@ function NativeVideoControlsOverlay({
                 <Icon
                   weight="bold"
                   as={fullscreen ? ArrowsInSimpleIcon : ArrowsOutSimpleIcon}
-                  color="white"
+                  className="text-white"
                   size={24}
                 />
               </Button>
@@ -483,7 +482,11 @@ function NativeVideoControlsOverlay({
                   startTimeToHideControls();
                 }}
               >
-                <Icon as={ClockCounterClockwiseIcon} color="white" size={32} />
+                <Icon
+                  as={ClockCounterClockwiseIcon}
+                  className="text-white"
+                  size={32}
+                />
               </Button>
 
               <Button
@@ -497,7 +500,7 @@ function NativeVideoControlsOverlay({
                 <Icon
                   as={player.playing ? PauseIcon : PlayIcon}
                   size={40}
-                  color="white"
+                  className="text-white"
                   weight="fill"
                 />
               </Button>
@@ -511,7 +514,11 @@ function NativeVideoControlsOverlay({
                 variant={"ghost"}
                 className="rounded-full bg-black/40 p-6"
               >
-                <Icon as={ClockClockwiseIcon} color="white" size={32} />
+                <Icon
+                  as={ClockClockwiseIcon}
+                  className="text-white"
+                  size={32}
+                />
               </Button>
             </View>
 

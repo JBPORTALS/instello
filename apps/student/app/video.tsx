@@ -1,6 +1,7 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
 import { useLocalSearchParams } from "expo-router";
+import { StatusBar } from "expo-status-bar";
 import { VideoSource } from "expo-video";
 import { NativeVideo } from "@/components/native-video";
 import { Text } from "@/components/ui/text";
@@ -52,28 +53,31 @@ export default function VideoScreen() {
   };
 
   return (
-    <NativeVideo className="pt-safe flex-1">
-      <NativeVideo.Player
-        videoId={videoId}
-        videoSource={videoSource}
-        muxOptions={muxOptions}
-      />
-      <NativeVideo.Content className="flex-1">
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerClassName="gap-3.5 p-4"
-          keyboardDismissMode="interactive"
-          showsVerticalScrollIndicator={false}
-        >
-          <VideoDetails
-            isLoading={isLoading && !video}
-            isFetching={isFetching}
-            error={error}
-            video={video}
-          />
-        </ScrollView>
-      </NativeVideo.Content>
-    </NativeVideo>
+    <>
+      <StatusBar style="auto" />
+      <NativeVideo className="pt-safe flex-1">
+        <NativeVideo.Player
+          videoId={videoId}
+          videoSource={videoSource}
+          muxOptions={muxOptions}
+        />
+        <NativeVideo.Content className="flex-1">
+          <ScrollView
+            keyboardShouldPersistTaps="handled"
+            contentContainerClassName="gap-3.5 p-4"
+            keyboardDismissMode="interactive"
+            showsVerticalScrollIndicator={false}
+          >
+            <VideoDetails
+              isLoading={isLoading && !video}
+              isFetching={isFetching}
+              error={error}
+              video={video}
+            />
+          </ScrollView>
+        </NativeVideo.Content>
+      </NativeVideo>
+    </>
   );
 }
 

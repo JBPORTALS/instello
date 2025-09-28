@@ -82,7 +82,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
   };
 };
 
-function getConfig() {
+export function getConfig() {
   switch (process.env.APP_ENV) {
     case "development":
       return {

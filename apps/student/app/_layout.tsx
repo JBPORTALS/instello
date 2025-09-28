@@ -25,6 +25,7 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <ClerkProvider
+        polling
         publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
         tokenCache={tokenCache}
       >

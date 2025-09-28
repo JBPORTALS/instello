@@ -3,7 +3,6 @@ import type { ImageSourcePropType } from "react-native";
 import * as React from "react";
 import { Image, Platform, View } from "react-native";
 import * as AuthSession from "expo-auth-session";
-import Constants from "expo-constants";
 import * as WebBrowser from "expo-web-browser";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -49,9 +48,7 @@ export function SocialConnections() {
           // For web, defaults to current path
           // For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
           // For more info, see https://docs.expo.dev/versions/latest/sdk/auth-session/#authsessionmakeredirecturioptions
-          redirectUrl: AuthSession.makeRedirectUri({
-            scheme: Constants.expoConfig?.android?.package,
-          }),
+          redirectUrl: AuthSession.makeRedirectUri(),
         });
 
         // If sign in was successful, set the active session

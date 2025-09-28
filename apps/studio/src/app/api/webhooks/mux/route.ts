@@ -58,13 +58,19 @@ export async function POST(req: Request) {
       }
 
       case "video.asset.ready": {
-        const asset = wbEvent.data;
-        const playbackId = asset.playback_ids?.[0]?.id;
+        const { playback_ids, duration, passthrough } = wbEvent.data;
+        const playbackId = playback_ids?.[0]?.id;
+
+        if (!passthrough)
+          return NextResponse.json(
+            { message: "No passthrough mentioned in the meta" },
+            { status: 400, statusText: "No Passthrough" },
+          );
 
         await db
           .update(video)
-          .set({ status: "ready", playbackId })
-          .where(eq(video.assetId, asset.id));
+          .set({ status: "ready", playbackId, duration })
+          .where(eq(video.id, passthrough));
 
         return NextResponse.json(
           { message: "Asset ready to play" },

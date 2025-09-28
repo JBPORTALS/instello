@@ -106,17 +106,17 @@ export const subscriptionRouter = {
 
       let status: "subscribed" | "expired" | undefined;
 
-      if (
-        userSubscription &&
-        isWithinInterval(new Date(), {
-          start: userSubscription.startDate,
-          end: userSubscription.endDate,
-        })
-      ) {
-        status = "subscribed";
-      } else {
-        status = "expired";
-      }
+      if (userSubscription)
+        if (
+          isWithinInterval(new Date(), {
+            start: userSubscription.startDate,
+            end: userSubscription.endDate,
+          })
+        ) {
+          status = "subscribed";
+        } else {
+          status = "expired";
+        }
 
       return {
         ...userSubscription,

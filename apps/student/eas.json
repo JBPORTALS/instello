@@ -19,7 +19,8 @@
         "withoutCredentials": false,
         "buildType": "apk",
         "image": "latest"
-      }
+      },
+      "channel": "preview"
     },
     "production": {
       "environment": "production",

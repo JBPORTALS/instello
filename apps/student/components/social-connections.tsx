@@ -37,9 +37,11 @@ export function SocialConnections() {
   useWarmUpBrowser();
   const { colorScheme } = useColorScheme();
   const { startSSOFlow } = useSSO();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   function onSocialLoginPress(strategy: SocialConnectionStrategy) {
     return async () => {
+      setIsLoading(true);
       try {
         // Start the authentication process by calling `startSSOFlow()`
         const { createdSessionId, setActive, signIn } = await startSSOFlow({
@@ -65,6 +67,7 @@ export function SocialConnections() {
         // See https://go.clerk.com/mRUDrIe for more info on error handling
         console.error(JSON.stringify(err, null, 2));
       }
+      setIsLoading(false);
     };
   }
 
@@ -78,6 +81,7 @@ export function SocialConnections() {
             size="sm"
             className="sm:flex-1"
             onPress={onSocialLoginPress(strategy.type)}
+            disabled={isLoading}
           >
             <Image
               className={cn(
@@ -93,7 +97,7 @@ export function SocialConnections() {
               })}
               source={strategy.source}
             />
-            <Text>{strategy.title}</Text>
+            <Text>{isLoading ? "Signing in..." : strategy.title}</Text>
           </Button>
         );
       })}

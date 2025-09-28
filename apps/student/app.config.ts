@@ -24,6 +24,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       supportsTablet: true,
       bundleIdentifier: scheme,
     },
+    updates: {
+      url: "https://u.expo.dev/055c4f68-c31e-41fe-bca2-8f4a15b5af71",
+    },
     android: {
       edgeToEdgeEnabled: true,
       adaptiveIcon: {
@@ -31,6 +34,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
         backgroundColor: "#ffffff",
       },
       package: scheme,
+      runtimeVersion: "appVersion",
     },
     web: {
       bundler: "metro",

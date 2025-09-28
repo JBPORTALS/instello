@@ -1,32 +1,44 @@
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Text } from '@/components/ui/text';
-import { useSignIn } from '@clerk/clerk-expo';
-import { router } from 'expo-router';
-import { useLocalSearchParams } from 'expo-router/build/hooks';
-import * as React from 'react';
-import { View } from 'react-native';
+import * as React from "react";
+import { View } from "react-native";
+import { router } from "expo-router";
+import { useLocalSearchParams } from "expo-router/build/hooks";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Text } from "@/components/ui/text";
+import { useSignIn } from "@clerk/clerk-expo";
 
 export function ForgotPasswordForm() {
-  const { email: emailParam = '' } = useLocalSearchParams<{ email?: string }>();
+  const { email: emailParam = "" } = useLocalSearchParams<{ email?: string }>();
   const [email, setEmail] = React.useState(emailParam);
   const { signIn, isLoaded } = useSignIn();
-  const [error, setError] = React.useState<{ email?: string; password?: string }>({});
+  const [error, setError] = React.useState<{
+    email?: string;
+    password?: string;
+  }>({});
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const onSubmit = async () => {
     if (!email) {
-      setError({ email: 'Email is required' });
+      setError({ email: "Email is required" });
       return;
     }
     if (!isLoaded) {
       return;
     }
 
+    setIsLoading(true);
+
     try {
       await signIn.create({
-        strategy: 'reset_password_email_code',
+        strategy: "reset_password_email_code",
         identifier: email,
       });
 
@@ -39,13 +51,17 @@ export function ForgotPasswordForm() {
       }
       console.error(JSON.stringify(err, null, 2));
     }
+
+    setIsLoading(false);
   };
 
   return (
     <View className="gap-6">
-      <Card className="border-border/0 shadow-none sm:border-border sm:shadow-sm sm:shadow-black/5">
+      <Card className="border-border/0 sm:border-border shadow-none sm:shadow-sm sm:shadow-black/5">
         <CardHeader>
-          <CardTitle className="text-center text-xl sm:text-left">Forgot password?</CardTitle>
+          <CardTitle className="text-center text-xl sm:text-left">
+            Forgot password?
+          </CardTitle>
           <CardDescription className="text-center sm:text-left">
             Enter your email to reset your password
           </CardDescription>
@@ -66,11 +82,19 @@ export function ForgotPasswordForm() {
                 returnKeyType="send"
               />
               {error.email ? (
-                <Text className="text-sm font-medium text-destructive">{error.email}</Text>
+                <Text className="text-destructive text-sm font-medium">
+                  {error.email}
+                </Text>
               ) : null}
             </View>
-            <Button className="w-full" onPress={onSubmit}>
-              <Text>Reset your password</Text>
+            <Button
+              disabled={isLoading || !email}
+              className="w-full"
+              onPress={onSubmit}
+            >
+              <Text>
+                {isLoading ? "Please wait..." : "Reset your password"}
+              </Text>
             </Button>
           </View>
         </CardContent>

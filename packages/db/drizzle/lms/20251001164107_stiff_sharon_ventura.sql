@@ -1,0 +1,1 @@
+ALTER TABLE "lms_video" ALTER COLUMN "duration" SET DATA TYPE real;

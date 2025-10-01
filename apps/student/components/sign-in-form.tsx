@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { useSignIn } from "@clerk/clerk-expo";
 
@@ -21,6 +20,7 @@ export function SignInForm() {
   const { signIn, setActive, isLoaded } = useSignIn();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
   const passwordInputRef = React.useRef<TextInput>(null);
   const [error, setError] = React.useState<{
     email?: string;
@@ -31,6 +31,8 @@ export function SignInForm() {
     if (!isLoaded) {
       return;
     }
+
+    setIsLoading(true);
 
     // Start the sign-in process using the email and password provided
     try {
@@ -61,6 +63,8 @@ export function SignInForm() {
       }
       console.error(JSON.stringify(err, null, 2));
     }
+
+    setIsLoading(false);
   }
 
   function onEmailSubmitEditing() {
@@ -128,8 +132,8 @@ export function SignInForm() {
                 </Text>
               ) : null}
             </View>
-            <Button className="w-full" onPress={onSubmit}>
-              <Text>Continue</Text>
+            <Button className="w-full" disabled={isLoading} onPress={onSubmit}>
+              <Text>{isLoading ? "Signing in..." : "Continue"}</Text>
             </Button>
           </View>
           <Text className="text-center text-sm">

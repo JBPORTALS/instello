@@ -34,16 +34,16 @@ export function VideoPageBreadcrumb() {
           <BreadcrumbLink asChild className="flex items-center gap-1.5">
             <Link href={`/c/${channelId}`}>
               <CircleIcon weight="duotone" />
-              {channel?.title}
+              {channel.title}
             </Link>
           </BreadcrumbLink>
         </BreadcrumbItem>
         <BreadcrumbSeparator />
-        <BreadcrumbItem>{video?.chapter.title}</BreadcrumbItem>
+        <BreadcrumbItem>{video.chapter.title}</BreadcrumbItem>
         <BreadcrumbSeparator />
 
         <BreadcrumbItem>
-          <BreadcrumbPage>{video?.title}</BreadcrumbPage>
+          <BreadcrumbPage>{video.title}</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

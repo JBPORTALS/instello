@@ -5,6 +5,7 @@ import { z } from "zod/v4";
 import { initialColumns } from "../columns.helpers";
 import { lmsPgTable } from "../table.helpers";
 import { chapter } from "./chapter";
+import { subscription } from "./subscription";
 
 export const channel = lmsPgTable("channel", (d) => ({
   ...initialColumns,
@@ -17,6 +18,7 @@ export const channel = lmsPgTable("channel", (d) => ({
 
 export const channelRelations = relations(channel, ({ many }) => ({
   chapters: many(chapter),
+  subscriptions: many(subscription),
 }));
 
 export const CreateChannelSchema = createInsertSchema(channel, {

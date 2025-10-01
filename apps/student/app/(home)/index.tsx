@@ -12,6 +12,8 @@ import { FlashList } from "@shopify/flash-list";
 import { useQuery } from "@tanstack/react-query";
 import { formatDate } from "date-fns";
 import { BookOpenTextIcon } from "phosphor-react-native";
+import { useVideoPrefetch } from "@/hooks/useVideoPrefetch";
+import { queryClient } from "@/utils/api";
 
 function ChannelCard({
   channel,
@@ -85,8 +87,29 @@ export default function Home() {
   const { data, isLoading } = useQuery(
     trpc.lms.channel.listPublic.queryOptions(),
   );
+  const { prefetchVideos } = useVideoPrefetch();
 
   const channelList = data ?? [];
+
+  // Prefetch videos for the first few channels when they load
+  React.useEffect(() => {
+    if (channelList.length > 0) {
+      // Prefetch videos for the first 3 channels to improve perceived performance
+      const firstThreeChannels = channelList.slice(0, 3);
+      
+      firstThreeChannels.forEach(async (channel) => {
+        try {
+          // Prefetch videos for this channel using query client
+          await queryClient.prefetchQuery(
+            trpc.lms.video.listPublicByChannelId.queryOptions({ channelId: channel.id })
+          );
+        } catch (error) {
+          // Silently fail - this is just prefetching
+          console.warn('Failed to prefetch videos for channel:', channel.id);
+        }
+      });
+    }
+  }, [channelList, prefetchVideos]);
 
   return (
     <ScrollView

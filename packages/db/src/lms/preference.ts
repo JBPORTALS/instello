@@ -11,11 +11,11 @@ export const preference = lmsPgTable("preference", (d) => ({
   courseId: d
     .text()
     .notNull()
-    .references(() => courseOrBranch.id),
+    .references(() => courseOrBranch.id, { onDelete: "cascade" }),
   branchId: d
     .text()
     .notNull()
-    .references(() => courseOrBranch.id),
+    .references(() => courseOrBranch.id, { onDelete: "cascade" }),
 }));
 
 export const CreatePreferenceSchema = createInsertSchema(preference, {

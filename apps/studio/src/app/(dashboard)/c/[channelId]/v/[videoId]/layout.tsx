@@ -12,8 +12,7 @@ export default async function Layout({
   children: React.ReactNode;
   params: Promise<{ channelId: string; videoId: string }>;
 }) {
-  const { channelId, videoId } = await params;
-  prefetch(trpc.lms.channel.getById.queryOptions({ channelId }));
+  const { videoId } = await params;
   prefetch(trpc.lms.video.getById.queryOptions({ videoId }));
   return (
     <HydrateClient>

@@ -1,6 +1,7 @@
 import "@/global.css";
 
 import * as React from "react";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -22,15 +23,21 @@ export default function RootLayout() {
   const { colorScheme } = useColorScheme();
 
   return (
-    <ClerkProvider tokenCache={tokenCache}>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
-          <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-          <Routes />
-          <PortalHost />
-        </ThemeProvider>
-      </QueryClientProvider>
-    </ClerkProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ClerkProvider
+        polling
+        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+        tokenCache={tokenCache}
+      >
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
+            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+            <Routes />
+            <PortalHost />
+          </ThemeProvider>
+        </QueryClientProvider>
+      </ClerkProvider>
+    </GestureHandlerRootView>
   );
 }
 
@@ -50,7 +57,7 @@ function Routes() {
   }
 
   return (
-    <Stack>
+    <Stack screenOptions={{ headerShadowVisible: false }}>
       {/* Screens only shown when the user is NOT signed in */}
       <Stack.Protected guard={!isSignedIn}>
         <Stack.Screen
@@ -79,13 +86,35 @@ function Routes() {
         {/** Screens only shown when the user Is completed the onboarding process */}
         <Stack.Protected guard={!!sessionClaims?.metadata?.onBoardingCompleted}>
           <Stack.Screen name="(home)" options={{ headerShown: false }} />
+          <Stack.Screen name="profile" options={{ title: "My Profile" }} />
           <Stack.Screen name="channel" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="(subscribe)/index"
+            options={{
+              presentation: "modal",
+              title: "Subscribe Now",
+              headerTitleAlign: "center",
+            }}
+          />
+          <Stack.Screen
+            name="(subscribe)/apply-coupon"
+            options={{
+              headerShown: false,
+              animation: "fade",
+            }}
+          />
+          <Stack.Screen
+            name="(subscribe)/coupon-success"
+            options={{
+              title: "",
+            }}
+          />
           <Stack.Screen
             name="video"
             options={{
-              title: "Watching Now",
-              headerTitleAlign: "center",
-              presentation: "fullScreenModal",
+              headerShown: false,
+              animation: "slide_from_bottom",
+              gestureDirection: "vertical",
             }}
           />
         </Stack.Protected>

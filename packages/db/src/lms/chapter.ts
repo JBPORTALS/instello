@@ -14,7 +14,7 @@ export const chapter = lmsPgTable("chapter", (d) => ({
   channelId: d
     .text()
     .notNull()
-    .references(() => channel.id),
+    .references(() => channel.id, { onDelete: "cascade" }),
   order: d.integer().notNull(),
   isPublished: d.boolean().default(false),
 }));

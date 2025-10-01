@@ -14,4 +14,9 @@ export default {
   casing: "snake_case",
   out: "./drizzle/erp",
   tablesFilter: "erp_*",
+  migrations: {
+    schema: "__drizzle_migrations_erp",
+    table: "drizzle_erp",
+    prefix: "timestamp",
+  },
 } satisfies Config;

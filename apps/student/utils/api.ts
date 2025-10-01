@@ -10,7 +10,12 @@ import { getBaseUrl } from "./base-url";
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      // ...
+      // Optimize for prefetching
+      staleTime: 5 * 60 * 1000, // 5 minutes - data stays fresh longer
+      gcTime: 10 * 60 * 1000, // 10 minutes - keep in cache longer
+      retry: 1, // Reduce retries for faster failure
+      refetchOnWindowFocus: false, // Don't refetch on window focus
+      refetchOnMount: false, // Don't refetch if data exists
     },
   },
 });

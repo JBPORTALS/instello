@@ -12,7 +12,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import { Text } from "@/components/ui/text";
 import { useSignUp } from "@clerk/clerk-expo";
 
@@ -20,6 +19,7 @@ export function SignUpForm() {
   const { signUp, isLoaded } = useSignUp();
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [isLoading, setIsLoading] = React.useState(false);
   const passwordInputRef = React.useRef<TextInput>(null);
   const [error, setError] = React.useState<{
     email?: string;
@@ -28,6 +28,8 @@ export function SignUpForm() {
 
   async function onSubmit() {
     if (!isLoaded) return;
+
+    setIsLoading(true);
 
     // Start sign-up process using email and password provided
     try {
@@ -53,6 +55,8 @@ export function SignUpForm() {
       }
       console.error(JSON.stringify(err, null, 2));
     }
+
+    setIsLoading(false);
   }
 
   function onEmailSubmitEditing() {
@@ -109,8 +113,12 @@ export function SignUpForm() {
                 </Text>
               ) : null}
             </View>
-            <Button className="w-full" onPress={onSubmit}>
-              <Text>Continue</Text>
+            <Button
+              disabled={isLoading || !email || !password}
+              className="w-full"
+              onPress={onSubmit}
+            >
+              <Text>{isLoading ? "Please wait..." : "Continue"}</Text>
             </Button>
           </View>
           <Text className="text-center text-sm">

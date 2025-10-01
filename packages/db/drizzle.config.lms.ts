@@ -14,4 +14,9 @@ export default {
   casing: "snake_case",
   out: "./drizzle/lms",
   tablesFilter: "lms_*",
+  migrations: {
+    schema: "__drizzle_migrations_lms",
+    table: "drizzle_lms",
+    prefix: "timestamp",
+  },
 } satisfies Config;

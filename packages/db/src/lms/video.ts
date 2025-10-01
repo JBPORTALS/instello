@@ -12,13 +12,13 @@ export const video = lmsPgTable("video", (d) => ({
   chapterId: d
     .text()
     .notNull()
-    .references(() => chapter.id),
+    .references(() => chapter.id, { onDelete: "cascade" }),
   title: d.varchar({ length: 100 }).notNull(),
   description: d.varchar({ length: 5000 }),
   uploadId: d.text().notNull(),
   assetId: d.text(),
   playbackId: d.text(),
-  duration: d.integer(),
+  duration: d.real(),
   status: d
     .text({
       enum: [

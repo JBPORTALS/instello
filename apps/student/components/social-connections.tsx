@@ -3,7 +3,6 @@ import type { ImageSourcePropType } from "react-native";
 import * as React from "react";
 import { Image, Platform, View } from "react-native";
 import * as AuthSession from "expo-auth-session";
-import { router } from "expo-router";
 import * as WebBrowser from "expo-web-browser";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -37,12 +36,14 @@ export function SocialConnections() {
   useWarmUpBrowser();
   const { colorScheme } = useColorScheme();
   const { startSSOFlow } = useSSO();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   function onSocialLoginPress(strategy: SocialConnectionStrategy) {
     return async () => {
+      setIsLoading(true);
       try {
         // Start the authentication process by calling `startSSOFlow()`
-        const { createdSessionId, setActive, signIn } = await startSSOFlow({
+        const { createdSessionId, setActive } = await startSSOFlow({
           strategy,
           // For web, defaults to current path
           // For native, you must pass a scheme, like AuthSession.makeRedirectUri({ scheme, path })
@@ -65,6 +66,7 @@ export function SocialConnections() {
         // See https://go.clerk.com/mRUDrIe for more info on error handling
         console.error(JSON.stringify(err, null, 2));
       }
+      setIsLoading(false);
     };
   }
 
@@ -78,6 +80,7 @@ export function SocialConnections() {
             size="sm"
             className="sm:flex-1"
             onPress={onSocialLoginPress(strategy.type)}
+            disabled={isLoading}
           >
             <Image
               className={cn(
@@ -93,7 +96,7 @@ export function SocialConnections() {
               })}
               source={strategy.source}
             />
-            <Text>{strategy.title}</Text>
+            <Text>{isLoading ? "Signing in..." : strategy.title}</Text>
           </Button>
         );
       })}

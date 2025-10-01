@@ -14,8 +14,8 @@ export default function ApplyCouponScreen() {
   const { mutate: createSubscription } = useMutation(
     trpc.lms.subscription.create.mutationOptions({
       async onSuccess(data) {
-        await queryClient.invalidateQueries(trpc.lms.channel.pathFilter());
-        await queryClient.invalidateQueries(trpc.lms.video.pathFilter());
+        await queryClient.invalidateQueries(trpc.lms.channel.getById.queryFilter({ channelId: data.channelId! }));
+        await queryClient.invalidateQueries(trpc.lms.video.listPublicByChannelId.queryFilter({channelId:data.channelId!}));
         router.replace(`/coupon-success?subscriptionId=${data.id}`);
       },
       onError(error) {

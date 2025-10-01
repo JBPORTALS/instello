@@ -16,6 +16,7 @@ import { trpc } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import LottieView from "lottie-react-native";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 
 export default function CouponSuccessScreen() {
   const { errorMessage, subscriptionId } = useLocalSearchParams<{
@@ -40,7 +41,7 @@ export default function CouponSuccessScreen() {
     );
 
   return (
-    <View className="flex-1 items-center">
+    <Animated.View entering={FadeIn} exiting={FadeOut} className="flex-1 items-center">
       <View className="w-full flex-1 items-center gap-3.5 px-6">
         <LottieView
           source={require("assets/animations/shine-crown.json")}
@@ -86,6 +87,6 @@ export default function CouponSuccessScreen() {
           <Text>Okay, Got it</Text>
         </Button>
       </View>
-    </View>
+    </Animated.View>
   );
 }

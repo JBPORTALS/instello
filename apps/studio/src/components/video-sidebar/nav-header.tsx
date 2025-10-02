@@ -35,13 +35,13 @@ export function NavHeader() {
       <div className="bg-accent relative aspect-video h-32 w-full overflow-hidden rounded-md">
         <Image
           fill
-          src={`https://image.mux.com/${video?.playbackId}/thumbnail.png?width=214&height=121&time=15`}
+          src={`https://image.mux.com/${video.playbackId}/thumbnail.png?width=214&height=121&time=15`}
           alt=""
         />
       </div>
       <span className="px-2 text-sm font-semibold">Chapter video</span>
       <p className="text-muted-foreground max-w-full truncate px-2 text-xs">
-        {video?.title}
+        {video.title}
       </p>
     </SidebarHeader>
   );

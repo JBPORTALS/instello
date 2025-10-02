@@ -128,12 +128,8 @@
           "name": "lms_chapter_channel_id_lms_channel_id_fk",
           "tableFrom": "lms_chapter",
           "tableTo": "lms_channel",
-          "columnsFrom": [
-            "channel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -217,12 +213,8 @@
           "name": "lms_coupon_channel_id_lms_channel_id_fk",
           "tableFrom": "lms_coupon",
           "tableTo": "lms_channel",
-          "columnsFrom": [
-            "channel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -275,12 +267,8 @@
           "name": "lms_coupon_redemption_coupon_id_lms_coupon_id_fk",
           "tableFrom": "lms_coupon_redemption",
           "tableTo": "lms_coupon",
-          "columnsFrom": [
-            "coupon_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coupon_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -355,12 +343,8 @@
           "name": "lms_coupon_target_coupon_id_lms_coupon_id_fk",
           "tableFrom": "lms_coupon_target",
           "tableTo": "lms_coupon",
-          "columnsFrom": [
-            "coupon_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["coupon_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -413,12 +397,8 @@
           "name": "lms_course_or_branch_course_id_lms_course_or_branch_id_fk",
           "tableFrom": "lms_course_or_branch",
           "tableTo": "lms_course_or_branch",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -520,12 +500,8 @@
           "name": "lms_video_chapter_id_lms_chapter_id_fk",
           "tableFrom": "lms_video",
           "tableTo": "lms_chapter",
-          "columnsFrom": [
-            "chapter_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["chapter_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -578,12 +554,8 @@
           "name": "lms_preference_course_id_lms_course_or_branch_id_fk",
           "tableFrom": "lms_preference",
           "tableTo": "lms_course_or_branch",
-          "columnsFrom": [
-            "course_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["course_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -591,12 +563,8 @@
           "name": "lms_preference_branch_id_lms_course_or_branch_id_fk",
           "tableFrom": "lms_preference",
           "tableTo": "lms_course_or_branch",
-          "columnsFrom": [
-            "branch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["branch_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -661,12 +629,8 @@
           "name": "lms_subscription_channel_id_lms_channel_id_fk",
           "tableFrom": "lms_subscription",
           "tableTo": "lms_channel",
-          "columnsFrom": [
-            "channel_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["channel_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

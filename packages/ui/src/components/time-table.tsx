@@ -356,7 +356,7 @@ function TimeTableSlot({
       animate={{ opacity: 1, scale: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95, y: 10 }}
       transition={{ duration: 0.2 }}
-      className="bg-accent absolute top-1 bottom-1 flex overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75"
+      className="bg-accent absolute bottom-1 top-1 flex overflow-hidden rounded-md border backdrop-blur-lg transition-all duration-75"
       dragConstraints={containerRef}
       style={{
         x: xWithSpring,
@@ -368,7 +368,7 @@ function TimeTableSlot({
       <div
         {...bindLeftResize()}
         className={cn(
-          "bg-accent/60 hover:bg-accent/80 active:bg-primary/20 relative top-0 left-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
+          "bg-accent/60 hover:bg-accent/80 active:bg-primary/20 relative left-0 top-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >
@@ -393,7 +393,7 @@ function TimeTableSlot({
         disabled={!editable}
         size={"icon"}
         className={cn(
-          "text-destructive hover:text-destructive hover:bg-destructive/10 relative top-2 right-2 size-5 [&>svg]:!size-3.5",
+          "text-destructive hover:text-destructive hover:bg-destructive/10 relative right-2 top-2 size-5 [&>svg]:!size-3.5",
           !editable && "hidden",
         )}
       >
@@ -403,7 +403,7 @@ function TimeTableSlot({
       <div
         {...bindRightResize()}
         className={cn(
-          "bg-accent/60 hover:bg-accent/80 active:bg-primary/20 relative top-0 right-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
+          "bg-accent/60 hover:bg-accent/80 active:bg-primary/20 relative right-0 top-0 z-10 flex h-full w-2.5 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >

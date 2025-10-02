@@ -13,7 +13,7 @@ export function SiteHeader({
   endElement,
 }: SiteHeaderProps) {
   return (
-    <header className="bg-sidebar flex h-(--header-height) shrink-0 items-center border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
+    <header className="bg-sidebar h-(--header-height) group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height) flex shrink-0 items-center border-b transition-[width,height] ease-linear">
       <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
         {/* Sidebar button */}
         <SidebarTrigger className="-ml-1" />

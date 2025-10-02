@@ -106,7 +106,7 @@ export function AttendanceTable({
     >
       <div
         className={cn(
-          "grid max-w-svw grid-cols-[200px_1fr] overflow-x-auto overflow-y-auto",
+          "max-w-svw grid grid-cols-[200px_1fr] overflow-x-auto overflow-y-auto",
           className,
         )}
         {...props}
@@ -115,7 +115,7 @@ export function AttendanceTable({
         {Array.from({ length: Math.max(0, 17 - students.length) }).map(
           (_, i) => (
             <React.Fragment key={`empty-${i}`}>
-              <div className="bg-background sticky top-0 left-0 h-12 border-r" />
+              <div className="bg-background sticky left-0 top-0 h-12 border-r" />
               <div className="bg-background h-12" />
             </React.Fragment>
           ),
@@ -132,7 +132,7 @@ export function AttendanceTableHeaderLeft({
   return (
     <div
       className={cn(
-        "bg-background sticky top-0 left-0 z-50 col-span-1 flex h-20 items-center justify-center border-r border-b p-1.5",
+        "bg-background sticky left-0 top-0 z-50 col-span-1 flex h-20 items-center justify-center border-b border-r p-1.5",
         className,
       )}
       {...props}
@@ -231,7 +231,7 @@ export function AttendanceTableData() {
         <React.Fragment key={s.id}>
           <div
             aria-label="student-row"
-            className="bg-background/80 border-b-border/50 sticky left-0 z-40 col-span-1 flex h-12 w-full items-center gap-2.5 border-r border-b p-1.5 text-sm backdrop-blur-lg"
+            className="bg-background/80 border-b-border/50 sticky left-0 z-40 col-span-1 flex h-12 w-full items-center gap-2.5 border-b border-r p-1.5 text-sm backdrop-blur-lg"
           >
             <Avatar className="border">
               <AvatarFallback>{s.name.charAt(0)}</AvatarFallback>
@@ -247,7 +247,7 @@ export function AttendanceTableData() {
 
               return (
                 <div
-                  className="flex h-full max-w-max min-w-20 border-r-2"
+                  className="flex h-full min-w-20 max-w-max border-r-2"
                   key={`hour-date-student-slot-${i + 1}`}
                 >
                   {periods.length === 0 ? (
@@ -276,7 +276,7 @@ export function AttendanceTableHeaderDates() {
   return (
     <>
       {dates.map((date, i) => (
-        <div className="h-full max-w-max min-w-20 border-r-2" key={i + 1}>
+        <div className="h-full min-w-20 max-w-max border-r-2" key={i + 1}>
           <div
             key={i}
             className="flex h-10 w-full items-center justify-center border-b px-2.5 text-sm"

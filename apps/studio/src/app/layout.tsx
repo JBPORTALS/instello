@@ -9,6 +9,7 @@ import { buttonVariants } from "@instello/ui/components/button";
 import { cn } from "@instello/ui/lib/utils";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
+
 import { studioFileRouter } from "./api/uploadthing/core";
 
 const geistMono = Geist_Mono({

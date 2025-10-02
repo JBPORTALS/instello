@@ -113,7 +113,7 @@ export function ReactTimetableSlot({
       <button
         {...bindLeft()}
         className={cn(
-          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 left-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute left-0 top-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >
@@ -126,7 +126,7 @@ export function ReactTimetableSlot({
       <button
         {...bindRight()}
         className={cn(
-          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute top-0 right-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
+          "bg-accent/60 hover:bg-accent/80 active:bg-muted absolute right-0 top-0 z-10 flex h-full w-2 touch-none items-center justify-center hover:cursor-ew-resize",
           !editable && "hidden",
         )}
       >

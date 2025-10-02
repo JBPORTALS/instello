@@ -18,7 +18,7 @@ export const columns: ColumnDef<Payment>[] = [
     header: "Student",
     cell(props) {
       return (
-        <div className="inline-flex min-w-3xl items-center gap-2 font-medium">
+        <div className="min-w-3xl inline-flex items-center gap-2 font-medium">
           <Avatar>
             <AvatarFallback>
               {props.row.original.firstName.charAt(0)}

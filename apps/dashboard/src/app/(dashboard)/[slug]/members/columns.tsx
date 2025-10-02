@@ -63,7 +63,7 @@ export const columns: ColumnDef<Member>[] = [
     header: () => <div className="ml-auto w-20 px-3 text-right">Joined</div>,
     cell(props) {
       return (
-        <div className="ml-auto max-w-max min-w-20 px-3">
+        <div className="ml-auto min-w-20 max-w-max px-3">
           <time className="text-muted-foreground text-xs">
             {formatDistanceToNowStrict(props.getValue() as Date, {
               addSuffix: true,

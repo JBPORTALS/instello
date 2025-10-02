@@ -118,7 +118,7 @@ export function ReactTimetable({
 
         {daysIndex.map((dayIdx) => (
           <React.Fragment key={`day-${dayIdx}`}>
-            <div className="bg-accent/20 text-accent-foreground/40 flex h-24 items-center border-r border-b p-6 text-xl font-medium first:border-b-3">
+            <div className="bg-accent/20 text-accent-foreground/40 first:border-b-3 flex h-24 items-center border-b border-r p-6 text-xl font-medium">
               {getWeekdayName(dayIdx)}
             </div>
 
@@ -150,7 +150,7 @@ export function ReactTimetable({
                       data-slot="empty"
                       key={`empty-${dayIdx}-${i}`}
                       className={cn(
-                        "hover:bg-muted bg-muted/10 absolute top-0 bottom-0 cursor-pointer transition-colors",
+                        "hover:bg-muted bg-muted/10 absolute bottom-0 top-0 cursor-pointer transition-colors",
                         occupied &&
                           "pointer-events-none h-0 opacity-0 hover:bg-transparent",
                         !editable && "hover:bg-muted/10 hover:cursor-auto",

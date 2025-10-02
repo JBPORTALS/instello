@@ -23,8 +23,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "src",
-    "globals.d.ts",
-    "../mobile/lib/helpers.ts"
+    "../mobile/lib/helpers.ts",
+    "types/globals.d.ts"
   ],
   "exclude": ["node_modules"]
 }

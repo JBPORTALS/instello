@@ -1,6 +1,7 @@
 "use client";
 
 import type { DayButton } from "react-day-picker";
+
 import * as React from "react";
 import { Button, buttonVariants } from "@instello/ui/components/button";
 import { cn } from "@instello/ui/lib/utils";
@@ -9,6 +10,7 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "lucide-react";
+
 import { DayPicker, getDefaultClassNames } from "react-day-picker";
 
 function Calendar({

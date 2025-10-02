@@ -10,7 +10,7 @@ export default async function Layout({
 }) {
   const { sessionClaims } = await auth();
 
-  if (!sessionClaims?.metadata?.hasCreatorRole) redirect("/no-access");
+  if (!sessionClaims?.metadata.hasCreatorRole) redirect("/no-access");
 
   return (
     <SidebarProvider

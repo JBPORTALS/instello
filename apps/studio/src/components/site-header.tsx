@@ -1,3 +1,4 @@
+import { ClerkLoaded, UserButton } from "@clerk/nextjs";
 import { Separator } from "@instello/ui/components/separator";
 
 interface SiteHeaderProps {
@@ -35,6 +36,11 @@ export function SiteHeader({
         {endElement && (
           <div className="ml-auto flex items-center gap-2">{endElement}</div>
         )}
+        <div className="ml-auto">
+        <ClerkLoaded>
+          <UserButton showName/>
+        </ClerkLoaded>
+        </div>
       </div>
     </header>
   );

@@ -52,7 +52,7 @@ export default function CouponSuccessScreen() {
           style={{ height: 200, width: 200 }}
           autoPlay
         />
-        <View className="items-center">
+        <View className="flex-1">
           <Text variant={"h3"}>Subscribed Successful</Text>
           <Text variant={"muted"}>Happy learning</Text>
         </View>

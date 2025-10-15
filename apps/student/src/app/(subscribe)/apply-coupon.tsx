@@ -18,6 +18,11 @@ export default function ApplyCouponScreen() {
           trpc.lms.channel.getById.queryFilter({ channelId: data.channelId! }),
         );
         await queryClient.invalidateQueries(
+          trpc.lms.subscription.getByChannelId.queryFilter({
+            channelId: data.channelId!,
+          }),
+        );
+        await queryClient.invalidateQueries(
           trpc.lms.video.listPublicByChannelId.queryFilter({
             channelId: data.channelId!,
           }),

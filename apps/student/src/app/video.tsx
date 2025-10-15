@@ -1,9 +1,6 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { VideoSource } from "expo-video";
@@ -12,7 +9,6 @@ import { Text } from "@/components/ui/text";
 import { RouterOutputs, trpc } from "@/utils/api";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Mux } from "mux-embed";
 import { CalendarIcon, ClockIcon } from "phosphor-react-native";
 
 export default function VideoScreen() {
@@ -40,33 +36,13 @@ export default function VideoScreen() {
     },
   };
 
-  // Custom Mux analytics options
-  const muxOptions: Parameters<Mux["init"]>[1] = {
-    data: {
-      env_key: process.env.EXPO_PUBLIC_MUX_ENV_KEY,
-      player_name: "Instello - Mobile Player",
-      player_version: "1.0.0",
-      video_id: videoId,
-      video_title: video?.title,
-      video_series: video?.chapter?.title,
-      video_duration: video?.duration ? video.duration * 1000 : undefined, // Convert to milliseconds
-      video_stream_type: "on-demand",
-      // Add custom metadata
-      custom_1: video?.chapter?.title, // Chapter name
-    },
-  };
-
   const { top } = useSafeAreaInsets();
 
   return (
     <>
       <StatusBar style="auto" />
       <NativeVideo style={{ paddingTop: top, flex: 1 }}>
-        <NativeVideo.Player
-          videoId={videoId}
-          videoSource={videoSource}
-          muxOptions={muxOptions}
-        />
+        <NativeVideo.Player videoId={videoId} videoSource={videoSource} />
         <NativeVideo.Content className="flex-1">
           <ScrollView
             keyboardShouldPersistTaps="handled"

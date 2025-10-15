@@ -106,7 +106,7 @@ export function ChannelLessonsList({ channelId }: { channelId: string }) {
           return (
             <Link
               asChild
-              href={`/video?playbackId=${item.playbackId}&videoId=${item.id}`}
+              href={`/video?playbackId=${item.playbackId}&videoId=${item.id}&assetId=${item.assetId}`}
               disabled={!item.canWatch}
             >
               <TouchableOpacity

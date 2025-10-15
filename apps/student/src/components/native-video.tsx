@@ -66,9 +66,11 @@ NativeVideo.Content = ({ ...props }: ViewProps) => {
 
 NativeVideo.Player = ({
   videoSource,
+  assetId,
   videoId,
 }: {
   videoSource: VideoSource;
+  assetId: string;
   videoId: string;
 }) => {
   const player = useVideoPlayer(videoSource, (player) => {
@@ -112,9 +114,10 @@ NativeVideo.Player = ({
             data: {
               env_key: process.env.EXPO_PUBLIC_MUX_ENV_KEY, // (required)
               viewer_user_id: user.user?.id,
+              mux_asset_id: assetId,
               video_id: videoId, // (required)
               video_title: metadata?.title,
-              player_software_version: "5.0.2", // (optional, but encouraged) the version of react-native-video that you are using
+              player_software_version: "~3.0.11", // (optional, but encouraged) the version of expo-video that you are using
               player_name: "Expo Video View", // See metadata docs for available metadata fields /docs/web-integration-guide#section-5-add-metadata
               video_series: metadata?.artist, // ex: 'Weekly Great Videos'
               video_duration: player.duration, // in milliseconds, ex: 120000
@@ -229,19 +232,7 @@ function NativeVideoControlsOverlay({
     currentOffsetFromLive: player.currentOffsetFromLive,
   });
 
-  // Track time updates for Mux analytics
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      if (player.playing && player.currentTime > 0) {
-        // This will be handled by the MuxVideoView component
-      }
-    }, 1000); // Update every second
-
-    return () => clearInterval(interval);
-  }, [player.playing, player.currentTime]);
-
   const pinchGesture = Gesture.Pinch()
-
     .onEnd((e) => {
       try {
         // Add safety checks for the gesture event

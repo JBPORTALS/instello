@@ -12,9 +12,10 @@ import { format } from "date-fns";
 import { CalendarIcon, ClockIcon } from "phosphor-react-native";
 
 export default function VideoScreen() {
-  const { videoId, playbackId } = useLocalSearchParams<{
+  const { videoId, playbackId, assetId } = useLocalSearchParams<{
     videoId: string;
     playbackId: string;
+    assetId: string;
   }>();
 
   const {
@@ -42,7 +43,11 @@ export default function VideoScreen() {
     <>
       <StatusBar style="auto" />
       <NativeVideo style={{ paddingTop: top, flex: 1 }}>
-        <NativeVideo.Player videoId={videoId} videoSource={videoSource} />
+        <NativeVideo.Player
+          assetId={assetId}
+          videoId={videoId}
+          videoSource={videoSource}
+        />
         <NativeVideo.Content className="flex-1">
           <ScrollView
             keyboardShouldPersistTaps="handled"

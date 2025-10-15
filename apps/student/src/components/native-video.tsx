@@ -72,6 +72,7 @@ NativeVideo.Player = ({
   videoSource: VideoSource;
   assetId: string;
   videoId: string;
+  channelName: string;
 }) => {
   const player = useVideoPlayer(videoSource, (player) => {
     player.loop = true;
@@ -119,7 +120,7 @@ NativeVideo.Player = ({
               video_title: metadata?.title,
               player_software_version: "~3.0.11", // (optional, but encouraged) the version of expo-video that you are using
               player_name: "Expo Video View", // See metadata docs for available metadata fields /docs/web-integration-guide#section-5-add-metadata
-              video_series: metadata?.artist, // ex: 'Weekly Great Videos'
+              video_series: `${metadata?.artwork}-${metadata?.artist}`, // ex: 'Weekly Great Videos'
               video_duration: player.duration, // in milliseconds, ex: 120000
               video_stream_type: "on-demand", // 'live' or 'on-demand'
             },

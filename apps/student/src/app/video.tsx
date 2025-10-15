@@ -47,6 +47,7 @@ export default function VideoScreen() {
           assetId={assetId}
           videoId={videoId}
           videoSource={videoSource}
+          channelName={video?.chapter.channel.title ?? "Unknown Channel"}
         />
         <NativeVideo.Content className="flex-1">
           <ScrollView

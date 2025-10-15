@@ -1,4 +1,4 @@
-import "@/global.css";
+import "../global.css";
 
 import * as React from "react";
 import { useColorScheme } from "react-native";

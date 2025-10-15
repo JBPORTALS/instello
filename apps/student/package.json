@@ -1,6 +1,6 @@
 {
   "name": "@instello/student",
-  "main": "expo-router/entry",
+  "main": "index.ts",
   "version": "1.0.0",
   "scripts": {
     "dev": "expo start -c",
@@ -76,5 +76,6 @@
     "tailwindcss": "catalog:",
     "typescript": "catalog:"
   },
-  "private": true
+  "private": true,
+  "prettier":"@instello/prettier-config"
 }

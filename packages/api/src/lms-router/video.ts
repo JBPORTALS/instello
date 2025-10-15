@@ -130,7 +130,9 @@ export const videoRouter = {
       const singleVideo = await ctx.db.query.video.findFirst({
         where: eq(video.id, input.videoId),
         with: {
-          chapter: true,
+          chapter: {
+            with: { channel: { columns: { title: true } } },
+          },
         },
       });
 

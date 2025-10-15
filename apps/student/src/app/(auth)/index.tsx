@@ -1,10 +1,11 @@
 import { View } from "react-native";
 import { Image } from "expo-image";
-import { Link, Stack } from "expo-router";
+import { Stack, useRouter } from "expo-router";
 import { Button } from "@/components/ui/button";
 import { Text } from "@/components/ui/text";
 
 export default function GetStarted() {
+  const router = useRouter();
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -42,16 +43,21 @@ export default function GetStarted() {
           <Text variant={"muted"} className="text-center">
             by continuing you'll accept all our terms and conditions
           </Text>
-          <Link asChild href={"/(auth)/sign-up"}>
-            <Button className="w-full" size={"lg"}>
-              <Text>Get Started</Text>
-            </Button>
-          </Link>
-          <Link asChild href={"/(auth)/sign-in"}>
-            <Button className="w-full" variant={"secondary"} size={"lg"}>
-              <Text>Sign in</Text>
-            </Button>
-          </Link>
+          <Button
+            className="w-full"
+            onPress={() => router.push("/(auth)/sign-up")}
+            size={"lg"}
+          >
+            <Text>Get Started</Text>
+          </Button>
+          <Button
+            className="w-full"
+            onPress={() => router.push("/(auth)/sign-in")}
+            variant={"secondary"}
+            size={"lg"}
+          >
+            <Text>Sign in</Text>
+          </Button>
         </View>
       </View>
     </>

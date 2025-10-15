@@ -107,11 +107,7 @@ export function SignInForm() {
               <View className="flex-row items-center">
                 <Label htmlFor="password">Password</Label>
                 <Link asChild href={`/(auth)/forgot-password?email=${email}`}>
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="web:h-fit ml-auto h-4 px-1 py-0 sm:h-4"
-                  >
+                  <Button variant="link" className="ml-auto px-1 py-0">
                     <Text className="font-normal leading-4">
                       Forgot your password?
                     </Text>
@@ -132,7 +128,11 @@ export function SignInForm() {
                 </Text>
               ) : null}
             </View>
-            <Button className="w-full" disabled={isLoading} onPress={onSubmit}>
+            <Button
+              className="w-full"
+              disabled={isLoading || !email || !password}
+              onPress={onSubmit}
+            >
               <Text>{isLoading ? "Signing in..." : "Continue"}</Text>
             </Button>
           </View>

@@ -77,7 +77,6 @@ export function SocialConnections() {
           <Button
             key={strategy.type}
             variant="outline"
-            size="sm"
             className="sm:flex-1"
             onPress={onSocialLoginPress(strategy.type)}
             disabled={isLoading}

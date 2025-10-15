@@ -423,8 +423,17 @@ function NativeVideoControlsOverlay({
         <View style={[styles.overlay]}>
           {/** Container */}
           <View
-            className="h-full w-full flex-1  items-center justify-between bg-black/20 px-2.5 py-4"
-            style={{ opacity: showControls ? 100 : 0 }}
+            style={{
+              opacity: showControls ? 100 : 0,
+              height: "100%",
+              width: "100%",
+              flex: 1,
+              alignItems: "center",
+              justifyContent: "space-between",
+              backgroundColor: "rgba(0,0,0,0.2)",
+              paddingHorizontal: 10,
+              paddingVertical: 16,
+            }}
           >
             {/** Controls Header*/}
             <View className="w-full flex-row justify-between">

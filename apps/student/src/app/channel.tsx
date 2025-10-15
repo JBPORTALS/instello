@@ -1,5 +1,6 @@
 import React from "react";
 import { ActivityIndicator, ScrollView, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { ImageBackground } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import { Link, useLocalSearchParams, useRouter } from "expo-router";
@@ -47,7 +48,6 @@ const blurhash =
 function ChannelDetailsSection() {
   const router = useRouter();
   const { channelId } = useLocalSearchParams<{ channelId: string }>();
-  console.log(channelId);
   const {
     data: channel,
     isLoading,
@@ -86,8 +86,8 @@ function ChannelDetailsSection() {
             height: "100%",
           }}
         >
-          <View className="pt-safe flex-1 px-4">
-            <View className="justify-between py-4">
+          <View className="flex-1">
+            <View className="justify-between px-4 py-8">
               <Button
                 onPress={() => router.back()}
                 size={"icon"}
@@ -139,10 +139,10 @@ function ChannelDetailsSection() {
           </View>
         </View>
       ) : (
-        <View className="gap-2.5 px-4">
+        <View className="gap-2.5 px-4 py-4">
           <Text
             variant={"h4"}
-            className="leading-2.5 font-medium tracking-wide"
+            className="leading-0.5 font-medium tracking-wide"
           >
             {channel?.title}
           </Text>
@@ -172,7 +172,7 @@ function ChannelDetailsSection() {
             </Text>
           </View>
 
-          {channel?.description && (
+          {channel?.description && channel.description.length !== 0 && (
             <ExapandableText variant={"muted"}>
               {channel.description}
             </ExapandableText>
@@ -208,18 +208,22 @@ function SubscribeButton() {
   const { data, isLoading } = useQuery(
     trpc.lms.subscription.getByChannelId.queryOptions({ channelId }),
   );
+  const router = useRouter();
 
-  if (isLoading) return <Skeleton className={"h-9 w-32 rounded-full"} />;
+  if (isLoading) return <Skeleton className={"h-[38px] w-28 rounded-full"} />;
 
   const renderSubscriptionButotn = () => {
     switch (data?.status) {
       case "expired":
         return (
-          <Link asChild href={`/(subscribe)?channelId=${channelId}`}>
-            <Button size={"sm"} variant={"outline"} className="rounded-full">
-              <Text className="text-xs">Renew Subscription</Text>
-            </Button>
-          </Link>
+          <Button
+            size={"sm"}
+            onPress={() => router.push(`/(subscribe)?channelId=${channelId}`)}
+            variant={"outline"}
+            className="rounded-full"
+          >
+            <Text className="text-xs">Renew Subscription</Text>
+          </Button>
         );
 
       case "subscribed":
@@ -231,16 +235,18 @@ function SubscribeButton() {
 
       default:
         return (
-          <Link asChild href={`/(subscribe)?channelId=${channelId}`}>
-            <Button size={"sm"} className="rounded-full">
-              <Icon
-                as={CrownIcon}
-                weight="duotone"
-                className="text-primary-foreground"
-              />
-              <Text className="text-xs">Subscribe to Watch</Text>
-            </Button>
-          </Link>
+          <Button
+            size={"sm"}
+            onPress={() => router.push(`/(subscribe)?channelId=${channelId}`)}
+            className="rounded-full"
+          >
+            <Icon
+              as={CrownIcon}
+              weight="duotone"
+              className="text-primary-foreground"
+            />
+            <Text className="text-xs">Subscribe to Watch</Text>
+          </Button>
         );
     }
   };

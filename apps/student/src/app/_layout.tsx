@@ -3,6 +3,7 @@ import "../global.css";
 import * as React from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { StatusBar } from "expo-status-bar";
@@ -23,21 +24,23 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ClerkProvider
-        polling
-        publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
-        tokenCache={tokenCache}
-      >
-        <QueryClientProvider client={queryClient}>
-          <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
-            <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
-            <Routes />
-            <PortalHost />
-          </ThemeProvider>
-        </QueryClientProvider>
-      </ClerkProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ClerkProvider
+          polling
+          publishableKey={process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY}
+          tokenCache={tokenCache}
+        >
+          <QueryClientProvider client={queryClient}>
+            <ThemeProvider value={NAV_THEME[colorScheme ?? "light"]}>
+              <StatusBar style={colorScheme === "dark" ? "light" : "dark"} />
+              <Routes />
+              <PortalHost />
+            </ThemeProvider>
+          </QueryClientProvider>
+        </ClerkProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }
 

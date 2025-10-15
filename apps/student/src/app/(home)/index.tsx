@@ -26,7 +26,10 @@ function ChannelCard({
       <TouchableOpacity>
         <Card
           key={channel.id}
-          className={cn("w-40 gap-3 border-0 p-2", className)}
+          className={cn(
+            "w-40 gap-3 border-0 bg-transparent p-2 shadow-none",
+            className,
+          )}
         >
           <Image
             source={{

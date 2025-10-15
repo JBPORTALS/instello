@@ -13,10 +13,11 @@ function IconImpl({ as: IconComponent, ...props }: IconProps) {
   return <IconComponent {...props} />;
 }
 
-styled(IconImpl, {
+const StyledIconIml = styled(IconImpl, {
   className: {
     target: "style",
     nativeStyleMapping: {
+      color: "color",
       height: "size",
       width: "size",
     },
@@ -50,7 +51,7 @@ function Icon({
   ...props
 }: IconProps) {
   return (
-    <IconImpl
+    <StyledIconIml
       as={IconComponent}
       className={cn("text-foreground", className)}
       size={size}

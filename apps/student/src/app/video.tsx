@@ -1,5 +1,9 @@
 import React from "react";
 import { ScrollView, View } from "react-native";
+import {
+  SafeAreaView,
+  useSafeAreaInsets,
+} from "react-native-safe-area-context";
 import { useLocalSearchParams } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { VideoSource } from "expo-video";
@@ -52,10 +56,12 @@ export default function VideoScreen() {
     },
   };
 
+  const { top } = useSafeAreaInsets();
+
   return (
     <>
       <StatusBar style="auto" />
-      <NativeVideo className="pt-safe flex-1">
+      <NativeVideo style={{ paddingTop: top, flex: 1 }}>
         <NativeVideo.Player
           videoId={videoId}
           videoSource={videoSource}

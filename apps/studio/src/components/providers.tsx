@@ -9,13 +9,7 @@ import { ThemeProvider as NextThemesProvider } from "next-themes";
 export function Providers({ children }: { children: React.ReactNode }) {
   useUploadLeaveGuard();
   return (
-    <NextThemesProvider
-      attribute="class"
-      defaultTheme="system"
-      enableSystem
-      disableTransitionOnChange
-      enableColorScheme
-    >
+    <NextThemesProvider attribute="class" defaultTheme="system" enableSystem>
       <TRPCReactProvider>
         {children}
         <Toaster />

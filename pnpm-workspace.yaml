@@ -7,6 +7,7 @@ catalog:
   eslint: ^9.28.0
   prettier: ^3.5.3
   typescript: ~5.9.2
+  tailwindcss: ^4.1.14
   zod: ^3.25.49
   sonner: "^2.0.6"
   superjson: "^2.2.2"
@@ -25,5 +26,5 @@ catalogs:
     react: ^19.1.0
     "react-dom": ^19.1.0
     "@types/node": "^20"
-    "@types/react": "^19.1.13"
+    "@types/react": "~19.1.10"
     "@types/react-dom": "^19"
